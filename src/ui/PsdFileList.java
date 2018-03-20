@@ -1,11 +1,17 @@
 package ui;
 
-import javax.swing.*;
-import javax.swing.border.*;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.io.File;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.ListCellRenderer;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 public class PsdFileList extends JList {
 	protected static Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);

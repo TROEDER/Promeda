@@ -15,19 +15,19 @@ import javax.swing.JFileChooser;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.apache.commons.io.FilenameUtils;
-
 import model.singleton.ImageHandler;
-
+import model.singleton.PropertiesModel;
 
 public class ArticleController implements ListSelectionListener, ActionListener {
 
 	private ArticleView view;
+	private PropertiesModel propApp = new PropertiesModel();
 
 	public ArticleController(String articleNr) {
+		propApp.loadAppProperties();
 		initView();
 		initPsdFiles(articleNr);
-		
+
 	}
 
 	private void initView() {
@@ -38,28 +38,36 @@ public class ArticleController implements ListSelectionListener, ActionListener 
 	public void initPsdFiles(final String filename) {
 		view.labelSearchQuery.setText(filename);
 		FilenameFilter filter = new FilenameFilter() {
-			
+
 			@Override
 			public boolean accept(File dir, String name) {
-				 return name.matches(".*("+filename+")+.*");
+				return name.matches(".*(" + filename + ")+.*");
 			}
 		};
-		File f = new File("media/originals/");
+		File f = new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirOriginals"));
 		File[] files = f.listFiles(filter);
 		System.out.println(files.length);
 		Vector<File> filesList = new Vector<File>();
 
 		for (File file : files) {
-			if (!file.isDirectory()) {
-				filesList.add(file);
+
+			if (file.isDirectory()) {
+				System.out.println(file.getName());
+				File[] files2 = file.listFiles(filter);
+				for (File file2 : files2) {
+
+					if (!file2.isDirectory()) {
+						filesList.add(file2);
+					}
+				}
 			}
 		}
 		view.listPsdFiles.setListData(filesList);
 		view.listPsdFiles.setSelectedIndex(0);
 	}
-	
+
 	public void initThumbSlider() {
-	
+
 		String articleNr = "18909G";
 		File liveImage = new File("media/live/100px/" + articleNr + "/" + articleNr + ".jpg");
 		if (liveImage.isFile()) {
@@ -75,11 +83,11 @@ public class ArticleController implements ListSelectionListener, ActionListener 
 				liveImage = new File(
 						"media/live/100px/" + articleNr + "_" + count + "/" + articleNr + "_" + count + ".jpg");
 			}
-//			view.listThumbs.setListData(imageFiles);
+			// view.listThumbs.setListData(imageFiles);
 		}
 
 	}
-	
+
 	public File saveFile() {
 		File file = null;
 
@@ -111,10 +119,10 @@ public class ArticleController implements ListSelectionListener, ActionListener 
 				e.printStackTrace();
 			}
 		} else if (ae.getSource() == view.btnRemoveFromLive) {
-			
+
 		}
 	}
-	
+
 	@Override
 	public void valueChanged(ListSelectionEvent lse) {
 		if (lse.getSource() == view.listPsdFiles) {
@@ -130,8 +138,8 @@ public class ArticleController implements ListSelectionListener, ActionListener 
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-		} 
+
+		}
 	}
 
 }

@@ -1,10 +1,14 @@
 package ui;
 
-import javax.swing.*;
-import javax.swing.border.*;
-
 import java.awt.Component;
 import java.io.File;
+
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.ListCellRenderer;
+import javax.swing.ListSelectionModel;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 public class FileList extends JList {
 	protected static Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);

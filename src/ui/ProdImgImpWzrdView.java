@@ -1,20 +1,21 @@
 package ui;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import java.awt.CardLayout;
-import javax.swing.JLabel;
-import java.awt.Font;
 import java.awt.Color;
-import javax.swing.JList;
-import javax.swing.border.BevelBorder;
-import javax.swing.JButton;
-import javax.swing.JScrollPane;
 import java.awt.Dimension;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.border.SoftBevelBorder;
+import java.awt.Font;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
 
 public class ProdImgImpWzrdView extends JFrame {
@@ -42,6 +43,7 @@ public class ProdImgImpWzrdView extends JFrame {
 	public JButton btnClearFileList;
 	public FileList fileListSourceFilesSummary;
 	public StoreList storeListTargetStoresSummary;
+	public JLabel labelLoadManMoving;
 
 	/**
 	 * Create the frame.
@@ -188,6 +190,11 @@ public class ProdImgImpWzrdView extends JFrame {
 		panelCardProcessing.setLayout(null);
 		panelCardProcessing.setBackground(Color.WHITE);
 		panelContentContainer.add(panelCardProcessing, "name_427830841893322");
+		
+		labelLoadManMoving = new JLabel("");
+		labelLoadManMoving.setBounds(10, 87, 48, 48);
+		labelLoadManMoving.setIcon(new ImageIcon(getClass().getResource("/img/load-man.png")));
+		panelCardProcessing.add(labelLoadManMoving);
 
 		JLabel lblProcessing = new JLabel("Processing...");
 		lblProcessing.setFont(new Font("Segoe UI", Font.BOLD, 16));

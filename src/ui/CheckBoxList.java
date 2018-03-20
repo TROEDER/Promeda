@@ -1,14 +1,20 @@
 package ui;
 
-import javax.swing.*;
-import javax.swing.border.*;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Vector;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.ListCellRenderer;
+import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 import model.prototype.StoreDataModel;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Iterator;
-import java.util.Vector;
 
 public class CheckBoxList extends JList {
 	protected static Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);

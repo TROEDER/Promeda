@@ -16,10 +16,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPClientConfig;
-import org.apache.commons.net.ftp.FTPFile;
-import org.apache.commons.net.ftp.FTPSClient;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -218,6 +214,7 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 
 	public void progressBarUpdate(int progressStepSize) {
 		view.progressBar.setValue(view.progressBar.getValue() + progressStepSize);
+		view.labelLoadManMoving.setLocation(view.progressBar.getValue()*4, 95);
 	}
 
 	public void progressLabelUpdate(String LabelText) {

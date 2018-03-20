@@ -2,8 +2,8 @@ package ui;
 
 import java.awt.Graphics;
 import java.awt.Image;
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -16,9 +16,9 @@ public class JPanelWithBackgroundImage extends JPanel {
 
 	}
 
-	public JPanelWithBackgroundImage(String fileName) {
+	public JPanelWithBackgroundImage(URL fileURL) {
 		try {
-			backgroundImage = ImageIO.read(new File(fileName));
+			backgroundImage = ImageIO.read(fileURL);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

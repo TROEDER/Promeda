@@ -1,23 +1,18 @@
 package ui;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
-import java.awt.FlowLayout;
-import javax.swing.JTextField;
 import java.awt.Component;
-import javax.swing.SwingConstants;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import java.awt.Dimension;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.ImageIcon;
 import java.awt.Font;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
 public class AppView extends JFrame {
 
@@ -39,7 +34,7 @@ public class AppView extends JFrame {
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 251, 372);
-		contentPane = new JPanelWithBackgroundImage("resource/img/promeda-app-bg3.jpg");
+		contentPane = new JPanelWithBackgroundImage(getClass().getResource("/img/promeda-app-bg3.jpg"));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);

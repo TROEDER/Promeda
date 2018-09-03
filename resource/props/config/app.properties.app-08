@@ -1,0 +1,5 @@
+locNetworkRes://SVR-APP-08/webserver/bildverwaltung/
+locMediaBackup://SVR-APP-08/webserver/bildverwaltung/
+mediaBackupDirOriginals:original/
+mediaBackupDirLive:live/
+locTmp:tmp/

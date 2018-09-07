@@ -29,5 +29,5 @@ hs_err_pid*
 .metadata
 
 # exluded folders #
-#lib/
-#stores/
+lib/
+stores/

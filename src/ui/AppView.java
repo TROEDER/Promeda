@@ -12,6 +12,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 public class AppView extends JFrame {
 
@@ -23,6 +25,7 @@ public class AppView extends JFrame {
 	public JButton btnExit;
 	public JTextField textFieldProdNr;
 	public JButton btnPageImgImpWzrd;
+	public JButton btnNewButton;
 
 	/**
 	 * Create the frame.
@@ -109,5 +112,10 @@ public class AppView extends JFrame {
 		btnPageImgImpWzrd.setAlignmentX(0.5f);
 		btnPageImgImpWzrd.setBounds(10, 294, 225, 40);
 		contentPane.add(btnPageImgImpWzrd);
+		
+		btnNewButton = new JButton("importer");
+		btnNewButton.addActionListener(controller);
+		btnNewButton.setBounds(10, 256, 98, 26);
+		contentPane.add(btnNewButton);
 	}
 }

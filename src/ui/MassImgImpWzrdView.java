@@ -50,13 +50,9 @@ public class MassImgImpWzrdView extends JFrame {
 	public StoreList storeListTargetStoresSummary;
 	public JLabel labelLoadManMoving;
 	public JTextField textFieldProductsCsv;
-	public JPanel panelCardImageOptions;
-	public JLabel lblImageOptions;
-	public JLabel lblSetupYourPreferred;
-	public JTextField textField;
-	public JTextField textField_1;
-	public JTextField textField_2;
+	public JTextField textFieldPsdFilesPath;
 	public JButton btnBrowseCsvFile;
+	public JButton btnBrowsePsdFilesPath;
 
 	/**
 	 * Create the frame.
@@ -95,17 +91,20 @@ public class MassImgImpWzrdView extends JFrame {
 		panelCardSourceFiles.add(scrollPane);
 
 		fileListSourceFiles = new FileList();
+		fileListSourceFiles.setEnabled(false);
 		fileListSourceFiles.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		fileListSourceFiles.setFont(new Font("Segoe UI", Font.BOLD, 12));
 		fileListSourceFiles.setBackground(new Color(240, 248, 255));
 		scrollPane.setViewportView(fileListSourceFiles);
 
 		btnAddFiles = new JButton("Add");
+		btnAddFiles.setEnabled(false);
 		btnAddFiles.addActionListener(controller);
 		btnAddFiles.setBounds(280, 74, 119, 23);
 		panelCardSourceFiles.add(btnAddFiles);
 
 		btnRemoveFiles = new JButton("Remove");
+		btnRemoveFiles.setEnabled(false);
 		btnRemoveFiles.addActionListener(controller);
 		btnRemoveFiles.setBounds(280, 108, 119, 23);
 		panelCardSourceFiles.add(btnRemoveFiles);
@@ -142,77 +141,24 @@ public class MassImgImpWzrdView extends JFrame {
 		lblHttpdokuwikidokuphpidresponsiveshopbilder.setBounds(10, 305, 389, 14);
 		panelCardSourceFiles.add(lblHttpdokuwikidokuphpidresponsiveshopbilder);
 		
-		textField_2 = new JTextField();
-		textField_2.setBorder(new TitledBorder(null, "Banner Foldername", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		textField_2.setColumns(10);
-		textField_2.setBounds(10, 239, 389, 39);
-		panelCardSourceFiles.add(textField_2);
+		textFieldPsdFilesPath = new JTextField();
+		textFieldPsdFilesPath.setBorder(new TitledBorder(null, "Banner Foldername", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		textFieldPsdFilesPath.setColumns(10);
+		textFieldPsdFilesPath.setBounds(10, 239, 260, 39);
+		panelCardSourceFiles.add(textFieldPsdFilesPath);
 		
 		btnBrowseCsvFile = new JButton("Browse");
 		btnBrowseCsvFile.addActionListener(controller);
 		btnBrowseCsvFile.setBounds(280, 201, 119, 23);
 		panelCardSourceFiles.add(btnBrowseCsvFile);
+		
+		btnBrowsePsdFilesPath = new JButton("Browse");
+		btnBrowsePsdFilesPath.addActionListener(controller);
+		btnBrowsePsdFilesPath.setBounds(280, 251, 119, 23);
+		panelCardSourceFiles.add(btnBrowsePsdFilesPath);
 
 		panelCardTargetStores = new JPanel();
 		panelCardTargetStores.addComponentListener(controller);
-		
-		panelCardImageOptions = new JPanel();
-		panelCardImageOptions.setLayout(null);
-		panelCardImageOptions.setBackground(Color.WHITE);
-		panelContentContainer.add(panelCardImageOptions, "name_1656368493048464");
-		
-		lblImageOptions = new JLabel("Image options");
-		lblImageOptions.setFont(new Font("Segoe UI", Font.BOLD, 16));
-		lblImageOptions.setBounds(10, 11, 410, 27);
-		panelCardImageOptions.add(lblImageOptions);
-		
-		lblSetupYourPreferred = new JLabel("Setup your preferred image sizes.");
-		lblSetupYourPreferred.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-		lblSetupYourPreferred.setBounds(10, 40, 410, 23);
-		panelCardImageOptions.add(lblSetupYourPreferred);
-		
-		JLabel lblDim = new JLabel("Custom Dimension");
-		lblDim.setBounds(20, 89, 102, 20);
-		panelCardImageOptions.add(lblDim);
-		
-		textField = new JTextField();
-		textField.setBounds(132, 89, 77, 20);
-		panelCardImageOptions.add(textField);
-		textField.setColumns(10);
-		
-		JLabel lblPx = new JLabel("px");
-		lblPx.setBounds(212, 89, 21, 20);
-		panelCardImageOptions.add(lblPx);
-		
-		textField_1 = new JTextField();
-		textField_1.setColumns(10);
-		textField_1.setBounds(243, 89, 77, 20);
-		panelCardImageOptions.add(textField_1);
-		
-		JLabel label = new JLabel("px");
-		label.setBounds(325, 89, 21, 20);
-		panelCardImageOptions.add(label);
-		
-		JLabel lblBreite = new JLabel("Breite");
-		lblBreite.setBounds(132, 74, 46, 14);
-		panelCardImageOptions.add(lblBreite);
-		
-		JLabel lblHhe = new JLabel("H\u00F6he");
-		lblHhe.setBounds(243, 74, 46, 14);
-		panelCardImageOptions.add(lblHhe);
-		
-		JButton btnNewButton = new JButton("Add");
-		btnNewButton.setBounds(356, 89, 51, 20);
-		panelCardImageOptions.add(btnNewButton);
-		
-		JScrollPane scrollPane_4 = new JScrollPane();
-		scrollPane_4.setBorder(null);
-		scrollPane_4.setBounds(20, 136, 387, 172);
-		panelCardImageOptions.add(scrollPane_4);
-		
-		JList list = new JList();
-		list.setBorder(new TitledBorder(null, "Sizes", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		scrollPane_4.setViewportView(list);
 		panelCardTargetStores.setLayout(null);
 		panelCardTargetStores.setBackground(new Color(255, 255, 255));
 		panelContentContainer.add(panelCardTargetStores, "panelCardTargetStores");

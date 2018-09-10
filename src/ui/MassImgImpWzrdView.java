@@ -50,12 +50,13 @@ public class MassImgImpWzrdView extends JFrame {
 	public StoreList storeListTargetStoresSummary;
 	public JLabel labelLoadManMoving;
 	public JTextField textFieldProductsCsv;
-	private JPanel panelCardImageOptions;
-	private JLabel lblImageOptions;
-	private JLabel lblSetupYourPreferred;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
+	public JPanel panelCardImageOptions;
+	public JLabel lblImageOptions;
+	public JLabel lblSetupYourPreferred;
+	public JTextField textField;
+	public JTextField textField_1;
+	public JTextField textField_2;
+	public JButton btnBrowseCsvFile;
 
 	/**
 	 * Create the frame.
@@ -147,13 +148,10 @@ public class MassImgImpWzrdView extends JFrame {
 		textField_2.setBounds(10, 239, 389, 39);
 		panelCardSourceFiles.add(textField_2);
 		
-		JButton btnBrowse = new JButton("Browse");
-		btnBrowse.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		btnBrowse.setBounds(280, 201, 119, 23);
-		panelCardSourceFiles.add(btnBrowse);
+		btnBrowseCsvFile = new JButton("Browse");
+		btnBrowseCsvFile.addActionListener(controller);
+		btnBrowseCsvFile.setBounds(280, 201, 119, 23);
+		panelCardSourceFiles.add(btnBrowseCsvFile);
 
 		panelCardTargetStores = new JPanel();
 		panelCardTargetStores.addComponentListener(controller);

@@ -18,10 +18,12 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.csv.CSVParser;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -51,7 +53,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 	public MassImgImpWzrdController() {
 		initProperties();
 		initView();
-		initStores();
+		//initStores();
 	}
 
 	public MassImgImpWzrdController(Vector<File> psdFileList) {
@@ -110,7 +112,9 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		}
 	}
 	
+	public void readCsv() {
 	
+	}
 
 	public void process() {
 
@@ -209,6 +213,24 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		view.btnCardNext.setText("Done");
 	}
 
+	public File chooseFile() {
+		File file = null;
+		
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
+		fileChooser.setDialogTitle("Select files (multiple selection possible)");
+		fileChooser.setMultiSelectionEnabled(false);
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fileChooser.setFileFilter(new FileNameExtensionFilter("choose .txt, .csv file", new String[] {"txt", "csv"}));
+		fileChooser.setLocation(100, 100);
+		
+		int returnVal = fileChooser.showOpenDialog(null);
+
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			file = fileChooser.getSelectedFile();
+		}
+		return file;
+	}
 	
 	public File[] openFiles() {
 		File[] files = null;
@@ -290,6 +312,9 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 			view.checkBoxListStores.selectAll();
 		} else if (ae.getSource() == view.btnDeselectAll) {
 			view.checkBoxListStores.deselectAll();
+		} else if (ae.getSource() == view.btnBrowseCsvFile) {
+			File productsCsv = chooseFile();
+			view.textFieldProductsCsv.setText(productsCsv.getAbsolutePath());
 		}
 	}
 

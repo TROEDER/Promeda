@@ -184,9 +184,9 @@ public final class SFTPClientModel {
             channel = session.openChannel("sftp");
             channel.connect();
             channelSftp = (ChannelSftp) channel;
-            System.out.println(channelSftp.getHome());
-            channelSftp.cd("/websale8_shop-promondo-dev-2/produkte/medien/bilder");
-            System.out.println(channelSftp.getHome());
+            System.out.println(channelSftp.lpwd());
+            channelSftp.cd("websale8_shop-promondo-dev-2/produkte/medien/bilder");
+            System.out.println(channelSftp.pwd());
         } catch (Exception ex) {
             ex.printStackTrace();
         }

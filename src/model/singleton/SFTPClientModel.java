@@ -181,6 +181,12 @@ public final class SFTPClientModel {
             config.put("StrictHostKeyChecking", "no");
             session.setConfig(config);
             session.connect();
+            channel = session.openChannel("sftp");
+            channel.connect();
+            channelSftp = (ChannelSftp) channel;
+            System.out.println(channelSftp.getHome());
+            channelSftp.cd("/websale8_shop-promondo-dev-2/produkte/medien/bilder");
+            System.out.println(channelSftp.getHome());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -196,8 +202,6 @@ public final class SFTPClientModel {
             channelSftp.cd(remoteFile.getParentFile().getName());
             System.out.println(remoteFile.getParentFile().getName());
             channelSftp.put(new FileInputStream(localFile), remoteFile.getName());
-            channelSftp.getHome();
-            System.out.println(channelSftp.getHome());
         } catch (Exception ex) {
             ex.printStackTrace();
         }

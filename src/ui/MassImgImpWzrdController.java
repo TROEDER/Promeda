@@ -43,6 +43,7 @@ import model.prototype.StoreDataModel;
 import model.singleton.FtpClientModel;
 import model.singleton.ImageHandler;
 import model.singleton.PropertiesModel;
+import model.singleton.SFTPClientModel;
 
 public class MassImgImpWzrdController implements ActionListener, ComponentListener {
 
@@ -199,11 +200,18 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 
 			for (StoreDataModel store : selectedStores) {
 				
-				FTPClient f = new FTPClient();
-				f.connect(store.getStoreFtpServer());
-				f.login(store.getStoreFtpUser(), store.getStoreFtpPass());
-				f.setFileType(FTP.BINARY_FILE_TYPE);
-
+				FTPClient ftp = null;
+				SFTPClientModel sftp = null;
+				
+				if(store.getStoreFtpProtocol().equals("ftp")) {
+	            		ftp = new FTPClient();
+	            		ftp.connect(store.getStoreFtpServer());
+	    				ftp.login(store.getStoreFtpUser(), store.getStoreFtpPass());
+	    				ftp.setFileType(FTP.BINARY_FILE_TYPE);
+				} else if(store.getStoreFtpProtocol().equals("sftp")) {
+	            	sftp = new SFTPClientModel(store.getStoreFtpServer(), store.getStoreFtpPort(), store.getStoreFtpUser(), store.getStoreFtpPass(), store.getDirDefault());
+				}
+				
 				for (File psdFiles : psdFileList) {
 						File[] psdFileVersionSort = sortByNumber(psdFiles.listFiles());
 						File psdFile = psdFileVersionSort[psdFileVersionSort.length - 1];
@@ -253,21 +261,26 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 
 							// VIA FTP
 							if (store.getStoreFtpProtocol().equals("ftp")) {
-								if (!f.isConnected()) {
-									f.connect(store.getStoreFtpServer());
+								if (!ftp.isConnected()) {
+									ftp.connect(store.getStoreFtpServer());
 								}
 								InputStream input = new FileInputStream(imgFile);
-								f.mkd(imgSize.getName());
-								f.changeWorkingDirectory(imgSize.getName());
-								f.storeFile(remoteFile.getName(), input);
-								f.changeToParentDirectory();
+								ftp.mkd(imgSize.getName());
+								ftp.changeWorkingDirectory(imgSize.getName());
+								ftp.storeFile(remoteFile.getName(), input);
+								ftp.changeToParentDirectory();
 
 								// VIA SFTP
-							} else if (store.getStoreFtpProtocol().equals("sftp")) {
-								if (!ftp.session.isConnected()) {
-									ftp.sftpConnect();
+							} else if (store.getStoreFtpProtocol().equals("sftpDEAKT")) {
+								if (!sftp.session.isConnected()) {
+									sftp.sftpConnect();
 								}
-								ftp.sftpUpload(imgFile, remoteFile);
+								sftp.sftpUpload(imgFile, remoteFile);
+							} else if (store.getStoreFtpProtocol().equals("sftp")) {
+								if (!sftp.session.isConnected()) {
+									sftp.sftpConnect();
+								}
+								sftp.sftpUpload(imgFile, remoteFile);
 							}
 						}
 						progressBarUpdate(progressStepSize);

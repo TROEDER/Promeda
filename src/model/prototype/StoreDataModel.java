@@ -13,6 +13,10 @@ import java.util.Vector;
  *
  * @author troeder
  */
+/**
+ * @author troeder
+ *
+ */
 public class StoreDataModel {
 
 	private String storeName;
@@ -21,6 +25,7 @@ public class StoreDataModel {
 	private String storeFtpUser;
 	private String storeFtpPass;
 	private String storeFtpProtocol;
+	private String dirDefault;
 	private ImageSize[] storeImageSizes;
 	private Vector<ImageSize> storeImageSizeList = new Vector<ImageSize>();;
 	private List<ImageSize> storeImageSizeListNew = new Vector<ImageSize>();
@@ -120,6 +125,14 @@ public class StoreDataModel {
 
 	public void setStoreFtpProtocol(String storeFtpProtocol) {
 		this.storeFtpProtocol = storeFtpProtocol;
+	}
+
+	public String getDirDefault() {
+		return dirDefault;
+	}
+
+	public void setDirDefault(String dirDefault) {
+		this.dirDefault = dirDefault;
 	}
 
 	public ImageSize[] getStoreImageSizes() {

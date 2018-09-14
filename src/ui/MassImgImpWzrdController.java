@@ -7,13 +7,20 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.ListIterator;
@@ -94,13 +101,13 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 			for (File file : files) {
 				if (!file.isDirectory() && FilenameUtils.isExtension(file.getName(), "properties")) {
 					Configuration config = new PropertiesConfiguration(file);
-					/*String[] imgSizeParams = config.getStringArray("banner.image.size");
-					for (String param : imgSizeParams) {
-						imageSizeList.add(new ImageSize(param.split(",")));
-						System.out.println(new ImageSize(param.split(",")).getName());
-						System.out.println(
-								"Groesse: " + imageSizeList.size() + " - " + imageSizeList.lastElement().getWidth());
-					}*/
+					/*
+					 * String[] imgSizeParams = config.getStringArray("banner.image.size"); for
+					 * (String param : imgSizeParams) { imageSizeList.add(new
+					 * ImageSize(param.split(","))); System.out.println(new
+					 * ImageSize(param.split(",")).getName()); System.out.println( "Groesse: " +
+					 * imageSizeList.size() + " - " + imageSizeList.lastElement().getWidth()); }
+					 */
 					// System.out.println("imageSizeList.size() " + imageSizeList.size() + " - " +
 					// imageSizeList.get(0).getName());
 					/*
@@ -199,91 +206,92 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		try {
 
 			for (StoreDataModel store : selectedStores) {
-				
+
 				FTPClient ftp = null;
 				SFTPClientModel sftp = null;
-				
-				if(store.getStoreFtpProtocol().equals("ftp")) {
-	            		ftp = new FTPClient();
-	            		ftp.connect(store.getStoreFtpServer());
-	    				ftp.login(store.getStoreFtpUser(), store.getStoreFtpPass());
-	    				ftp.setFileType(FTP.BINARY_FILE_TYPE);
-				} else if(store.getStoreFtpProtocol().equals("sftp")) {
-	            	sftp = new SFTPClientModel(store.getStoreFtpServer(), store.getStoreFtpPort(), store.getStoreFtpUser(), store.getStoreFtpPass(), store.getDirDefault());
+
+				if (store.getStoreFtpProtocol().equals("ftp")) {
+					ftp = new FTPClient();
+					ftp.connect(store.getStoreFtpServer());
+					ftp.login(store.getStoreFtpUser(), store.getStoreFtpPass());
+					ftp.setFileType(FTP.BINARY_FILE_TYPE);
+				} else if (store.getStoreFtpProtocol().equals("sftp")) {
+					sftp = new SFTPClientModel(store.getStoreFtpServer(), store.getStoreFtpPort(),
+							store.getStoreFtpUser(), store.getStoreFtpPass(), store.getDirDefault());
 				}
-				
+
 				for (File psdFiles : psdFileList) {
-						File[] psdFileVersionSort = sortByNumber(psdFiles.listFiles());
-						File psdFile = psdFileVersionSort[psdFileVersionSort.length - 1];
-						// COPY PSD FILE TO ORIGINALS FOLDER
-						/*
-						 * copyFile(psdFile, new File(propApp.get("locMediaBackup") +
-						 * propApp.get("mediaBackupDirOriginals") +
-						 * FilenameUtils.getBaseName(psdFile.getName()) + "/" +
-						 * FilenameUtils.getBaseName(psdFile.getName()) + currentDate + "." +
-						 * FilenameUtils.getExtension(psdFile.getName())));
-						 */
+					File[] psdFileVersionSort = sortByNumber(psdFiles.listFiles());
+					File psdFile = psdFileVersionSort[psdFileVersionSort.length - 1];
+					// COPY PSD FILE TO ORIGINALS FOLDER
+					/*
+					 * copyFile(psdFile, new File(propApp.get("locMediaBackup") +
+					 * propApp.get("mediaBackupDirOriginals") +
+					 * FilenameUtils.getBaseName(psdFile.getName()) + "/" +
+					 * FilenameUtils.getBaseName(psdFile.getName()) + currentDate + "." +
+					 * FilenameUtils.getExtension(psdFile.getName())));
+					 */
 
-						// GET BUFFEREDIMAGE FROM PSD FILE
-						img = imgHandler.getImageFromPsd(psdFile);
-						// Show 100x100px thumb of current file in wizard
-						progressThumbUpdate(imgHandler.resizeImage(100, 100, img));
-						
-						for (ImageSize imgSize : store.getStoreImageSizeListNew()) {
+					// GET BUFFEREDIMAGE FROM PSD FILE
+					img = imgHandler.getImageFromPsd(psdFile);
+					// Show 100x100px thumb of current file in wizard
+					progressThumbUpdate(imgHandler.resizeImage(100, 100, img));
 
-							// RESIZE BUFFEREDIMAGE
-							progressLabelUpdate("Resize " + FilenameUtils.getBaseName(psdFiles.getName()) + " to "
-									+ imgSize.getWidth() + "px");
-							BufferedImage scaledImage = imgHandler.resizeImage(imgSize.getWidth(), imgSize.getHeight(),
-									img);
+					for (ImageSize imgSize : store.getStoreImageSizeListNew()) {
 
-							// REMOVE ALPHA CHANNEL FROM BUFFEREDIMAGE ( ARGB -> RGB )
-							progressLabelUpdate("Remove Alpha Channel from "
-									+ FilenameUtils.getBaseName(psdFile.getName()) + " (" + imgSize.getWidth() + "px)");
-							BufferedImage rgbImage = imgHandler.removeAlphaChannel(scaledImage);
+						// RESIZE BUFFEREDIMAGE
+						progressLabelUpdate("Resize " + FilenameUtils.getBaseName(psdFiles.getName()) + " to "
+								+ imgSize.getWidth() + "px");
+						BufferedImage scaledImage = imgHandler.resizeImage(imgSize.getWidth(), imgSize.getHeight(),
+								img);
 
-							// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
-							File directory = new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive")
-									+ imgSize.getName());
-							if (!directory.exists()) {
-								directory.mkdirs();
-							}
+						// REMOVE ALPHA CHANNEL FROM BUFFEREDIMAGE ( ARGB -> RGB )
+						progressLabelUpdate("Remove Alpha Channel from " + FilenameUtils.getBaseName(psdFile.getName())
+								+ " (" + imgSize.getWidth() + "px)");
+						BufferedImage rgbImage = imgHandler.removeAlphaChannel(scaledImage);
 
-							imgFile = new File(
-									directory.getPath() + "/" + FilenameUtils.getBaseName(psdFiles.getName()) + ".jpg");
-							ImageIO.write(rgbImage, "jpg", imgFile);
-
-							// UPLOAD TO WEBSERVER
-							progressLabelUpdate("Upload " + FilenameUtils.getBaseName(psdFiles.getName()) + " ("
-									+ imgSize.getName() + ") to " + store.getStoreName());
-
-							File remoteFile = new File(imgSize.getName() + "/" + imgFile.getName());
-
-							// VIA FTP
-							if (store.getStoreFtpProtocol().equals("ftp")) {
-								if (!ftp.isConnected()) {
-									ftp.connect(store.getStoreFtpServer());
-								}
-								InputStream input = new FileInputStream(imgFile);
-								ftp.mkd(imgSize.getName());
-								ftp.changeWorkingDirectory(imgSize.getName());
-								ftp.storeFile(remoteFile.getName(), input);
-								ftp.changeToParentDirectory();
-
-								// VIA SFTP
-							} else if (store.getStoreFtpProtocol().equals("sftpDEAKT")) {
-								if (!sftp.session.isConnected()) {
-									sftp.sftpConnect();
-								}
-								sftp.sftpUpload(imgFile, remoteFile);
-							} else if (store.getStoreFtpProtocol().equals("sftp")) {
-								if (!sftp.session.isConnected()) {
-									sftp.sftpConnect();
-								}
-								sftp.sftpUpload(imgFile, remoteFile);
-							}
+						// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
+						File directory = new File(
+								propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive") + imgSize.getName());
+						if (!directory.exists()) {
+							directory.mkdirs();
 						}
-						progressBarUpdate(progressStepSize);
+
+						imgFile = new File(
+								directory.getPath() + "/" + FilenameUtils.getBaseName(psdFiles.getName()) + ".jpg");
+						ImageIO.write(rgbImage, "jpg", imgFile);
+
+						// UPLOAD TO WEBSERVER
+						progressLabelUpdate("Upload " + FilenameUtils.getBaseName(psdFiles.getName()) + " ("
+								+ imgSize.getName() + ") to " + store.getStoreName());
+
+						File remoteFile = new File(imgSize.getName() + "/" + imgFile.getName());
+
+						// VIA FTP
+						if (store.getStoreFtpProtocol().equals("ftp")) {
+							if (!ftp.isConnected()) {
+								ftp.connect(store.getStoreFtpServer());
+							}
+							InputStream input = new FileInputStream(imgFile);
+							ftp.mkd(imgSize.getName());
+							ftp.changeWorkingDirectory(imgSize.getName());
+							ftp.storeFile(remoteFile.getName(), input);
+							ftp.changeToParentDirectory();
+
+							// VIA SFTP
+						} else if (store.getStoreFtpProtocol().equals("sftpDEAKT")) {
+							if (!sftp.session.isConnected()) {
+								sftp.sftpConnect();
+							}
+							sftp.sftpUpload(imgFile, remoteFile);
+						} else if (store.getStoreFtpProtocol().equals("sftp")) {
+							if (!sftp.session.isConnected()) {
+								sftp.sftpConnect();
+							}
+							sftp.sftpUpload(imgFile, remoteFile);
+						}
+					}
+					progressBarUpdate(progressStepSize);
 				}
 			}
 		} catch (IOException e) {
@@ -293,6 +301,69 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		progressLabelUpdate("complete");
 		view.btnCardNext.setEnabled(true);
 		view.btnCardNext.setText("Done");
+	}
+
+	public static String executePost(String targetURL, String urlParameters) {
+		HttpURLConnection connection = null;
+
+		try {
+			// Create connection
+			URL url = new URL(targetURL);
+			connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+			connection.setRequestProperty("Content-Length", Integer.toString(urlParameters.getBytes().length));
+			connection.setRequestProperty("Content-Language", "en-US");
+
+			connection.setUseCaches(false);
+			connection.setDoOutput(true);
+
+			// Send request
+			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+			wr.writeBytes(urlParameters);
+			wr.close();
+
+			// Get Response
+			InputStream is = connection.getInputStream();
+			BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+			StringBuilder response = new StringBuilder(); // or StringBuffer if Java version 5+
+			String line;
+			while ((line = rd.readLine()) != null) {
+				response.append(line);
+				response.append('\r');
+			}
+			rd.close();
+			return response.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			if (connection != null) {
+				connection.disconnect();
+			}
+		}
+	}
+
+	public static void fireHTTPRequest(String request) {
+		URL yahoo;
+		try {
+			yahoo = new URL("http://www.yahoo.com/");
+			URLConnection yc = yahoo.openConnection();
+			BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
+			String inputLine;
+
+			while ((inputLine = in.readLine()) != null)
+				System.out.println(inputLine);
+			in.close();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	public File chooseFile() {

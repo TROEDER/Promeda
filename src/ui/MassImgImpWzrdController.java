@@ -276,14 +276,14 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 							// VIA SFTP
 						} else if (store.getStoreFtpProtocol().equals("sftpDEAKT")) {
 							if (!sftp.session.isConnected()) {
-								sftp.sftpConnect();
+								sftp.connect();
 							}
-							sftp.sftpUpload(imgFile, remoteFile);
+							sftp.upload(imgFile, remoteFile);
 						} else if (store.getStoreFtpProtocol().equals("sftp")) {
 							if (!sftp.session.isConnected()) {
-								sftp.sftpConnect();
+								sftp.connect();
 							}
-							sftp.sftpUpload(imgFile, remoteFile);
+							sftp.upload(imgFile, remoteFile);
 						}
 					}
 					progressBarUpdate(progressStepSize);

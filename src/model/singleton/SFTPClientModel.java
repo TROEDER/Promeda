@@ -7,12 +7,8 @@
 package model.singleton;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Vector;
 
-import com.enterprisedt.net.ftp.FTPException;
-import com.enterprisedt.net.ftp.FileTransferClient;
 import com.enterprisedt.util.debug.Level;
 import com.enterprisedt.util.debug.Logger;
 import com.jcraft.jsch.Channel;
@@ -28,11 +24,10 @@ public final class SFTPClientModel {
 	private String user;
 	private String password;
 	private String dirDefault;
-	
+
 	public Session session = null;
 	private Channel channel = null;
 	private ChannelSftp channelSftp = null;
-
 
 	/**
 	 * Logger for Debugging/Output for Log-File set up logger so that we get some
@@ -47,7 +42,7 @@ public final class SFTPClientModel {
 	 * @param ftpUser
 	 * @param ftpPwd
 	 ******************************************************************************/
-	public SFTPClientModel(String ftpHost, int ftpPort, String ftpUser, String ftpPwd, String ftpDirDefault ) {
+	public SFTPClientModel(String ftpHost, int ftpPort, String ftpUser, String ftpPwd, String ftpDirDefault) {
 
 		/**
 		 * Logger for Debugging/Output for Log-File set up logger so that we get some
@@ -61,31 +56,31 @@ public final class SFTPClientModel {
 		user = ftpUser;
 		password = ftpPwd;
 		dirDefault = ftpDirDefault;
-		
+
 	}
 
-	public void sftpConnect() {
+	public void connect() {
 
-        try {
-            JSch jsch = new JSch();
-            session = jsch.getSession(user, host, port);
-            session.setPassword(password);
-            java.util.Properties config = new java.util.Properties();
-            config.put("StrictHostKeyChecking", "no");
-            session.setConfig(config);
-            session.connect();
-            channel = session.openChannel("sftp");
-            channel.connect();
-            channelSftp = (ChannelSftp) channel;
-            System.out.println(channelSftp.pwd());
-            channelSftp.cd(dirDefault);
-            System.out.println(channelSftp.pwd());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+		try {
+			JSch jsch = new JSch();
+			session = jsch.getSession(user, host, port);
+			session.setPassword(password);
+			java.util.Properties config = new java.util.Properties();
+			config.put("StrictHostKeyChecking", "no");
+			session.setConfig(config);
+			session.connect();
+			channel = session.openChannel("sftp");
+			channel.connect();
+			channelSftp = (ChannelSftp) channel;
+			System.out.println(channelSftp.pwd());
+			channelSftp.cd(dirDefault);
+			System.out.println(channelSftp.pwd());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
-	
-	public void changeDir(File remoteFile) {  
+
+	public void changeDir(File remoteFile) {
 		try {
 			channelSftp.cd(remoteFile.getParentFile().getName());
 			channelSftp.cd(remoteFile.getParentFile().getName());
@@ -94,19 +89,23 @@ public final class SFTPClientModel {
 			e.printStackTrace();
 		}
 	}
-	public void sftpUpload(File localFile, File remoteFile) {
+
+	public void upload(File localFile, File remoteFile) {
 		try {
 			Vector<String> cwdFileList = channelSftp.ls(channelSftp.pwd());
-            if(remoteFile.getParentFile().exists()) channelSftp.mkdir(remoteFile.getParentFile().getName());
-            /*channelSftp.cd("/websale8_shop-promondo-dev-2/produkte/medien/bilder");
-            channelSftp.cd(remoteFile.getParentFile().getName());
-            System.out.println(remoteFile.getParentFile().getName());
-            channelSftp.put(new FileInputStream(localFile), remoteFile.getName());*/
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+			if (remoteFile.getParentFile().exists())
+				channelSftp.mkdir(remoteFile.getParentFile().getName());
+			/*
+			 * channelSftp.cd("/websale8_shop-promondo-dev-2/produkte/medien/bilder");
+			 * channelSftp.cd(remoteFile.getParentFile().getName());
+			 * System.out.println(remoteFile.getParentFile().getName()); channelSftp.put(new
+			 * FileInputStream(localFile), remoteFile.getName());
+			 */
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
-	
+
 	public void sftpDisconnect() {
 		channelSftp.disconnect();
 		channel.disconnect();

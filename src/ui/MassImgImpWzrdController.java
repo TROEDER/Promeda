@@ -1,7 +1,5 @@
 package ui;
 
-import static org.apache.commons.io.FileUtils.copyFile;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -16,14 +14,12 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.ListIterator;
 import java.util.Scanner;
 import java.util.Vector;
 
@@ -35,7 +31,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -363,7 +358,6 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
 	public File chooseFile() {

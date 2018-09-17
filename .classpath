@@ -9,7 +9,11 @@
 	<classpathentry exported="true" kind="lib" path="lib/java-image-scaling-0.8.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mysql-connector-java-5.1.44-bin.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/psd-library-0.0.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-io-2.5.jar" sourcepath="lib/commons-io-2.5-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io-2.5.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Promeda/lib/commons-io-2.5-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/joda-time-2.9.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-net-3.6.jar" sourcepath="lib/commons-net-3.6-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jsch-0.1.54.jar" sourcepath="lib/jsch-0.1.54-sources.jar">
@@ -43,5 +47,10 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/commons-csv-1.4.jar" sourcepath="lib/commons-csv-1.4-sources.jar"/>
+	<classpathentry kind="lib" path="lib/sanselan-0.97-incubator.jar" sourcepath="lib/sanselan-0.97-incubator-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Promeda/lib/sanselan-0.97-incubator-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

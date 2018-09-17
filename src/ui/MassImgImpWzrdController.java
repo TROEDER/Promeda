@@ -31,6 +31,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -50,13 +51,15 @@ import model.singleton.SFTPClientModel;
 public class MassImgImpWzrdController implements ActionListener, ComponentListener {
 
 	private MassImgImpWzrdView view;
-	private FtpClientModel ftp;
 	private PropertiesModel propApp;
 	private Vector<StoreDataModel> stores;
 	private Vector<StoreDataModel> selectedStores;
 	private File psdFilesPath;
 	private Vector<File> psdFileList = new Vector<File>();
-	Vector<ImageSize> imageSizeList = new Vector<ImageSize>();
+	private Vector<ImageSize> imageSizeList = new Vector<ImageSize>();
+	
+	private FTPClient ftp = null;
+	private SFTPClientModel sftp = null;
 
 	public MassImgImpWzrdController() {
 		initProperties();
@@ -112,7 +115,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 					 */
 					stores.add(new StoreDataModel(config.getString("url"), config.getString("ftp.host"),
 							Integer.parseInt(config.getString("ftp.port")), config.getString("ftp.protocol"),
-							config.getString("ftp.user"), config.getString("ftp.pswd"),
+							config.getString("ftp.user"), config.getString("ftp.pswd"), config.getString("ftp.dir.default"),
 							config.getList("product.image.size")));
 				}
 				imageSizeList.clear();
@@ -129,6 +132,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 			scanner = new Scanner(csvFile);
 			while (scanner.hasNext()) {
 				productID = scanner.next();
+				System.out.println(psdFilesPath.getAbsolutePath() + File.separatorChar + productID);
 				File psdFile = new File(psdFilesPath.getAbsolutePath() + File.separatorChar + productID);
 				if (psdFile.isDirectory() && psdFile.exists()) {
 					psdFileList.add(psdFile);
@@ -202,9 +206,6 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 
 			for (StoreDataModel store : selectedStores) {
 
-				FTPClient ftp = null;
-				SFTPClientModel sftp = null;
-
 				if (store.getStoreFtpProtocol().equals("ftp")) {
 					ftp = new FTPClient();
 					ftp.connect(store.getStoreFtpServer());
@@ -213,22 +214,25 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 				} else if (store.getStoreFtpProtocol().equals("sftp")) {
 					sftp = new SFTPClientModel(store.getStoreFtpServer(), store.getStoreFtpPort(),
 							store.getStoreFtpUser(), store.getStoreFtpPass(), store.getDirDefault());
+					sftp.connect();
 				}
 
 				for (File psdFiles : psdFileList) {
+
+					// GET LATEST PSD VERSION (VIA FILENAME ATTACHMENT '_YYmmdd' (Date))
 					File[] psdFileVersionSort = sortByNumber(psdFiles.listFiles());
 					File psdFile = psdFileVersionSort[psdFileVersionSort.length - 1];
+
 					// COPY PSD FILE TO ORIGINALS FOLDER
-					/*
-					 * copyFile(psdFile, new File(propApp.get("locMediaBackup") +
-					 * propApp.get("mediaBackupDirOriginals") +
-					 * FilenameUtils.getBaseName(psdFile.getName()) + "/" +
-					 * FilenameUtils.getBaseName(psdFile.getName()) + currentDate + "." +
-					 * FilenameUtils.getExtension(psdFile.getName())));
-					 */
+					/*FileUtils.copyFile(psdFile,
+							new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirOriginals")
+									+ FilenameUtils.getBaseName(psdFiles.getName()) + "/"
+									+ FilenameUtils.getBaseName(psdFiles.getName()) + currentDate + "."
+									+ FilenameUtils.getExtension(psdFile.getName())));*/
 
 					// GET BUFFEREDIMAGE FROM PSD FILE
 					img = imgHandler.getImageFromPsd(psdFile);
+					
 					// Show 100x100px thumb of current file in wizard
 					progressThumbUpdate(imgHandler.resizeImage(100, 100, img));
 
@@ -273,12 +277,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 							ftp.storeFile(remoteFile.getName(), input);
 							ftp.changeToParentDirectory();
 
-							// VIA SFTP
-						} else if (store.getStoreFtpProtocol().equals("sftpDEAKT")) {
-							if (!sftp.session.isConnected()) {
-								sftp.connect();
-							}
-							sftp.upload(imgFile, remoteFile);
+						// VIA SFTP
 						} else if (store.getStoreFtpProtocol().equals("sftp")) {
 							if (!sftp.session.isConnected()) {
 								sftp.connect();
@@ -329,6 +328,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 				response.append('\r');
 			}
 			rd.close();
+			System.out.println(response.toString());
 			return response.toString();
 		} catch (Exception e) {
 			e.printStackTrace();

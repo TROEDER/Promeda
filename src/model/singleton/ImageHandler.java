@@ -15,6 +15,7 @@ import com.mortennobel.imagescaling.AdvancedResizeOp;
 import com.mortennobel.imagescaling.ResampleOp;
 
 import psd.model.Psd;
+import psd.parser.PsdFileParser;
 
 /**
  *
@@ -62,6 +63,7 @@ public class ImageHandler {
 		img = psd.getImage();
 		return img;
 	}
+	
 
 	/**
 	 *

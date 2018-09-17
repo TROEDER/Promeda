@@ -71,6 +71,24 @@ public class StoreDataModel {
 			}
 		selectStatus = false;
 	}
+	
+	public StoreDataModel(String storeName, String storeFtpServer, int storeFtpPort, String storeFtpProtocol, String storeFtpUser, 
+			String storeFtpPass, String dirDefault, List<Object> storeImageSizeList) {
+
+		this.storeName = storeName;
+		this.storeFtpServer = storeFtpServer;
+		this.storeFtpPort = storeFtpPort;
+		this.storeFtpProtocol = storeFtpProtocol;
+		this.storeFtpUser = storeFtpUser;
+		this.storeFtpPass = storeFtpPass;
+		this.dirDefault = dirDefault;
+		for(Object imageSizeParams: storeImageSizeList){
+			storeImageSizeListNew.add(new ImageSize(imageSizeParams.toString().split(",")));
+			System.out.println("xyz" +new ImageSize(imageSizeParams.toString().split(",")).getHeight());
+			}
+		selectStatus = false;
+	}
+	
 	public Boolean getSelectStatus() {
 		return selectStatus;
 	}

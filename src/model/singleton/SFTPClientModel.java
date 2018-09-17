@@ -7,6 +7,8 @@
 package model.singleton;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.Vector;
 
 import com.enterprisedt.util.debug.Level;
@@ -15,6 +17,7 @@ import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
 
 public final class SFTPClientModel {
@@ -92,21 +95,25 @@ public final class SFTPClientModel {
 
 	public void upload(File localFile, File remoteFile) {
 		try {
-			Vector<String> cwdFileList = channelSftp.ls(channelSftp.pwd());
-			if (remoteFile.getParentFile().exists())
+			SftpATTRS attrs;
+			try {
+				attrs = channelSftp.stat(remoteFile.getParentFile().getName());
+			} catch (Exception e) {
 				channelSftp.mkdir(remoteFile.getParentFile().getName());
-			/*
-			 * channelSftp.cd("/websale8_shop-promondo-dev-2/produkte/medien/bilder");
-			 * channelSftp.cd(remoteFile.getParentFile().getName());
-			 * System.out.println(remoteFile.getParentFile().getName()); channelSftp.put(new
-			 * FileInputStream(localFile), remoteFile.getName());
-			 */
-		} catch (Exception ex) {
-			ex.printStackTrace();
+			}
+			channelSftp.cd(remoteFile.getParentFile().getName());
+			channelSftp.put(new FileInputStream(localFile), remoteFile.getName());
+			channelSftp.cd("..");
+		} catch (SftpException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
-	public void sftpDisconnect() {
+	public void disconnect() {
 		channelSftp.disconnect();
 		channel.disconnect();
 		session.disconnect();

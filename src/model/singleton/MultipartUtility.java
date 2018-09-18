@@ -130,6 +130,7 @@ public class MultipartUtility {
 		int status = httpConn.getResponseCode();
 		if (status == HttpURLConnection.HTTP_OK) {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(httpConn.getInputStream()));
+			System.out.println(HttpURLConnection.guessContentTypeFromStream(httpConn.getInputStream()));
 			String line = null;
 			while ((line = reader.readLine()) != null) {
 				response.add(line);

@@ -218,11 +218,15 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 				}
 
 				for (File psdFiles : psdFileList) {
-					try {
+					procfiles: try {
 						// GET LATEST PSD VERSION (VIA FILENAME ATTACHMENT '_YYmmdd' (Date))
 						File[] psdFileVersionSort = sortByNumber(psdFiles.listFiles());
+						if (psdFileVersionSort.length == 0 || psdFileVersionSort == null) {
+							break procfiles;
+						}
 						File psdFile = psdFileVersionSort[psdFileVersionSort.length - 1];
 
+						//// NOT USING THE ORIG-PSD FILE BACKUP FOR MASS-RESTORER ATM ////
 						// COPY PSD FILE TO ORIGINALS FOLDER
 						/*
 						 * FileUtils.copyFile(psdFile, new File(propApp.get("locMediaBackup") +
@@ -268,7 +272,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 
 							File remoteFile = new File(imgSize.getName() + "/" + imgFile.getName());
 
-							// USWING FTP
+							// USING FTP
 							if (store.getStoreFtpProtocol().equals("ftp")) {
 								if (!ftp.isConnected()) {
 									ftp.connect(store.getStoreFtpServer());
@@ -278,9 +282,10 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 								ftp.changeWorkingDirectory(imgSize.getName());
 								ftp.storeFile(remoteFile.getName(), input);
 								ftp.changeToParentDirectory();
-
-								// USING SFTP
-							} else if (store.getStoreFtpProtocol().equals("sftp")) {
+							}
+							
+							// USING SFTP
+							else if (store.getStoreFtpProtocol().equals("sftp")) {
 								if (!sftp.session.isConnected()) {
 									sftp.connect();
 								}
@@ -393,8 +398,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	public File chooseFile() {
 		File file = null;
 

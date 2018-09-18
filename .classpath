@@ -1,17 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0_45"/>
-	<classpathentry excluding="ui/@archives/*" kind="src" path="src"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0_45"/>
+	<classpathentry excluding="*.gitignore|ui/@archives/*" kind="src" path="src"/>
+	<classpathentry excluding="*|**" kind="src" path="stores"/>
 	<classpathentry kind="src" path="resource"/>
 	<classpathentry exported="true" kind="lib" path="lib/edtftpj.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/Filters.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/java-image-scaling-0.8.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mysql-connector-java-5.1.44-bin.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/psd-library-0.0.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-io-2.5.jar" sourcepath="lib/commons-io-2.5-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io-2.5.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Promeda/lib/commons-io-2.5-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/joda-time-2.9.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-net-3.6.jar" sourcepath="lib/commons-net-3.6-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jsch-0.1.54.jar" sourcepath="resource/com/jcraft"/>
+	<classpathentry exported="true" kind="lib" path="lib/jsch-0.1.54.jar" sourcepath="lib/jsch-0.1.54-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Promeda/lib/jsch-0.1.54-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/commons-logging-1.2.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/PromedaSwing/lib/commons-logging-1.2-javadoc.jar!/"/>
@@ -35,6 +44,12 @@
 	<classpathentry exported="true" kind="lib" path="lib/commons-configuration-1.10.jar" sourcepath="lib/commons-configuration2-2.2-sources.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/PromedaSwing/lib/commons-configuration-1.10-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="lib/commons-csv-1.4.jar" sourcepath="lib/commons-csv-1.4-sources.jar"/>
+	<classpathentry kind="lib" path="lib/sanselan-0.97-incubator.jar" sourcepath="lib/sanselan-0.97-incubator-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Promeda/lib/sanselan-0.97-incubator-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="bin"/>

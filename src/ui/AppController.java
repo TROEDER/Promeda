@@ -29,6 +29,8 @@ public class AppController implements ActionListener {
 			new ProdImgImpWzrdController();
 		} else if (ae.getSource() == view.btnPageImgImpWzrd) {
 			new BannerImgImpWzrdController();
+		} else if (ae.getSource() == view.btnNewButton) {
+			new MassImgImpWzrdController();
 		} else if (ae.getSource() == view.btnSettings) {
 			new SettingsController(); 
 		} else if (ae.getSource() == view.btnSearch || ae.getSource() == view.textFieldProdNr) {

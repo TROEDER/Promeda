@@ -13,6 +13,10 @@ import java.util.Vector;
  *
  * @author troeder
  */
+/**
+ * @author troeder
+ *
+ */
 public class StoreDataModel {
 
 	private String storeName;
@@ -21,6 +25,7 @@ public class StoreDataModel {
 	private String storeFtpUser;
 	private String storeFtpPass;
 	private String storeFtpProtocol;
+	private String dirDefault;
 	private ImageSize[] storeImageSizes;
 	private Vector<ImageSize> storeImageSizeList = new Vector<ImageSize>();;
 	private List<ImageSize> storeImageSizeListNew = new Vector<ImageSize>();
@@ -66,6 +71,24 @@ public class StoreDataModel {
 			}
 		selectStatus = false;
 	}
+	
+	public StoreDataModel(String storeName, String storeFtpServer, int storeFtpPort, String storeFtpProtocol, String storeFtpUser, 
+			String storeFtpPass, String dirDefault, List<Object> storeImageSizeList) {
+
+		this.storeName = storeName;
+		this.storeFtpServer = storeFtpServer;
+		this.storeFtpPort = storeFtpPort;
+		this.storeFtpProtocol = storeFtpProtocol;
+		this.storeFtpUser = storeFtpUser;
+		this.storeFtpPass = storeFtpPass;
+		this.dirDefault = dirDefault;
+		for(Object imageSizeParams: storeImageSizeList){
+			storeImageSizeListNew.add(new ImageSize(imageSizeParams.toString().split(",")));
+			System.out.println("xyz" +new ImageSize(imageSizeParams.toString().split(",")).getHeight());
+			}
+		selectStatus = false;
+	}
+	
 	public Boolean getSelectStatus() {
 		return selectStatus;
 	}
@@ -120,6 +143,14 @@ public class StoreDataModel {
 
 	public void setStoreFtpProtocol(String storeFtpProtocol) {
 		this.storeFtpProtocol = storeFtpProtocol;
+	}
+
+	public String getDirDefault() {
+		return dirDefault;
+	}
+
+	public void setDirDefault(String dirDefault) {
+		this.dirDefault = dirDefault;
 	}
 
 	public ImageSize[] getStoreImageSizes() {

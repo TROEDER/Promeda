@@ -3,14 +3,13 @@
  */
 package examples;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteException;
 
 import model.singleton.MultipartUtility;
 
@@ -20,26 +19,38 @@ import model.singleton.MultipartUtility;
  */
 public class SftpTester {
 
-	private HttpURLConnection httpConn;
-
-	public SftpTester() {
-		URL url = new URL(requestURL);
-		httpConn = (HttpURLConnection) url.openConnection();
-		httpConn.setUseCaches(false);
-		httpConn.setDoOutput(true); // indicates POST method
-	}
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		
 		SftpTester sftpTester = new SftpTester();
-		sftpTester.getRequest();
+		// sftpTester.sendMultipartRequest();
+		sftpTester.exec();
 	}
 
-	public void HTTPMultipartPostRequest() {
+	public int exec() {
+		int exitValue = 0;
+		//CommandLine cmdLine = new CommandLine("D:\\Benutzer\\Projekte\\eclipse-workspace\\Promeda\\imagemin\\node_modules\\npm\\bin\\npm");
+		CommandLine cmdLine = new CommandLine("D:\\Benutzer\\Projekte\\eclipse-workspace\\Promeda\\imagemin\\node_modules\\gulp\\node_modules\\.bin\\gulp");
+		//cmdLine.addArgument("start");
+		DefaultExecutor executor = new DefaultExecutor();
+		try {
+			exitValue = executor.execute(cmdLine);
+		} catch (ExecuteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			return exitValue;
+		}
+
+	}
+	public void sendMultipartRequest() {
 		String charset = "UTF-8";
-		File uploadFile = new File("img/logo.png");
+		File uploadFile = new File("D:\\Benutzer\\Projekte\\eclipse-workspace\\Promeda\\bin\\examples\\logo.png");
 		String requestURL = "https://im2.io/kzrbgzzbfm/full";
 
 		try {
@@ -67,54 +78,5 @@ public class SftpTester {
 		}
 	}
 
-	public void getRequest() {
-		List<String> response = new ArrayList<String>();
-		String requestURL = "https://img.gs/kzrbgzzbfm/full/https://promondo-dev-2.websale.biz/websale8_shop-promondo-dev-2/produkte/medien/bilder/720px/87857G.jpg";
-		// checks server's status code first
-		int status = 0;
-		try {
-			status = httpConn.getResponseCode();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		if (status == HttpURLConnection.HTTP_OK) {
-			BufferedReader reader = null;
-			try {
-				reader = new BufferedReader(new InputStreamReader(httpConn.getInputStream()));
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			try {
-				System.out.println(HttpURLConnection.guessContentTypeFromStream(httpConn.getInputStream()));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			String line = null;
-			try {
-				while ((line = reader.readLine()) != null) {
-					response.add(line);
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				reader.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			httpConn.disconnect();
-		} else {
-			try {
-				throw new IOException("Server returned non-OK status: " + status);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
+	
 }

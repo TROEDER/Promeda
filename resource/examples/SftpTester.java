@@ -26,13 +26,16 @@ public class SftpTester {
 		
 		SftpTester sftpTester = new SftpTester();
 		// sftpTester.sendMultipartRequest();
-		sftpTester.exec();
+		System.out.println(sftpTester.exec());
 	}
 
 	public int exec() {
-		int exitValue = 0;
+		int exitValue = 999;
+		String line = "gulp";
+		CommandLine cmdLine = CommandLine.parse(line);
+
 		//CommandLine cmdLine = new CommandLine("D:\\Benutzer\\Projekte\\eclipse-workspace\\Promeda\\imagemin\\node_modules\\npm\\bin\\npm");
-		CommandLine cmdLine = new CommandLine("D:\\Benutzer\\Projekte\\eclipse-workspace\\Promeda\\imagemin\\node_modules\\gulp\\node_modules\\.bin\\gulp");
+		//CommandLine cmdLine = new CommandLine("D:\\Benutzer\\Projekte\\eclipse-workspace\\Promeda\\imagemin\\node_modules\\gulp\\node_modules\\.bin\\gulp");
 		//cmdLine.addArgument("start");
 		DefaultExecutor executor = new DefaultExecutor();
 		try {

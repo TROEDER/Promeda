@@ -10,14 +10,17 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -58,8 +61,10 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 	private Vector<StoreDataModel> selectedStores;
 	private File psdFilesPath;
 	private Vector<File> psdFileList = new Vector<File>();
+	private Vector<String> psdStringList = new Vector<String>();
+	private List<String[]> psdArrayList = new ArrayList<String[]>();
 	private Vector<ImageSize> imageSizeList = new Vector<ImageSize>();
-
+	private File csvFileProducts;
 	private FTPClient ftp = null;
 	private SFTPClientModel sftp = null;
 
@@ -127,7 +132,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		}
 	}
 
-	public void readCsv(File csvFile) {
+	public void readCsvOld(File csvFile) {
 		String productID;
 		Scanner scanner;
 		try {
@@ -142,6 +147,24 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 						psdFileList.add(psdFileAdditional);
 					}
 				}
+			}
+			scanner.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void readCsv(File csvFile) {
+		String productID;
+		Scanner scanner;
+		psdStringList.clear();
+
+		try {
+			scanner = new Scanner(csvFile);
+			while (scanner.hasNext()) {
+				productID = scanner.next();
+				psdStringList.add(productID);
+				System.out.println(productID);
 			}
 			scanner.close();
 		} catch (FileNotFoundException e) {
@@ -191,6 +214,18 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		return files;
 	}
 
+	public File getLatestPSDFileVersion(File psdFiles) {
+		// GET LATEST PSD VERSION (VIA FILENAME ATTACHMENT '_YYmmdd' (Date))
+		// File[] psdFileVersionSort = sortByNumber(psdFiles.listFiles());
+		File[] psdFileVersionSort = psdFiles.listFiles();
+		Arrays.sort(psdFileVersionSort);
+		if (psdFileVersionSort.length == 0 || psdFileVersionSort == null) {
+			return null;
+		} else {
+			return psdFileVersionSort[psdFileVersionSort.length - 1];
+		}
+	}
+
 	public void process() {
 
 		ImageHandler imgHandler = new ImageHandler();
@@ -218,15 +253,11 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 				}
 
 				for (File psdFiles : psdFileList) {
-					procfiles: try {
+					try {
 						// GET LATEST PSD VERSION (VIA FILENAME ATTACHMENT '_YYmmdd' (Date))
 						File[] psdFileVersionSort = sortByNumber(psdFiles.listFiles());
-						if (psdFileVersionSort.length == 0 || psdFileVersionSort == null) {
-							break procfiles;
-						}
 						File psdFile = psdFileVersionSort[psdFileVersionSort.length - 1];
 
-						//// NOT USING THE ORIG-PSD FILE BACKUP FOR MASS-RESTORER ATM ////
 						// COPY PSD FILE TO ORIGINALS FOLDER
 						/*
 						 * FileUtils.copyFile(psdFile, new File(propApp.get("locMediaBackup") +
@@ -272,7 +303,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 
 							File remoteFile = new File(imgSize.getName() + "/" + imgFile.getName());
 
-							// USING FTP
+							// USWING FTP
 							if (store.getStoreFtpProtocol().equals("ftp")) {
 								if (!ftp.isConnected()) {
 									ftp.connect(store.getStoreFtpServer());
@@ -282,10 +313,9 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 								ftp.changeWorkingDirectory(imgSize.getName());
 								ftp.storeFile(remoteFile.getName(), input);
 								ftp.changeToParentDirectory();
-							}
-							
-							// USING SFTP
-							else if (store.getStoreFtpProtocol().equals("sftp")) {
+
+								// USING SFTP
+							} else if (store.getStoreFtpProtocol().equals("sftp")) {
 								if (!sftp.session.isConnected()) {
 									sftp.connect();
 								}
@@ -305,6 +335,83 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		progressLabelUpdate("complete");
 		view.btnCardNext.setEnabled(true);
 		view.btnCardNext.setText("Done");
+	}
+
+	public void processManuelly() {
+		File psdFile;
+		double progressBarMax = 100;
+		double progressSteps = psdStringList.size() * selectedStores.size();
+		double progressStepSizef = progressBarMax / progressSteps;
+		int progressStepSize = (int) Math.round(progressStepSizef);
+		System.out.println("size:" + selectedStores.size());
+		for (StoreDataModel store : selectedStores) {
+
+			for (String productID : psdStringList) {
+				psdFileList.clear();
+				psdFile = new File(psdFilesPath.getAbsolutePath() + File.separatorChar + productID);
+				if (psdFile.isDirectory() && psdFile.exists()) {
+					psdFileList.add(psdFile);
+					for (File psdFileAdditional : getPsdFileAdditionals(productID, psdFilesPath)) {
+						psdFileList.add(psdFileAdditional);
+					}
+				}
+				System.out.println("size:" + psdFileList.size());
+				for (File psdFiles : psdFileList) {
+					// GET LATEST PSD VERSION (VIA FILENAME ATTACHMENT '_YYmmdd' (Date))
+					File psdFileLatestVersion = getLatestPSDFileVersion(psdFiles);
+					if (psdFileLatestVersion != null) {
+						// START BUILDING IMAGE
+						buildImage(psdFiles.getName(), psdFileLatestVersion, store);
+					}
+				}
+			}
+		}
+		progressBarUpdate(100);
+		progressLabelUpdate("complete");
+		view.btnCardNext.setEnabled(true);
+		view.btnCardNext.setText("Done");
+	}
+
+	public void buildImage(String fileName, File psdFile, StoreDataModel store) {
+		ImageHandler imgHandler = new ImageHandler();
+		File imgFile;
+		BufferedImage img;
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("_yyyyMMdd");
+		String currentDate = LocalDate.now().toString(fmt);
+
+		try {
+			img = imgHandler.getImageFromPsd(psdFile);
+
+			// Show 100x100px thumb of current file in wizard
+			progressThumbUpdate(imgHandler.resizeImage(100, 100, img));
+
+			for (ImageSize imgSize : store.getStoreImageSizeListNew()) {
+
+				// RESIZE BUFFEREDIMAGE
+				progressLabelUpdate(
+						"Resize " + FilenameUtils.getBaseName(fileName) + " to " + imgSize.getWidth() + "px");
+				BufferedImage scaledImage = imgHandler.resizeImage(imgSize.getWidth(), imgSize.getHeight(), img);
+
+				// REMOVE ALPHA CHANNEL FROM BUFFEREDIMAGE ( ARGB -> RGB )
+				progressLabelUpdate("Remove Alpha Channel from " + FilenameUtils.getBaseName(fileName) + " ("
+						+ imgSize.getWidth() + "px)");
+				BufferedImage rgbImage = imgHandler.removeAlphaChannel(scaledImage);
+
+				// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
+				File directory = new File("D:\\Benutzer\\Projekte\\eclipse-workspace\\Promeda\\imagemin\\dist\\images\\"
+						+ imgSize.getName());
+				if (!directory.exists()) {
+					directory.mkdirs();
+				}
+
+				imgFile = new File(directory.getPath() + File.separator + fileName + ".jpg");
+
+				ImageIO.write(rgbImage, "jpg", imgFile);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void imageOptim(File file) {
@@ -517,7 +624,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		} else if (ae.getSource() == view.btnBrowseCsvFile) {
 			File productsCsv = chooseFile();
 			view.textFieldProductsCsv.setText(productsCsv.getAbsolutePath());
-			readCsv(productsCsv);
+			readCsvOld(productsCsv);
 		} else if (ae.getSource() == view.btnBrowsePsdFilesPath) {
 			addFilesPath();
 		}

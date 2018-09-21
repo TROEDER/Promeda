@@ -296,7 +296,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 							imgFile = new File(
 									directory.getPath() + "/" + FilenameUtils.getBaseName(psdFiles.getName()) + ".jpg");
 							ImageIO.write(rgbImage, "jpg", imgFile);
-
+							
 							// UPLOAD TO (REMOTE-)WEBSERVER
 							progressLabelUpdate("Upload " + FilenameUtils.getBaseName(psdFiles.getName()) + " ("
 									+ imgSize.getName() + ") to " + store.getStoreName());

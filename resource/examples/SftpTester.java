@@ -25,8 +25,9 @@ public class SftpTester {
 	public static void main(String[] args) {
 		
 		SftpTester sftpTester = new SftpTester();
+		sftpTester.sendMultipartRequest();
 		// sftpTester.sendMultipartRequest();
-		System.out.println(sftpTester.exec());
+		//System.out.println(sftpTester.exec());
 	}
 
 	public int exec() {

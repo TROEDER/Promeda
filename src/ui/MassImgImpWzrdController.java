@@ -138,13 +138,22 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		try {
 			scanner = new Scanner(csvFile);
 			while (scanner.hasNext()) {
+				System.out.println("mark 1");
 				productID = scanner.next();
 				System.out.println(psdFilesPath.getAbsolutePath() + File.separatorChar + productID);
 				File psdFile = new File(psdFilesPath.getAbsolutePath() + File.separatorChar + productID);
+				System.out.println("mark 2");
 				if (psdFile.isDirectory() && psdFile.exists()) {
+					System.out.println("mark 3");
 					psdFileList.add(psdFile);
+					// System.out.println("mark 4");
+					// psdFileList.addAll(Arrays.asList(getPsdFileAdditionals(productID,
+					// psdFilesPath)));
+					System.out.println("mark 4");
 					for (File psdFileAdditional : getPsdFileAdditionals(productID, psdFilesPath)) {
+						System.out.println("mark 5.1");
 						psdFileList.add(psdFileAdditional);
+						System.out.println("mark 5.2");
 					}
 				}
 			}
@@ -296,7 +305,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 							imgFile = new File(
 									directory.getPath() + "/" + FilenameUtils.getBaseName(psdFiles.getName()) + ".jpg");
 							ImageIO.write(rgbImage, "jpg", imgFile);
-							
+
 							// UPLOAD TO (REMOTE-)WEBSERVER
 							progressLabelUpdate("Upload " + FilenameUtils.getBaseName(psdFiles.getName()) + " ("
 									+ imgSize.getName() + ") to " + store.getStoreName());
@@ -398,14 +407,13 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 				BufferedImage rgbImage = imgHandler.removeAlphaChannel(scaledImage);
 
 				// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
-				File directory = new File("D:\\Benutzer\\Projekte\\eclipse-workspace\\Promeda\\imagemin\\dist\\images\\"
-						+ imgSize.getName());
+				File directory = new File(
+						propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive") + imgSize.getName());
 				if (!directory.exists()) {
 					directory.mkdirs();
 				}
 
-				imgFile = new File(directory.getPath() + File.separator + fileName + ".jpg");
-
+				imgFile = new File(directory.getPath() + "/" + fileName + ".jpg");
 				ImageIO.write(rgbImage, "jpg", imgFile);
 			}
 		} catch (IOException e) {
@@ -624,7 +632,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		} else if (ae.getSource() == view.btnBrowseCsvFile) {
 			File productsCsv = chooseFile();
 			view.textFieldProductsCsv.setText(productsCsv.getAbsolutePath());
-			readCsvOld(productsCsv);
+			readCsv(productsCsv);
 		} else if (ae.getSource() == view.btnBrowsePsdFilesPath) {
 			addFilesPath();
 		}
@@ -649,7 +657,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 			Thread t = new Thread() {
 				@Override
 				public void run() {
-					process();
+					processManuelly();
 				}
 			};
 			t.start();

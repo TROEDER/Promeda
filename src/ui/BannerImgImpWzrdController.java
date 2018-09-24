@@ -24,6 +24,9 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.sanselan.ImageParser;
+import org.apache.sanselan.ImageReadException;
+import org.apache.sanselan.Sanselan;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -35,6 +38,8 @@ import model.prototype.StoreDataModel;
 import model.singleton.FtpClientModel;
 import model.singleton.ImageHandler;
 import model.singleton.PropertiesModel;
+import psd.model.Layer;
+import psd.model.Psd;
 
 public class BannerImgImpWzrdController implements ActionListener, ComponentListener {
 
@@ -43,7 +48,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 	private PropertiesModel propApp;
 	private Vector<StoreDataModel> stores;
 	private Vector<StoreDataModel> selectedStores;
-	private File[] psdFiles;
+	private File psdFile;
 	private Vector<File> psdFileList = new Vector<File>();
 	Vector<ImageSize> imageSizeList = new Vector<ImageSize>();
 
@@ -53,12 +58,12 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 		initStores();
 	}
 
-	public BannerImgImpWzrdController(Vector<File> psdFileList) {
+	public BannerImgImpWzrdController(File psdFile) {
 		initProperties();
 		initView();
 		initStores();
-		this.psdFileList = psdFileList;
-		view.fileListSourceFiles.setListData(psdFileList);
+		this.psdFile = psdFile;
+		view.fileListSourceFiles.setText(psdFile.getAbsolutePath());
 	}
 
 	private void initProperties() {
@@ -76,36 +81,54 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 		File f = new File(propApp.get("locNetworkRes") + "stores");
 		File[] files = f.listFiles();
 		stores = new Vector<StoreDataModel>();
-		
-		try
-		{
+
+		try {
 			for (File file : files) {
 				if (!file.isDirectory() && FilenameUtils.isExtension(file.getName(), "properties")) {
 					Configuration config = new PropertiesConfiguration(file);
 					String[] imgSizeParams = config.getStringArray("banner.image.size");
-					for(String param : imgSizeParams) {
+					for (String param : imgSizeParams) {
 						imageSizeList.add(new ImageSize(param.split(",")));
 						System.out.println(new ImageSize(param.split(",")).getName());
-						System.out.println("Groesse: " + imageSizeList.size() + " - " + imageSizeList.lastElement().getWidth());
+						System.out.println(
+								"Groesse: " + imageSizeList.size() + " - " + imageSizeList.lastElement().getWidth());
 					}
-					//System.out.println("imageSizeList.size() " + imageSizeList.size() + " - " + imageSizeList.get(0).getName());
-					/*stores.add(new StoreDataModel(config.getString("url"), config.getString("ftp.host"),
-							Integer.parseInt(config.getString("ftp.port")), config.getString("ftp.user"),
-							config.getString("ftp.pswd"), imageSizeList));*/
+					// System.out.println("imageSizeList.size() " + imageSizeList.size() + " - " +
+					// imageSizeList.get(0).getName());
+					/*
+					 * stores.add(new StoreDataModel(config.getString("url"),
+					 * config.getString("ftp.host"), Integer.parseInt(config.getString("ftp.port")),
+					 * config.getString("ftp.user"), config.getString("ftp.pswd"), imageSizeList));
+					 */
 					stores.add(new StoreDataModel(config.getString("url"), config.getString("ftp.host"),
-							Integer.parseInt(config.getString("ftp.port")), config.getString("ftp.protocol"), config.getString("ftp.user"),
-							config.getString("ftp.pswd"), config.getList("banner.image.size")));
+							Integer.parseInt(config.getString("ftp.port")), config.getString("ftp.protocol"),
+							config.getString("ftp.user"), config.getString("ftp.pswd"),
+							config.getList("banner.image.size")));
 				}
 				imageSizeList.clear();
 			}
-		}
-		catch (ConfigurationException cex)
-		{
-		    // Something went wrong
+		} catch (ConfigurationException cex) {
+			// Something went wrong
 		}
 	}
-	
-	
+
+	public void parsePsdLayers() {
+
+		// view.labelPreviewPsdImage.setIcon(new
+		// ImageIcon(Sanselan.getBufferedImage(psdFile)));
+		Psd psd;
+		Layer layer;
+		try {
+			psd = new Psd(psdFile);
+			for (int i = 0; i <= psd.getLayersCount(); i++) {
+				layer = psd.getLayer(i);
+				view.labelPreviewPsdImage.setIcon(new ImageIcon(layer.getImage()));
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	public void process() {
 
@@ -119,58 +142,55 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 		double progressSteps = psdFileList.size() * selectedStores.size();
 		double progressStepSizef = progressBarMax / progressSteps;
 		int progressStepSize = (int) Math.round(progressStepSizef);
-		
+
 		try {
-			
+
 			for (StoreDataModel store : selectedStores) {
 				FTPClient f = new FTPClient();
-			    f.connect(store.getStoreFtpServer());
-			    f.login(store.getStoreFtpUser(), store.getStoreFtpPass());
-			    f.setFileType(FTP.BINARY_FILE_TYPE);
-			    
+				f.connect(store.getStoreFtpServer());
+				f.login(store.getStoreFtpUser(), store.getStoreFtpPass());
+				f.setFileType(FTP.BINARY_FILE_TYPE);
+
 				for (File psdFile : psdFileList) {
-					
-				// COPY PSD FILE TO ORIGINALS FOLDER
-					copyFile(psdFile,
-							new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirOriginals")
-									+ view.textFieldBannerFileName.getText() + "/"
-									+ view.textFieldBannerFileName.getText() + currentDate + "."
-									+ FilenameUtils.getExtension(psdFile.getName())));
-				
-				// GET BUFFEREDIMAGE FROM PSD FILE
+
+					// COPY PSD FILE TO ORIGINALS FOLDER
+					copyFile(psdFile, new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirOriginals")
+							+ view.textFieldBannerFileName.getText() + "/" + view.textFieldBannerFileName.getText()
+							+ currentDate + "." + FilenameUtils.getExtension(psdFile.getName())));
+
+					// GET BUFFEREDIMAGE FROM PSD FILE
 					img = imgHandler.getImageFromPsd(psdFile);
-					
+
 					progressThumbUpdate(imgHandler.resizeImage(100, 100, img));
 					for (ImageSize imgSize : store.getStoreImageSizeListNew()) {
 
-					// RESIZE BUFFEREDIMAGE
+						// RESIZE BUFFEREDIMAGE
 						progressLabelUpdate("Resize " + FilenameUtils.getBaseName(psdFile.getName()) + " to "
 								+ imgSize.getWidth() + "px");
-						BufferedImage scaledImage = imgHandler.resizeImage(imgSize.getWidth(),
-								imgSize.getHeight(), img);
+						BufferedImage scaledImage = imgHandler.resizeImage(imgSize.getWidth(), imgSize.getHeight(),
+								img);
 
-					// REMOVE ALPHA CHANNEL FROM BUFFEREDIMAGE ( ARGB -> RGB )
+						// REMOVE ALPHA CHANNEL FROM BUFFEREDIMAGE ( ARGB -> RGB )
 						progressLabelUpdate("Remove Alpha Channel from " + FilenameUtils.getBaseName(psdFile.getName())
 								+ " (" + imgSize.getWidth() + "px)");
 						BufferedImage rgbImage = imgHandler.removeAlphaChannel(scaledImage);
 
-					// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
+						// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
 						File directory = new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive")
 								+ imgSize.getName() + "/" + view.textFieldBannerFileName.getText() + "/");
 						if (!directory.exists()) {
 							directory.mkdirs();
 						}
 
-						imgFile = new File(
-								directory.getPath() + "/" + view.textFieldBannerFileName.getText() + ".jpg");
+						imgFile = new File(directory.getPath() + "/" + view.textFieldBannerFileName.getText() + ".jpg");
 						ImageIO.write(rgbImage, "jpg", imgFile);
 
-					// UPLOAD TO WEBSERVER 
+						// UPLOAD TO WEBSERVER
 						progressLabelUpdate("Upload " + FilenameUtils.getBaseName(psdFile.getName()) + " ("
 								+ imgSize.getName() + ") to " + store.getStoreName());
 
 						File remoteFile = new File(imgSize.getName() + "/" + imgFile.getName());
-						
+
 						// VIA FTP
 						if (store.getStoreFtpProtocol().equals("ftp")) {
 							if (!f.isConnected()) {
@@ -182,8 +202,8 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 							f.changeWorkingDirectory(imgSize.getName());
 							f.storeFile(remoteFile.getName(), input);
 							f.changeToParentDirectory();
-							
-						// VIA SFTP
+
+							// VIA SFTP
 						} else if (store.getStoreFtpProtocol().equals("sftp")) {
 							if (!ftp.session.isConnected()) {
 								ftp.sftpConnect();
@@ -203,6 +223,24 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 		view.btnCardNext.setText("Done");
 	}
 
+	public File openFile() {
+		File file = null;
+
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
+		fileChooser.setDialogTitle("Select files (multiple selection possible)");
+		fileChooser.setMultiSelectionEnabled(false);
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fileChooser.setLocation(100, 100);
+
+		int returnVal = fileChooser.showOpenDialog(null);
+
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			file = fileChooser.getSelectedFile();
+		}
+		return file;
+	}
+
 	public File[] openFiles() {
 		File[] files = null;
 
@@ -218,25 +256,6 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 			files = fileChooser.getSelectedFiles();
 		}
 		return files;
-	}
-
-	public void addFiles() {
-		psdFiles = openFiles();
-
-		for (File file : psdFiles) {
-			psdFileList.add(file);
-		}
-		view.fileListSourceFiles.setListData(psdFileList);
-	}
-
-	public void removeFiles() {
-		psdFileList.remove(view.fileListSourceFiles.getSelectedIndex());
-		view.fileListSourceFiles.setListData(psdFileList);
-	}
-
-	public void clearList() {
-		psdFileList.clear();
-		view.fileListSourceFiles.setListData(psdFileList);
 	}
 
 	public void initSelectedStoreList() {
@@ -274,11 +293,9 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 				view.cardLayoutContentContainer.next(view.panelContentContainer);
 			}
 		} else if (ae.getSource() == view.btnAddFiles) {
-			addFiles();
-		} else if (ae.getSource() == view.btnRemoveFiles) {
-			removeFiles();
-		} else if (ae.getSource() == view.btnClearFileList) {
-			clearList();
+			psdFile = openFile();
+			view.fileListSourceFiles.setText(psdFile.getAbsolutePath());
+			parsePsdLayers();
 		} else if (ae.getSource() == view.btnSelectAll) {
 			view.checkBoxListStores.selectAll();
 		} else if (ae.getSource() == view.btnDeselectAll) {
@@ -321,7 +338,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 	@Override
 	public void componentMoved(ComponentEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

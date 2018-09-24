@@ -12,12 +12,9 @@ import java.io.File;
 import java.io.IOException;
 
 import com.mortennobel.imagescaling.AdvancedResizeOp;
-import com.mortennobel.imagescaling.ResampleFilter;
 import com.mortennobel.imagescaling.ResampleOp;
-import com.mortennobel.imagescaling.experimental.ImprovedMultistepRescaleOp;
 
 import psd.model.Psd;
-import psd.parser.PsdFileParser;
 
 /**
  *

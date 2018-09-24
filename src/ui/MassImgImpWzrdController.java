@@ -10,17 +10,14 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -35,7 +32,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -47,7 +43,6 @@ import org.joda.time.format.DateTimeFormatter;
 
 import model.prototype.ImageSize;
 import model.prototype.StoreDataModel;
-import model.singleton.FtpClientModel;
 import model.singleton.ImageHandler;
 import model.singleton.MultipartUtility;
 import model.singleton.PropertiesModel;
@@ -62,9 +57,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 	private File psdFilesPath;
 	private Vector<File> psdFileList = new Vector<File>();
 	private Vector<String> psdStringList = new Vector<String>();
-	private List<String[]> psdArrayList = new ArrayList<String[]>();
 	private Vector<ImageSize> imageSizeList = new Vector<ImageSize>();
-	private File csvFileProducts;
 	private FTPClient ftp = null;
 	private SFTPClientModel sftp = null;
 
@@ -348,10 +341,10 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 
 	public void processManuelly() {
 		File psdFile;
-		double progressBarMax = 100;
-		double progressSteps = psdStringList.size() * selectedStores.size();
-		double progressStepSizef = progressBarMax / progressSteps;
-		int progressStepSize = (int) Math.round(progressStepSizef);
+		view.progressBar.setValue(0);
+		view.progressBar.setMaximum(psdStringList.size() * selectedStores.size());
+		view.progressBar.setString(view.progressBar.getValue() + "/" + view.progressBar.getMaximum());
+		
 		System.out.println("size:" + selectedStores.size());
 		for (StoreDataModel store : selectedStores) {
 
@@ -373,6 +366,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 						buildImage(psdFiles.getName(), psdFileLatestVersion, store);
 					}
 				}
+				progressBarUpdate(1);
 			}
 		}
 		progressBarUpdate(100);
@@ -595,7 +589,8 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 
 	public void progressBarUpdate(int progressStepSize) {
 		view.progressBar.setValue(view.progressBar.getValue() + progressStepSize);
-		view.labelLoadManMoving.setLocation(view.progressBar.getValue() * 4, 95);
+		view.progressBar.setString(view.progressBar.getValue() + "/" + view.progressBar.getMaximum());
+		view.labelLoadManMoving.setLocation(view.progressBar.getValue(), 95);
 	}
 
 	public void progressLabelUpdate(String LabelText) {

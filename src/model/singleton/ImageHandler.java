@@ -15,7 +15,6 @@ import com.mortennobel.imagescaling.AdvancedResizeOp;
 import com.mortennobel.imagescaling.ResampleOp;
 
 import psd.model.Psd;
-import psd.parser.PsdFileParser;
 
 /**
  *
@@ -74,9 +73,16 @@ public class ImageHandler {
 	 */
 	public BufferedImage resizeImage(int width, int height, BufferedImage bImage) {
 		ResampleOp resampleOp = new ResampleOp(width, height);
+		//ImprovedMultistepRescaleOp rescaleOp = new ImprovedMultistepRescaleOp(width, height);
+
 		resampleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.Soft);
+		//rescaleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.VerySharp);
+		//rescaleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.Soft);
+		
 		BufferedImage rescaledBImage = resampleOp.filter(bImage,
 				new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB));
+		//BufferedImage rescaledBImage = rescaleOp.filter(bImage,
+		//		new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB));
 		return rescaledBImage;
 	}
 

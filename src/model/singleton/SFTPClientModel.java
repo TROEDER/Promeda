@@ -9,7 +9,6 @@ package model.singleton;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.Vector;
 
 import com.enterprisedt.util.debug.Level;
 import com.enterprisedt.util.debug.Logger;
@@ -36,7 +35,7 @@ public final class SFTPClientModel {
 	 * Logger for Debugging/Output for Log-File set up logger so that we get some
 	 * output
 	 **/
-	private Logger log = Logger.getLogger(SFTPClientModel.class);
+	// private Logger log = Logger.getLogger(SFTPClientModel.class);
 
 	/*******************************************************************************
 	 * Constructor - Creates FTP for given host data

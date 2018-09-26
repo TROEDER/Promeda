@@ -86,10 +86,6 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		view.setVisible(true);
 	}
 
-	public void initBannerDim() {
-
-	}
-
 	public void initStores() {
 		File f = new File(propApp.get("locNetworkRes") + "stores");
 		File[] files = f.listFiles();
@@ -118,7 +114,6 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 							config.getString("ftp.user"), config.getString("ftp.pswd"),
 							config.getString("ftp.dir.default"), config.getList("product.image.size")));
 				}
-				imageSizeList.clear();
 			}
 		} catch (ConfigurationException cex) {
 			// Something went wrong

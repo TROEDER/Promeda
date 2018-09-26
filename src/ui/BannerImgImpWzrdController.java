@@ -56,6 +56,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 		initProperties();
 		initView();
 		initStores();
+		initBannerDim();
 	}
 
 	public BannerImgImpWzrdController(File psdFile) {
@@ -75,6 +76,21 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 
 		view = new BannerImgImpWzrdView(this);
 		view.setVisible(true);
+	}
+
+	public void initBannerDim() {
+		File filePropBanner = new File(propApp.get("locNetworkRes") + "banner" + File.separator + "banner.properties");
+		try {
+			Configuration config = new PropertiesConfiguration(filePropBanner);
+			for (Object imageSizeParams : config.getList("banner.image.size")) {
+				imageSizeList.add(new ImageSize(imageSizeParams.toString().split(",")));
+				System.out.println("xyz" + new ImageSize(imageSizeParams.toString().split(",")).getHeight());
+			}
+			view.listBannerModels.setListData(imageSizeList);
+		} catch (ConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void initStores() {
@@ -130,6 +146,9 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 		}
 	}
 
+	/**
+	 * 
+	 */
 	public void process() {
 
 		ImageHandler imgHandler = new ImageHandler();

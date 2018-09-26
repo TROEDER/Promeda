@@ -54,6 +54,7 @@ public class BannerImgImpWzrdView extends JFrame {
 	public JTextField textField_3;
 	public JPanel panel_1;
 	public JLabel labelPreviewPsdImage;
+	public JList listBannerModels;
 
 	/**
 	 * Create the frame.
@@ -182,8 +183,8 @@ public class BannerImgImpWzrdView extends JFrame {
 		panel_1.add(scrollPane_4);
 		scrollPane_4.setBorder(null);
 		
-		JList list = new JList();
-		scrollPane_4.setViewportView(list);
+		listBannerModels = new JList();
+		scrollPane_4.setViewportView(listBannerModels);
 		
 		textFieldBannerFileName = new JTextField();
 		textFieldBannerFileName.setColumns(10);

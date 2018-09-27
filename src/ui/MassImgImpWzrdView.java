@@ -255,6 +255,8 @@ public class MassImgImpWzrdView extends JFrame {
 		panelCardProcessing.add(labelProgressStep);
 
 		progressBar = new JProgressBar();
+		progressBar.setString("0/100");
+		progressBar.setStringPainted(true);
 		progressBar.setBounds(10, 109, 410, 27);
 		panelCardProcessing.add(progressBar);
 

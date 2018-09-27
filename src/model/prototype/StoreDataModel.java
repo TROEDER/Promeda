@@ -43,7 +43,7 @@ public class StoreDataModel {
 		List<ImageSize> lList = Arrays.asList(storeImageSizes);
 		selectStatus = false;
 	}
-	
+
 	public StoreDataModel(String storeName, String storeFtpServer, int storeFtpPort, String storeFtpUser,
 			String storeFtpPass, Vector<ImageSize> storeImageSizeList) {
 
@@ -56,8 +56,8 @@ public class StoreDataModel {
 		selectStatus = false;
 	}
 
-	public StoreDataModel(String storeName, String storeFtpServer, int storeFtpPort, String storeFtpProtocol, String storeFtpUser, 
-			String storeFtpPass, List<Object> storeImageSizeList) {
+	public StoreDataModel(String storeName, String storeFtpServer, int storeFtpPort, String storeFtpProtocol,
+			String storeFtpUser, String storeFtpPass, List<Object> storeImageSizeList) {
 
 		this.storeName = storeName;
 		this.storeFtpServer = storeFtpServer;
@@ -65,15 +65,15 @@ public class StoreDataModel {
 		this.storeFtpProtocol = storeFtpProtocol;
 		this.storeFtpUser = storeFtpUser;
 		this.storeFtpPass = storeFtpPass;
-		for(Object imageSizeParams: storeImageSizeList){
+		for (Object imageSizeParams : storeImageSizeList) {
 			storeImageSizeListNew.add(new ImageSize(imageSizeParams.toString().split(",")));
-			System.out.println("xyz" +new ImageSize(imageSizeParams.toString().split(",")).getHeight());
-			}
+			System.out.println("xyz" + new ImageSize(imageSizeParams.toString().split(",")).getHeight());
+		}
 		selectStatus = false;
 	}
-	
-	public StoreDataModel(String storeName, String storeFtpServer, int storeFtpPort, String storeFtpProtocol, String storeFtpUser, 
-			String storeFtpPass, String dirDefault, List<Object> storeImageSizeList) {
+
+	public StoreDataModel(String storeName, String storeFtpServer, int storeFtpPort, String storeFtpProtocol,
+			String storeFtpUser, String storeFtpPass, String dirDefault, List<Object> storeImageSizeList) {
 
 		this.storeName = storeName;
 		this.storeFtpServer = storeFtpServer;
@@ -82,13 +82,13 @@ public class StoreDataModel {
 		this.storeFtpUser = storeFtpUser;
 		this.storeFtpPass = storeFtpPass;
 		this.dirDefault = dirDefault;
-		for(Object imageSizeParams: storeImageSizeList){
+		for (Object imageSizeParams : storeImageSizeList) {
 			storeImageSizeListNew.add(new ImageSize(imageSizeParams.toString().split(",")));
-			System.out.println("xyz" +new ImageSize(imageSizeParams.toString().split(",")).getHeight());
-			}
+			System.out.println("xyz" + new ImageSize(imageSizeParams.toString().split(",")).getHeight());
+		}
 		selectStatus = false;
 	}
-	
+
 	public Boolean getSelectStatus() {
 		return selectStatus;
 	}
@@ -168,6 +168,7 @@ public class StoreDataModel {
 	public void setStoreImageSizeList(Vector<ImageSize> storeImageSizeList) {
 		this.storeImageSizeList = storeImageSizeList;
 	}
+
 	public List<ImageSize> getStoreImageSizeListNew() {
 		return storeImageSizeListNew;
 	}

@@ -80,7 +80,7 @@ public class ImageHandler {
 		//rescaleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.Soft);
 		
 		BufferedImage rescaledBImage = resampleOp.filter(bImage,
-				new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB));
+				new BufferedImage(width, height, bImage.getType()));
 		//BufferedImage rescaledBImage = rescaleOp.filter(bImage,
 		//		new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB));
 		return rescaledBImage;

@@ -54,7 +54,7 @@ public class BannerImgImpWzrdView extends JFrame {
 	public JTextField textField_3;
 	public JPanel panel_1;
 	public JLabel labelPreviewPsdImage;
-	public JList listBannerModels;
+	public BannerCheckBoxList listBannerModels;
 
 	/**
 	 * Create the frame.
@@ -118,13 +118,14 @@ public class BannerImgImpWzrdView extends JFrame {
 		labelPreviewPsdImage.setBounds(6, 16, 373, 182);
 		panel_2.add(labelPreviewPsdImage);
 
-		panelCardTargetStores = new JPanel();
-		panelCardTargetStores.addComponentListener(controller);
-		
 		panelCardImageOptions = new JPanel();
+		panelCardImageOptions.addComponentListener(controller);
 		panelCardImageOptions.setLayout(null);
 		panelCardImageOptions.setBackground(Color.WHITE);
 		panelContentContainer.add(panelCardImageOptions, "name_1656368493048464");
+		
+		panelCardTargetStores = new JPanel();
+		panelCardTargetStores.addComponentListener(controller);
 		
 		lblImageOptions = new JLabel("Image options");
 		lblImageOptions.setFont(new Font("Segoe UI", Font.BOLD, 16));
@@ -183,7 +184,7 @@ public class BannerImgImpWzrdView extends JFrame {
 		panel_1.add(scrollPane_4);
 		scrollPane_4.setBorder(null);
 		
-		listBannerModels = new JList();
+		listBannerModels = new BannerCheckBoxList();
 		scrollPane_4.setViewportView(listBannerModels);
 		
 		textFieldBannerFileName = new JTextField();

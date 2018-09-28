@@ -28,7 +28,10 @@ hs_err_pid*
 #.project
 .metadata
 
-# exluded folders #
+# folders #
 lib/
 stores/
 imagemin/
+
+# files #
+bin/.gitignore

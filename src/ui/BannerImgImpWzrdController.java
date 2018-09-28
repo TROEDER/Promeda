@@ -86,7 +86,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 
 	public void initBannerDim() {
 		System.out.println("asdasd" + propApp.get("locNetworkRes"));
-		File filePropBanner = new File(propApp.get("locNetworkRes") + "banner" + File.separator + "banner.properties");
+		File filePropBanner = new File(propApp.get("locNetworkRes") + "banner" + "/" + "banner.properties");
 		try {
 			Configuration config = new PropertiesConfiguration(filePropBanner);
 			List<Object> templates = config.getList("template");
@@ -191,21 +191,34 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 
 				// GET BUFFEREDIMAGE FROM PSD FILE
 				// img = imgHandler.getImageFromPsd(psdFile);
-				
+
 				progressThumbUpdate(imgHandler.resizeImage(100, 100, srcImage));
 				for (BannerModel banner : selectedBannerTemplates) {
 
+					Vector<BufferedImage> scaledImages = new Vector<BufferedImage>();
+					scaledImages.clear();
+					
 					// RESIZE BUFFEREDIMAGE
 					progressLabelUpdate("Resize " + FilenameUtils.getBaseName(srcFile.getName()) + " to "
 							+ banner.getDimSM().width + " " + banner.getDimSM().height + " px");
-					BufferedImage scaledImageSM = imgHandler.removeAlphaChannel(
-							imgHandler.resizeImage(banner.getDimSM().width, banner.getDimSM().height, srcImage));
-					BufferedImage scaledImageMD = imgHandler.resizeImage(banner.getDimMD().width,
-							banner.getDimMD().height, srcImage);
-					BufferedImage scaledImageLG = imgHandler.resizeImage(banner.getDimLG().width,
+					
+					if(banner.getDimSM()!=null || banner.getDimSM().width >= 0) {
+						BufferedImage scaledImageSM = imgHandler.resizeImage(banner.getDimSM().width,
+						banner.getDimSM().height, srcImage);
+						scaledImages.add(scaledImageSM);
+					}
+					if(banner.getDimMD()!=null || banner.getDimMD().width >= 0) {
+						BufferedImage scaledImageMD = imgHandler.resizeImage(banner.getDimMD().width,
+						banner.getDimMD().height, srcImage);
+					scaledImages.add(scaledImageMD);
+					}
+					if(banner.getDimLG()!=null || banner.getDimLG().width >= 0) {
+						BufferedImage scaledImageLG = imgHandler.resizeImage(banner.getDimLG().width,
 							banner.getDimLG().height, srcImage);
-					BufferedImage[] scaledImages = { scaledImageSM, scaledImageMD, scaledImageLG };
-
+						scaledImages.add(scaledImageLG);
+					}
+					//BufferedImage[] scaledImages = { scaledImageSM, scaledImageMD, scaledImageLG };
+					
 					// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
 					File[] directories = {
 							new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive")
@@ -214,21 +227,22 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 									+ banner.getDirname() + "/" + "md" + "/"),
 							new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive")
 									+ banner.getDirname() + "/" + "lg" + "/") };
-					for (int i = 0; i <= scaledImages.length; i++) {
+					for (int i = 0; i <= scaledImages.size(); i++) {
 						System.out.println(directories[i].getPath());
 						if (!directories[i].exists()) {
 							directories[i].mkdirs();
 						}
 
 						imgFile = new File(directories[i].getPath() + "/" + bannerName + ".jpg");
-						ImageIO.write(scaledImages[i], "jpg", imgFile);
+						ImageIO.write(scaledImages.get(i), "jpg", imgFile);
+
 						// UPLOAD TO (REMOTE-)WEBSERVER
 						progressLabelUpdate("Upload " + FilenameUtils.getBaseName(srcFile.getName()) + " ("
 								+ banner.getName() + ") to " + store.getStoreName());
 						String remoteDir = banner.getDirname() + "/" + directories[i].getName();
 						File remoteFile = new File(remoteDir + "/" + imgFile.getName());
 
-						// USWING FTP
+						// USING FTP
 						if (store.getStoreFtpProtocol().equals("ftp")) {
 							if (!ftp.isConnected()) {
 								ftp.connect(store.getStoreFtpServer());
@@ -363,6 +377,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 			System.out.println(srcFile.getName());
 			initSrcFile(srcFile);
 			view.fileListSourceFiles.setText(srcFile.getAbsolutePath());
+			view.textFieldBannerFileName.setText(FilenameUtils.getBaseName(srcFile.getName()));
 		} else if (ae.getSource() == view.btnSelectAll) {
 			view.checkBoxListStores.selectAll();
 		} else if (ae.getSource() == view.btnDeselectAll) {

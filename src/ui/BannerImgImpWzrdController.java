@@ -2,6 +2,7 @@ package ui;
 
 import static org.apache.commons.io.FileUtils.copyFile;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -11,13 +12,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
-import java.util.ListIterator;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.ListModel;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -35,7 +40,6 @@ import model.prototype.BannerModel;
 
 import model.prototype.ImageSize;
 import model.prototype.StoreDataModel;
-import model.singleton.FtpClientModel;
 import model.singleton.ImageHandler;
 import model.singleton.PropertiesModel;
 import model.singleton.SFTPClientModel;
@@ -49,7 +53,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 	private Vector<StoreDataModel> stores;
 	private Vector<StoreDataModel> selectedStores;
 	private File srcFile;
-	private Vector<File> psdFileList = new Vector<File>();
+	private Vector<File> srcFileList = new Vector<File>();
 	private Vector<ImageSize> imageSizeList = new Vector<ImageSize>();
 	private Vector<BannerModel> bannerTemplates = new Vector<BannerModel>();
 	private Vector<BannerModel> selectedBannerTemplates = new Vector<BannerModel>();
@@ -94,7 +98,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 			for (Object template : templates) {
 				templateProps = config.subset(template.toString());
 				bannerTemplates.add(new BannerModel(template.toString(), templateProps));
-				System.out.println(bannerTemplates.lastElement().getDimSM().width);
+				System.out.println(bannerTemplates.lastElement().getDimMD().width);
 			}
 			view.listBannerModels.setListData(bannerTemplates);
 		} catch (ConfigurationException e) {
@@ -197,59 +201,44 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 
 					Vector<BufferedImage> scaledImages = new Vector<BufferedImage>();
 					scaledImages.clear();
-					
-					// RESIZE BUFFEREDIMAGE
-					progressLabelUpdate("Resize " + FilenameUtils.getBaseName(srcFile.getName()) + " to "
-							+ banner.getDimSM().width + " " + banner.getDimSM().height + " px");
-					
-					if(banner.getDimSM()!=null || banner.getDimSM().width >= 0) {
-						BufferedImage scaledImageSM = imgHandler.resizeImage(banner.getDimSM().width,
-						banner.getDimSM().height, srcImage);
-						scaledImages.add(scaledImageSM);
-					}
-					if(banner.getDimMD()!=null || banner.getDimMD().width >= 0) {
-						BufferedImage scaledImageMD = imgHandler.resizeImage(banner.getDimMD().width,
-						banner.getDimMD().height, srcImage);
-					scaledImages.add(scaledImageMD);
-					}
-					if(banner.getDimLG()!=null || banner.getDimLG().width >= 0) {
-						BufferedImage scaledImageLG = imgHandler.resizeImage(banner.getDimLG().width,
-							banner.getDimLG().height, srcImage);
-						scaledImages.add(scaledImageLG);
-					}
-					//BufferedImage[] scaledImages = { scaledImageSM, scaledImageMD, scaledImageLG };
-					
-					// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
-					File[] directories = {
-							new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive")
-									+ banner.getDirname() + "/" + "sm" + "/"),
-							new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive")
-									+ banner.getDirname() + "/" + "md" + "/"),
-							new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive")
-									+ banner.getDirname() + "/" + "lg" + "/") };
-					for (int i = 0; i <= scaledImages.size(); i++) {
-						System.out.println(directories[i].getPath());
-						if (!directories[i].exists()) {
-							directories[i].mkdirs();
+
+					for (Entry<String, Dimension> dim : banner.getDimensions().entrySet()) {
+						// RESIZE BUFFEREDIMAGE
+						progressLabelUpdate("Resize " + FilenameUtils.getBaseName(srcFile.getName()) + " to "
+								+ dim.getValue().width + " " + dim.getValue().height + " px");
+
+						// RESIZE BUFFEREDIMAGE
+						progressLabelUpdate("Resize " + FilenameUtils.getBaseName(srcFile.getName()) + " to "
+								+ banner.getDimSM().width + " " + banner.getDimSM().height + " px");
+						BufferedImage scaledImage = imgHandler.resizeImage(banner.getDimSM().width,
+								banner.getDimSM().height, srcImage);
+
+						// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
+						File directory = new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive")
+								+ banner.getDirname() + File.separator + dim.getKey());
+						if (!directory.exists()) {
+							directory.mkdirs();
 						}
 
-						imgFile = new File(directories[i].getPath() + "/" + bannerName + ".jpg");
-						ImageIO.write(scaledImages.get(i), "jpg", imgFile);
+						imgFile = new File(directory.getPath() + File.separator + bannerName + ".jpg");
+						ImageIO.write(scaledImage, "jpg", imgFile);
 
 						// UPLOAD TO (REMOTE-)WEBSERVER
-						progressLabelUpdate("Upload " + FilenameUtils.getBaseName(srcFile.getName()) + " ("
+						progressLabelUpdate("Upload " + bannerName + " ("
 								+ banner.getName() + ") to " + store.getStoreName());
-						String remoteDir = banner.getDirname() + "/" + directories[i].getName();
-						File remoteFile = new File(remoteDir + "/" + imgFile.getName());
 
-						// USING FTP
+						File remoteFile = new File(banner.getDirname() + "/" + dim.getKey() + "/" + imgFile.getName());
+
+						// USWING FTP
 						if (store.getStoreFtpProtocol().equals("ftp")) {
 							if (!ftp.isConnected()) {
 								ftp.connect(store.getStoreFtpServer());
 							}
 							InputStream input = new FileInputStream(imgFile);
-							ftp.mkd(remoteDir);
-							ftp.changeWorkingDirectory(remoteDir);
+							ftp.mkd(banner.getDirname());
+							ftp.changeWorkingDirectory(banner.getDirname());
+							ftp.mkd(dim.getKey());
+							ftp.changeWorkingDirectory(dim.getKey());
 							ftp.storeFile(remoteFile.getName(), input);
 							ftp.changeToParentDirectory();
 							ftp.changeToParentDirectory();
@@ -266,9 +255,12 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 				progressBarUpdate(progressStepSize);
 			}
 
-		} catch (IOException e) {
+		} catch (
+
+		IOException e) {
 			e.printStackTrace();
 		}
+
 		progressBarUpdate(100);
 		progressLabelUpdate("complete");
 		view.btnCardNext.setEnabled(true);
@@ -300,6 +292,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 		fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
 		fileChooser.setDialogTitle("Select files (multiple selection possible)");
 		fileChooser.setMultiSelectionEnabled(true);
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fileChooser.setLocation(100, 100);
 
 		int returnVal = fileChooser.showOpenDialog(null);
@@ -374,7 +367,8 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 			}
 		} else if (ae.getSource() == view.btnAddFiles) {
 			srcFile = openFile();
-			System.out.println(srcFile.getName());
+			srcFileList.add(srcFile);
+			// srcFileList = new Vector<File>(Arrays.asList(openFiles()));
 			initSrcFile(srcFile);
 			view.fileListSourceFiles.setText(srcFile.getAbsolutePath());
 			view.textFieldBannerFileName.setText(FilenameUtils.getBaseName(srcFile.getName()));
@@ -395,7 +389,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 		} else if (ce.getSource() == view.panelCardSummary) {
 			view.btnCardNext.setText("Import");
 			initSelectedStoreList();
-			view.fileListSourceFilesSummary.setListData(psdFileList);
+			view.fileListSourceFilesSummary.setListData(srcFileList);
 			view.fileListSourceFilesSummary.setEnabled(false);
 			view.storeListTargetStoresSummary.setListData(selectedStores);
 			view.storeListTargetStoresSummary.setEnabled(false);

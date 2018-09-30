@@ -48,13 +48,11 @@ public class BannerImgImpWzrdView extends JFrame {
 	public JLabel labelLoadManMoving;
 	public JLabel lblImageOptions;
 	public JLabel lblSetupYourPreferred;
-	public JTextField textField;
-	public JTextField textField_1;
 	public JTextField textFieldBannerFileName;
-	public JTextField textField_3;
 	public JPanel panel_1;
 	public JLabel labelPreviewPsdImage;
 	public BannerCheckBoxList listBannerModels;
+	private JScrollPane scrollPane;
 
 	/**
 	 * Create the frame.
@@ -127,7 +125,7 @@ public class BannerImgImpWzrdView extends JFrame {
 		panelCardTargetStores = new JPanel();
 		panelCardTargetStores.addComponentListener(controller);
 		
-		lblImageOptions = new JLabel("Image options");
+		lblImageOptions = new JLabel("Banner Options");
 		lblImageOptions.setFont(new Font("Segoe UI", Font.BOLD, 16));
 		lblImageOptions.setBounds(10, 11, 410, 27);
 		panelCardImageOptions.add(lblImageOptions);
@@ -137,67 +135,25 @@ public class BannerImgImpWzrdView extends JFrame {
 		lblSetupYourPreferred.setBounds(10, 40, 410, 23);
 		panelCardImageOptions.add(lblSetupYourPreferred);
 		
-		JPanel panel = new JPanel();
-		panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Custom Dimension", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel.setBounds(10, 174, 123, 145);
-		panelCardImageOptions.add(panel);
-		panel.setLayout(null);
-		
-		textField = new JTextField();
-		textField.setBounds(10, 38, 77, 20);
-		panel.add(textField);
-		textField.setColumns(10);
-		
-		JLabel lblPx = new JLabel("px");
-		lblPx.setBounds(90, 38, 21, 20);
-		panel.add(lblPx);
-		
-		textField_1 = new JTextField();
-		textField_1.setBounds(10, 84, 77, 20);
-		panel.add(textField_1);
-		textField_1.setColumns(10);
-		
-		JLabel label = new JLabel("px");
-		label.setBounds(92, 84, 21, 20);
-		panel.add(label);
-		
-		JLabel lblBreite = new JLabel("Breite");
-		lblBreite.setBounds(10, 23, 46, 14);
-		panel.add(lblBreite);
-		
-		JLabel lblHhe = new JLabel("H\u00F6he");
-		lblHhe.setBounds(10, 69, 46, 14);
-		panel.add(lblHhe);
-		
-		JButton btnNewButton = new JButton("Add");
-		btnNewButton.setBounds(10, 115, 101, 20);
-		panel.add(btnNewButton);
-		
 		panel_1 = new JPanel();
-		panel_1.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Dimensions", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel_1.setBounds(143, 174, 266, 145);
+		panel_1.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Banner Templates", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panel_1.setBounds(10, 124, 399, 195);
 		panelCardImageOptions.add(panel_1);
 		panel_1.setLayout(null);
 		
-		JScrollPane scrollPane_4 = new JScrollPane();
-		scrollPane_4.setBounds(6, 16, 250, 118);
-		panel_1.add(scrollPane_4);
-		scrollPane_4.setBorder(null);
+		scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 22, 379, 162);
+		panel_1.add(scrollPane);
 		
 		listBannerModels = new BannerCheckBoxList();
-		scrollPane_4.setViewportView(listBannerModels);
+		scrollPane.setViewportView(listBannerModels);
+		listBannerModels.setPreferredSize(new Dimension(300, 250));
 		
 		textFieldBannerFileName = new JTextField();
 		textFieldBannerFileName.setColumns(10);
 		textFieldBannerFileName.setBorder(new TitledBorder(null, "Banner Filename", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		textFieldBannerFileName.setBounds(10, 74, 399, 39);
 		panelCardImageOptions.add(textFieldBannerFileName);
-		
-		textField_3 = new JTextField();
-		textField_3.setColumns(10);
-		textField_3.setBorder(new TitledBorder(null, "Banner Foldername", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		textField_3.setBounds(10, 124, 399, 39);
-		panelCardImageOptions.add(textField_3);
 		panelCardTargetStores.setLayout(null);
 		panelCardTargetStores.setBackground(new Color(255, 255, 255));
 		panelContentContainer.add(panelCardTargetStores, "panelCardTargetStores");

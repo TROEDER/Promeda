@@ -88,7 +88,7 @@ public class BannerCheckBoxList extends JList {
 		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
 				boolean cellHasFocus) {
 			BannerModel banner = (BannerModel) value;
-			JLabel label = new JLabel(banner.getName() + banner.getDimSM().toString() + "@sm ");
+			JLabel label = new JLabel(banner.getName() + " - " + banner.GetDimensionsKeys());
 			if (banner.getSelectStatus()) {
 				label.setIcon(checked);
 			} else {

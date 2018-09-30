@@ -1,15 +1,22 @@
 package model.prototype;
 
 import java.awt.Dimension;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.configuration.Configuration;
 
 public class BannerModel {
+	
+	private String name;
+	private String dirname;
 	private Dimension dimSM;
 	private Dimension dimMD;
 	private Dimension dimLG;
-	private String name;
-	private String dirname;
+	HashMap<String, Dimension> dimensions;
 	private Boolean selectStatus;
 	
 	public BannerModel() {
@@ -17,14 +24,34 @@ public class BannerModel {
 	}
 
 	public BannerModel(String name, Configuration props) {
+		dimensions = new HashMap<String, Dimension>();
+		
 		this.name = name;
 		this.dirname = props.getString("dirname");
-		dimSM = new Dimension(props.getInt("sm.width"), props.getInt("sm.height"));
-		dimMD = new Dimension(props.getInt("md.width"), props.getInt("md.height"));
-		dimLG = new Dimension(props.getInt("lg.width"), props.getInt("lg.height"));
+		
+		if(props.containsKey("sm.width") && props.containsKey("sm.height")) {
+			dimSM = new Dimension(props.getInt("sm.width"), props.getInt("sm.height"));
+			dimensions.put("sm", dimSM);
+		}
+		if(props.containsKey("md.width") && props.containsKey("md.height")) {
+			dimMD = new Dimension(props.getInt("md.width"), props.getInt("md.height"));
+			dimensions.put("md", dimMD);
+		}
+		if(props.containsKey("lg.width") && props.containsKey("lg.height")) {
+			dimLG = new Dimension(props.getInt("lg.width"), props.getInt("lg.height"));
+			dimensions.put("lg", dimLG);
+		}		
 		setSelectStatus(false);
 	}
 
+	public String GetDimensionsKeys() {
+		String keys = "output: " + dirname + "/[";
+		for ( String key : dimensions.keySet() ) {
+		 keys += " " + key + " ";  
+		}
+		keys += "]";
+		return keys;
+	}
 	/**
 	 * @return the dimSM
 	 */
@@ -68,6 +95,20 @@ public class BannerModel {
 	}
 
 	/**
+	 * @return the dimensions
+	 */
+	public HashMap<String, Dimension> getDimensions() {
+		return dimensions;
+	}
+
+	/**
+	 * @param dimensions the dimensions to set
+	 */
+	public void setDimensions(HashMap<String, Dimension> dimensions) {
+		this.dimensions = dimensions;
+	}
+
+	/**
 	 * @return the name
 	 */
 	public String getName() {
@@ -108,4 +149,5 @@ public class BannerModel {
 	public void setSelectStatus(Boolean selectStatus) {
 		this.selectStatus = selectStatus;
 	}
+	
 }

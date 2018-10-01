@@ -131,7 +131,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 					stores.add(new StoreDataModel(config.getString("url"), config.getString("ftp.host"),
 							Integer.parseInt(config.getString("ftp.port")), config.getString("ftp.protocol"),
 							config.getString("ftp.user"), config.getString("ftp.pswd"),
-							config.getString("ftp.dir.default"), config.getList("product.image.size")));
+							config.getString("ftp.dir.banner"), config.getList("product.image.size")));
 				}
 			}
 		} catch (ConfigurationException cex) {

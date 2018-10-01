@@ -135,6 +135,12 @@ public class BannerImgImpWzrdView extends JFrame {
 		lblSetupYourPreferred.setBounds(10, 40, 410, 23);
 		panelCardImageOptions.add(lblSetupYourPreferred);
 		
+		textFieldBannerFileName = new JTextField();
+		textFieldBannerFileName.setColumns(10);
+		textFieldBannerFileName.setBorder(new TitledBorder(null, "Banner Filename", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		textFieldBannerFileName.setBounds(10, 74, 399, 39);
+		panelCardImageOptions.add(textFieldBannerFileName);
+		
 		panel_1 = new JPanel();
 		panel_1.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Banner Templates", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		panel_1.setBounds(10, 124, 399, 195);
@@ -142,18 +148,11 @@ public class BannerImgImpWzrdView extends JFrame {
 		panel_1.setLayout(null);
 		
 		scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 22, 379, 162);
+		scrollPane.setBounds(10, 24, 379, 160);
 		panel_1.add(scrollPane);
 		
 		listBannerModels = new BannerCheckBoxList();
 		scrollPane.setViewportView(listBannerModels);
-		listBannerModels.setPreferredSize(new Dimension(300, 250));
-		
-		textFieldBannerFileName = new JTextField();
-		textFieldBannerFileName.setColumns(10);
-		textFieldBannerFileName.setBorder(new TitledBorder(null, "Banner Filename", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		textFieldBannerFileName.setBounds(10, 74, 399, 39);
-		panelCardImageOptions.add(textFieldBannerFileName);
 		panelCardTargetStores.setLayout(null);
 		panelCardTargetStores.setBackground(new Color(255, 255, 255));
 		panelContentContainer.add(panelCardTargetStores, "panelCardTargetStores");

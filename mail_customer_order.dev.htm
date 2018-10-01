@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; margin: 0 auto; padding: 0; height: 100%; width: 100%;">
+<head>
+    <meta charset="utf-8"> <!-- utf-8 works for most cases -->
+    <meta name="viewport" content="width=device-width"> <!-- Forcing initial-scale shouldn't be necessary -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- Use the latest (edge) version of IE rendering engine -->
+    <meta name="x-apple-disable-message-reformatting">  <!-- Disable auto-scale in iOS 10 Mail entirely -->
+    <title></title> <!-- The title tag shows in email notifications, like Android 4.4. -->
+
+    <!-- Web Font / @font-face : BEGIN -->
+    <!-- NOTE: If web fonts are not required, lines 10 - 27 can be safely removed. -->
+
+    <!-- Desktop Outlook chokes on web font references and defaults to Times New Roman, so we force a safe fallback font. -->
+    <!--[if mso]>
+        <style>
+            * {
+                font-family: sans-serif !important;
+            }
+        </style>
+    <![endif]-->
+
+    <!-- All other clients get the webfont reference; some will render the font and others will silently fail to the fallbacks. More on that here: http://stylecampaign.com/blog/2015/02/webfont-support-in-email/ -->
+    <!--[if !mso]><!-->
+    <!-- insert web font reference, eg: <link href='https://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'> -->
+    <!--<![endif]-->
+
+    <!-- Web Font / @font-face : END -->
+
+    <!-- CSS Reset : BEGIN -->
+    <style>
+@media only screen and (min-device-width: 320px) and (max-device-width: 374px) {
+  .email-container {
+    min-width: 320px !important;
+  }
+}
+@media only screen and (min-device-width: 375px) and (max-device-width: 413px) {
+  .email-container {
+    min-width: 375px !important;
+  }
+}
+@media only screen and (min-device-width: 414px) {
+  .email-container {
+    min-width: 414px !important;
+  }
+}
+</style>
+    <!-- CSS Reset : END -->
+	<!-- Reset list spacing because Outlook ignores much of our inline CSS. -->
+	<!--[if mso]>
+	<style type="text/css">
+		ul,
+		ol {
+			margin: 0 !important;
+		}
+		li {
+			margin-left: 30px !important;
+		}
+		li.list-item-first {
+			margin-top: 0 !important;
+		}
+		li.list-item-last {
+			margin-bottom: 10px !important;
+		}
+	</style>
+	<![endif]-->
+
+	<!-- Styles copied from Oxygen Invoice Template -->
+	
+    <!-- Progressive Enhancements : BEGIN -->
+    <style>
+@media screen and (max-width: 600px) {
+  .email-container {
+    width: 100% !important;
+    margin: auto !important;
+  }
+
+  .fluid {
+    max-width: 100% !important;
+    height: auto !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .stack-column,
+.stack-column-center {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    direction: ltr !important;
+  }
+
+  .stack-column-center {
+    text-align: center !important;
+  }
+
+  .center-on-narrow {
+    text-align: center !important;
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    float: none !important;
+  }
+
+  table.center-on-narrow {
+    display: inline-block !important;
+  }
+
+  .email-container p {
+    font-size: 17px !important;
+  }
+}
+</style>
+    <!-- Progressive Enhancements : END -->
+
+	<!-- custom -->
+	
+	<!-- custom -->
+    <!-- What it does: Makes background images in 72ppi Outlook render at correct size. -->
+    <!--[if gte mso 9]>
+    <xml>
+        <o:OfficeDocumentSettings>
+            <o:AllowPNG/>
+            <o:PixelsPerInch>96</o:PixelsPerInch>
+        </o:OfficeDocumentSettings>
+    </xml>
+    <![endif]-->
+
+</head>
+<!--
+	The email background color (#222222) is defined in three places:
+	1. body tag: for most email clients
+	2. center tag: for Gmail and Inbox mobile apps and web versions of Gmail, GSuite, Inbox, Yahoo, AOL, Libero, Comcast, freenet, Mail.ru, Orange.fr
+	3. mso conditional: For Windows 10 Mail
+-->
+<body width="100%" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-line-height-rule: exactly; background-color: #ffffff; margin: 0 auto; height: 100%; width: 100%; padding: 0;">
+	<center style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; width: 100%; background-color: #ffffff;">
+    <!--[if mso | IE]>
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #ffffff;">
+    <tr>
+    <td>
+    <![endif]-->
+
+        <!-- Visually Hidden Preheader Text : BEGIN -->
+        <div style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; display: none; font-size: 1px; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; mso-hide: all; font-family: sans-serif;">
+            (Optional) This text will appear in the inbox preview, but not the email body. It can be used to supplement the email subject line or even summarize the email's contents. Extended text preheaders (~490 characters) seems like a better UX for anyone using a screenreader or voice-command apps like Siri to dictate the contents of an email. If this text is not included, email clients will automatically populate it using the text (including image alt text) at the start of the email's body.
+        </div>
+        <!-- Visually Hidden Preheader Text : END -->
+
+        <!-- Create white space after the desired preview text so email clients don’t pull other distracting text into the inbox preview. Extend as necessary. -->
+        <!-- Preview Text Spacing Hack : BEGIN -->
+        <div style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; display: none; font-size: 1px; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; mso-hide: all; font-family: sans-serif;">
+	        &zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
+        </div>
+        <!-- Preview Text Spacing Hack : END -->
+
+		<!-- Full Bleed Background Section : BEGIN -->
+	    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; background-color: #ffffff; border-bottom: 6px solid #990033; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; border-collapse: collapse; table-layout: fixed; margin: 0 auto;" bgcolor="#ffffff">
+	        <tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+	            <td valign="top" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+	                <div style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; max-width: 600px; margin: auto;" class="email-container">
+	                    <!--[if mso]>
+	                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" align="center">
+	                    <tr>
+	                    <td>
+	                    <![endif]-->
+	                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; border-collapse: collapse; table-layout: fixed; margin: 0 auto;">
+	                        <tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+	                            <td style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; padding: 10px 4px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+	                                <img src="../images/trans-mails/logo.jpg" align="left" alt="alt_text" border="0" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; -ms-interpolation-mode: bicubic; height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 15px; color: #555555;">
+									<img src="../images/trans-mails/aside-head-mail.gif" align="right" alt="alt_text" border="0" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; -ms-interpolation-mode: bicubic; height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 15px; color: #555555;">
+	                            </td>
+	                        </tr>
+	                    </table>
+	                    <!--[if mso]>
+	                    </td>
+	                    </tr>
+	                    </table>
+	                    <![endif]-->
+	                </div>
+	            </td>
+	        </tr>
+	    </table>
+	    <!-- Full Bleed Background Section : END -->
+		
+		<!-- Full Bleed Background Section : BEGIN -->
+	    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; background-color: #f5f5f5; border-bottom: 1px solid #dedede; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; border-collapse: collapse; table-layout: fixed; margin: 0 auto;" bgcolor="#f5f5f5">
+	        <tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+	            <td valign="top" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+	                <div style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; max-width: 600px; margin: auto;" class="email-container">
+	                    <!--[if mso]>
+	                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" align="center">
+	                    <tr>
+	                    <td>
+	                    <![endif]-->
+	                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; border-collapse: collapse; table-layout: fixed; margin: 0 auto;">
+	                        <tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+								<td style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; padding: 20px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #4d4d4d; text-align: center; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" align="center">
+									<h3 style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">~A-CompleteSalutation~</h3>
+									<p style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">hiermit best&auml;tigen wir den Eingang Ihrer Bestellung.</p>
+								</td>
+							</tr>
+							<tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+								<td style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; padding: 0 20px 20px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+									<!-- Button : BEGIN -->
+									<table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; border-collapse: collapse; table-layout: fixed; margin: 0 auto;">
+										<tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+											<td class="button-td button-td-primary" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; border-radius: 4px; background: #990033; color: #ffffff; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+												<a class="button-a button-a-primary" href="~WS-UserAccountLink~" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; background: #990033; font-family: sans-serif; font-size: 15px; font-weight: 700; line-height: 15px; text-decoration: none; padding: 13px 17px; color: #ffffff; display: block; border-radius: 4px; border: 1px solid #990033;">Mein Konto</a>
+											</td>
+										</tr>
+									</table>
+									<!-- Button : END -->
+								</td>
+							</tr>
+						  <!-- 2 Even Columns : BEGIN -->
+							<tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+								<td valign="top" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+									<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; border-collapse: collapse; table-layout: fixed; margin: 0 auto;">
+										<tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+											<!-- Column : BEGIN -->
+											<td class="stack-column-center" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+												<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; border-collapse: collapse; table-layout: fixed; margin: 0 auto;">
+												<tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+												  <td class="mini-container-left" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; width: 278px; padding: 10px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="278">
+													<table cellpadding="0" cellspacing="0" width="100%" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; border-collapse: collapse; table-layout: fixed; margin: 0 auto;">
+													  <tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+														<td class="mini-block-padding" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; padding: 10px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+														  <table cellspacing="0" cellpadding="0" width="100%" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; table-layout: fixed; margin: 0 auto; border-collapse: separate;">
+															<tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+															  <td class="mini-block" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; border: 1px solid #e5e5e5; border-radius: 5px; background-color: #ffffff; padding: 12px 15px 15px; text-align: left; width: 253px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="253" bgcolor="#ffffff" align="left">
+																<span class="header-sm" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; font-weight: 700; color: #4d4d4d; padding: 5px 0; font-size: 18px; line-height: 1.3;">Shipping Address</span><br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+																Jane Doe <br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+																123 Street <br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+																Victoria, BC <br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+																Canada
+															  </td>
+															</tr>
+														  </table>
+														</td>
+													  </tr>
+													</table>
+												  </td>
+												</tr>
+											  </table>
+											</td>
+											<!-- Column : END -->
+											<!-- Column : BEGIN -->
+											<td class="stack-column-center" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+												<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; border-collapse: collapse; table-layout: fixed; margin: 0 auto;">
+													<tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+														<td class="mini-container-right" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; width: 278px; padding: 10px 14px 10px 15px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="278">
+														<table cellpadding="0" cellspacing="0" width="100%" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; border-collapse: collapse; table-layout: fixed; margin: 0 auto;">
+														  <tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+															<td class="mini-block-padding" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; padding: 10px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+															  <table cellspacing="0" cellpadding="0" width="100%" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; table-layout: fixed; margin: 0 auto; border-collapse: separate;">
+																<tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+																  <td class="mini-block" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; border: 1px solid #e5e5e5; border-radius: 5px; background-color: #ffffff; padding: 12px 15px 15px; text-align: left; width: 253px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="253" bgcolor="#ffffff" align="left">
+																	<span class="header-sm" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; font-weight: 700; color: #4d4d4d; padding: 5px 0; font-size: 18px; line-height: 1.3;">Shipping Address</span><br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+																	Jane Doe <br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+																	123 Street <br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+																	Victoria, BC <br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+																	Canada
+																  </td>
+																</tr>
+															  </table>
+															</td>
+														  </tr>
+														</table>
+													</td>
+													</tr>
+												</table>
+											</td>
+											<!-- Column : END -->
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<!-- 2 Even Columns : END -->
+	                    </table>
+	                    <!--[if mso]>
+	                    </td>
+	                    </tr>
+	                    </table>
+	                    <![endif]-->
+	                </div>
+	            </td>
+	        </tr>
+	    </table>
+	    <!-- Full Bleed Background Section : END -->
+		
+        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; border-collapse: collapse; table-layout: fixed; margin: 0 auto;" class="email-container">
+	       <!-- 1 Column Text + Button : BEGIN -->
+            <tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+                <td style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; background-color: #ffffff; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" bgcolor="#ffffff">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; border-collapse: collapse; table-layout: fixed; margin: 0 auto;">
+                        <tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+							<td align="center" valign="top" width="100%" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; background-color: #ffffff; border-top: 1px solid #e5e5e5; border-bottom: 1px solid #e5e5e5; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" bgcolor="#ffffff">
+							  <center style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+								<table cellpadding="0" cellspacing="0" width="600" class="w320" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; border-collapse: collapse; table-layout: fixed; margin: 0 auto;">
+									<tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+									  <td class="item-table" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; padding: 50px 20px; width: 560px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="560">
+										<table class="basket-cols" cellspacing="0" cellpadding="0" width="100%" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; border-collapse: collapse; table-layout: fixed; margin: 0 auto;">
+										  <tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+											<td class="title-dark" width="300" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; text-align: left; border-bottom: 1px solid #cccccc; color: #4d4d4d; font-weight: 700; padding-bottom: 5px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" align="left">
+											  Item
+											</td>
+											<td class="title-dark" width="163" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; text-align: left; border-bottom: 1px solid #cccccc; color: #4d4d4d; font-weight: 700; padding-bottom: 5px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" align="left">
+											  Qty
+											</td>
+											<td class="title-dark" width="97" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; text-align: left; border-bottom: 1px solid #cccccc; color: #4d4d4d; font-weight: 700; padding-bottom: 5px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" align="left">
+											  Total
+											</td>
+										  </tr>
+
+
+										  <tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+											<td class="item-col item" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; width: 300px; padding-top: 20px; text-align: left; vertical-align: top; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="300" align="left" valign="top">
+											  <table cellspacing="0" cellpadding="0" width="100%" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; border-collapse: collapse; table-layout: fixed; margin: 0 auto;">
+												<tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+												  <td class="mobile-hide-img" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+													<a href="" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; text-decoration: none;"><img width="110" height="92" src="http://s3.amazonaws.com/swu-filepicker/RPezUIwPRv8pjatAAH1E_item_images_19.jpg" alt="item1" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; -ms-interpolation-mode: bicubic;"></a>
+												  </td>
+												  <td class="product" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; text-align: left; vertical-align: top; width: 175px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="175" align="left" valign="top">
+													<span style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #4d4d4d; font-weight: bold;">Golden Earings</span> <br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+													Hot city looks
+												  </td>
+												</tr>
+											  </table>
+											</td>
+											<td class="item-col quantity" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; padding-top: 20px; text-align: left; vertical-align: top; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" align="left" valign="top">
+											  1
+											</td>
+											<td class="item-col" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; padding-top: 20px; text-align: left; vertical-align: top; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" align="left" valign="top">
+											  $3.50
+											</td>
+										  </tr>
+
+
+										  <tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+											<td class="item-col item" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; width: 300px; padding-top: 20px; text-align: left; vertical-align: top; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="300" align="left" valign="top">
+											  <table cellspacing="0" cellpadding="0" width="100%" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; border-collapse: collapse; table-layout: fixed; margin: 0 auto;">
+												<tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+												  <td class="mobile-hide-img" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+													<a href="" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; text-decoration: none;"><img width="110" height="92" src="http://s3.amazonaws.com/swu-filepicker/9wRy50HQTg2CTyZA5Ozi_item_images_16.jpg" alt="item2" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; -ms-interpolation-mode: bicubic;"></a>
+												  </td>
+												  <td class="product" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; text-align: left; vertical-align: top; width: 175px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="175" align="left" valign="top">
+													<span style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #4d4d4d; font-weight: bold;">Pink Shoes</span> <br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+													Newest styles
+												  </td>
+												</tr>
+											  </table>
+											</td>
+											<td class="item-col quantity" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; padding-top: 20px; text-align: left; vertical-align: top; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" align="left" valign="top">
+											  1
+											</td>
+											<td class="item-col price" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; padding-top: 20px; text-align: left; vertical-align: top; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" align="left" valign="top">
+											  $10.50
+											</td>
+										  </tr>
+
+
+										  <tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+											<td class="item-col item mobile-row-padding" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; width: 300px; padding-top: 20px; text-align: left; vertical-align: top; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="300" align="left" valign="top"></td>
+											<td class="item-col quantity" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; padding-top: 20px; text-align: left; vertical-align: top; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" align="left" valign="top"></td>
+											<td class="item-col price" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; padding-top: 20px; text-align: left; vertical-align: top; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" align="left" valign="top"></td>
+										  </tr>
+
+
+										  <tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+											<td class="item-col item" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; width: 300px; padding-top: 20px; text-align: left; vertical-align: top; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="300" align="left" valign="top">
+											</td>
+											<td class="item-col quantity" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; padding-top: 20px; vertical-align: top; text-align: right; padding-right: 10px; border-top: 1px solid #cccccc; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" align="right" valign="top">
+											  <span class="total-space" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">Subtotal</span> <br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+											  <span class="total-space" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">Tax</span>  <br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+											  <span class="total-space" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">Shipping</span> <br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+											  <span class="total-space" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; font-weight: bold; color: #4d4d4d;">Total</span>
+											</td>
+											<td class="item-col price" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; padding-top: 20px; vertical-align: top; text-align: left; border-top: 1px solid #cccccc; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" align="left" valign="top">
+											  <span class="total-space" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">$13.02</span> <br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+											  <span class="total-space" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">$0.75</span>  <br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+											  <span class="total-space" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">$1.00</span>  <br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+											  <span class="total-space" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; font-weight: bold; color: #4d4d4d;">$15.77</span>
+											</td>
+											</tr>
+										</table>
+									  </td>
+									</tr>
+								</table>
+							  </center>
+							</td>
+						  </tr>
+                    </table>
+                </td>
+            </tr>
+            <!-- 1 Column Text + Button : END -->
+	    </table>
+
+		<!-- Full Bleed Background Section : BEGIN -->
+	    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; background-color: #f5f5f5; border-bottom: 1px solid #dedede; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; border-collapse: collapse; table-layout: fixed; margin: 0 auto;" bgcolor="#f5f5f5">
+	        <tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+	            <td valign="top" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+	                <div style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; max-width: 600px; margin: auto;" class="email-container">
+	                    <!--[if mso]>
+	                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" align="center">
+	                    <tr>
+	                    <td>
+	                    <![endif]-->
+	                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; border-collapse: collapse; table-layout: fixed; margin: 0 auto;">
+	                        <tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+								<td class="mini-block-padding" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; padding: 10px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+									<table cellspacing="0" cellpadding="0" width="100%" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; table-layout: fixed; margin: 0 auto; border-collapse: separate;">
+									<tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+									  <td class="block" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; border: 1px solid #e5e5e5; border-radius: 5px; background-color: #ffffff; padding: 12px 15px 15px; text-align: left; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" bgcolor="#ffffff" align="left">
+										<span class="header-sm" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; font-weight: 700; color: #4d4d4d; padding: 5px 0; font-size: 18px; line-height: 1.3;">Weitere Informationen</span><br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+										Zahlungsart: 	~WS-Payment~ <br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">	 
+		
+										Zustellung: 	~WS-Delivery~ 	 <br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+											
+										Lieferung ab dem: 	~WS-DelivDate~ 	 <br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+											
+										Auftragseingangskennung: 	~WS-OrderID~ <br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">	 
+											
+										Datum: 	~WS-OrderDate~ 	 <br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+											
+										Uhrzeit: 	~WS-OrderTime~
+									  </td>
+									</tr>
+								  </table>
+								</td>
+							</tr>
+	                    </table>
+	                    <!--[if mso]>
+	                    </td>
+	                    </tr>
+	                    </table>
+	                    <![endif]-->
+	                </div>
+	            </td>
+	        </tr>
+	    </table>
+	    <!-- Full Bleed Background Section : END -->
+		
+		<table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; border-collapse: collapse; table-layout: fixed; margin: 0 auto;" class="email-container">
+			<!-- 1 Column Text : BEGIN -->
+	        <tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+	            <td style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; background-color: #ffffff; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" bgcolor="#ffffff">
+	                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; border-collapse: collapse; table-layout: fixed; margin: 0 auto;">
+	                    <tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+	                        <td style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; padding: 20px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+	                            Den Liefertermin entnehmen Sie bitte dem angegebenen Lieferstatus.
+								Sollte sich an der Lieferzeit etwas ï¿½ndern, werden wir Sie zeitnah informieren.
+								Falls Sie eine Vorablieferung der sofort lieferbaren Produkte wï¿½nschen, teilen Sie uns dies bitte kurz mit.
+								Die fehlenden Artikel werden selbstverstï¿½ndlich versandkostenfrei nachgeliefert.
+
+								Diese Eingangsbestï¿½tigung stellt keine Annahme Ihres Auftrages dar, sondern soll Sie nur darï¿½ber informieren, dass Ihre Bestellung bei uns eingegangen ist. Die Eingangsbestï¿½tigung enthï¿½lt alle relevanten Daten zur Bestellung. Der Kaufvertrag kommt mit unserer Auftragsbestï¿½tigung oder Lieferung der bestellten Ware zustande.
+
+								Fï¿½r Fragen oder Anregungen freuen wir uns ï¿½ber Ihre Kontaktaufnahme per E-Mail: service@promondo.de, telefonisch unter 0611 - 99 18 60 oder auch per Fax 0611 - 99 18 699.
+
+								Vielen Dank fï¿½r Ihren Auftrag.
+								Mit freundlichen Grï¿½ï¿½en
+
+								Promondo Verlag & Versand GmbH
+	                        </td>
+	                    </tr>
+	                </table>
+	            </td>
+	        </tr>
+	        <!-- 1 Column Text : END -->
+		</table>
+		
+		<!-- Email Body : END -->
+		
+	    <!-- Email Footer : BEGIN -->
+        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; border-collapse: collapse; table-layout: fixed; margin: 0 auto;" class="email-container">
+	        <tr style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+	            <td style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; padding: 20px; font-family: sans-serif; font-size: 12px; line-height: 15px; text-align: center; color: #888888; mso-table-lspace: 0pt; mso-table-rspace: 0pt;" align="center">
+	                <webversion style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #cccccc; text-decoration: underline; font-weight: bold;">View as a Web Page</webversion>
+	                <br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;"><br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+	                <b style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">Promondo Verlag &amp; Versand GmbH</b><br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+					<span class="unstyle-auto-detected-links" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+						Hagenauer Str. 1, 65203 Wiesbaden<br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; border-bottom: 0; cursor: default; color: inherit; text-decoration: none; font-size: inherit; font-family: inherit; font-weight: inherit; line-height: inherit;">
+						0611 - 99 18 60<br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; border-bottom: 0; cursor: default; color: inherit; text-decoration: none; font-size: inherit; font-family: inherit; font-weight: inherit; line-height: inherit;">
+						<a href="mailto:info@promondo.de" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; border-bottom: 0; cursor: default; color: inherit; text-decoration: none; font-size: inherit; font-family: inherit; font-weight: inherit; line-height: inherit;">info@promondo.de</a>
+					</span>
+	                <br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;"><br style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+	                <unsubscribe style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #888888; text-decoration: underline;">unsubscribe</unsubscribe>
+	            </td>
+	        </tr>
+	    </table>
+	    <!-- Email Footer : END -->
+
+	    
+
+    <!--[if mso | IE]>
+    </td>
+    </tr>
+    </table>
+    <![endif]-->
+    </center>
+</body>
+</html>

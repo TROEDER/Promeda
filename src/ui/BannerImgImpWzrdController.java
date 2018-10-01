@@ -90,7 +90,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 
 	public void initBannerDim() {
 		System.out.println("asdasd" + propApp.get("locNetworkRes"));
-		File filePropBanner = new File(propApp.get("locNetworkRes") + "banner" + "/" + "banner.properties");
+		File filePropBanner = new File(propApp.get("locNetworkRes") + "banner" + File.separator + "banner.properties");
 		try {
 			Configuration config = new PropertiesConfiguration(filePropBanner);
 			List<Object> templates = config.getList("template");
@@ -98,7 +98,6 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 			for (Object template : templates) {
 				templateProps = config.subset(template.toString());
 				bannerTemplates.add(new BannerModel(template.toString(), templateProps));
-				System.out.println(bannerTemplates.lastElement().getDimMD().width);
 			}
 			view.listBannerModels.setListData(bannerTemplates);
 		} catch (ConfigurationException e) {
@@ -209,9 +208,9 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 
 						// RESIZE BUFFEREDIMAGE
 						progressLabelUpdate("Resize " + FilenameUtils.getBaseName(srcFile.getName()) + " to "
-								+ banner.getDimSM().width + " " + banner.getDimSM().height + " px");
-						BufferedImage scaledImage = imgHandler.resizeImage(banner.getDimSM().width,
-								banner.getDimSM().height, srcImage);
+								+ dim.getValue().width + " " +  dim.getValue().height + " px");
+						BufferedImage scaledImage = imgHandler.resizeImage(dim.getValue().width,
+								dim.getValue().height, srcImage);
 
 						// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
 						File directory = new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive")

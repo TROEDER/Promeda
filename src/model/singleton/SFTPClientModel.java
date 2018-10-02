@@ -92,24 +92,40 @@ public final class SFTPClientModel {
 		}
 	}
 
-	public void upload(File localFile, File remoteFile) {
+	public void changeDir(String dir) {
 		try {
-			SftpATTRS attrs;
-			try {
-				attrs = channelSftp.stat(remoteFile.getParentFile().getName());
-			} catch (Exception e) {
-				channelSftp.mkdir(remoteFile.getParentFile().getName());
-			}
-			channelSftp.cd(remoteFile.getParentFile().getName());
-			channelSftp.put(new FileInputStream(localFile), remoteFile.getName());
-			channelSftp.cd("..");
+			channelSftp.cd(dir);
 		} catch (SftpException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+	}
+	
+	public void makeDir(String dir) {
+		SftpATTRS attrs;
+		try {
+			attrs = channelSftp.stat(dir);
+		} catch (Exception e) {
+			try {
+				channelSftp.mkdir(dir);
+			} catch (SftpException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+	}
+	public void upload(File localFile, File remoteFile) {
+		
+			try {
+				channelSftp.put(new FileInputStream(localFile), remoteFile.getPath());
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SftpException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
 	}
 
 	public void disconnect() {

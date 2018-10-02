@@ -226,7 +226,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 						progressLabelUpdate("Upload " + bannerName + " ("
 								+ banner.getName() + ") to " + store.getStoreName());
 
-						File remoteFile = new File(banner.getDirname() + "/" + dim.getKey() + "/" + imgFile.getName());
+						File remoteFile = new File(imgFile.getName());
 
 						// USWING FTP
 						if (store.getStoreFtpProtocol().equals("ftp")) {
@@ -247,7 +247,13 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 							if (!sftp.session.isConnected()) {
 								sftp.connect();
 							}
+							sftp.makeDir(banner.getDirname());
+							sftp.changeDir(banner.getDirname());
+							sftp.makeDir(dim.getKey());
+							sftp.changeDir(dim.getKey());
 							sftp.upload(imgFile, remoteFile);
+							sftp.changeDir("..");
+							sftp.changeDir("..");
 						}
 					}
 				}

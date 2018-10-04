@@ -18,6 +18,7 @@ public class BannerModel {
 	private Dimension dimLG;
 	HashMap<String, Dimension> dimensions;
 	private Boolean selectStatus;
+	private Boolean matchSrcStatus;
 	
 	public BannerModel() {
 
@@ -42,6 +43,7 @@ public class BannerModel {
 			dimensions.put("lg", dimLG);
 		}		
 		setSelectStatus(false);
+		setMatchSrcStatus(true);
 	}
 
 	public String GetDimensionsKeys() {
@@ -148,6 +150,20 @@ public class BannerModel {
 	 */
 	public void setSelectStatus(Boolean selectStatus) {
 		this.selectStatus = selectStatus;
+	}
+
+	/**
+	 * @return the matchSrcStatus
+	 */
+	public Boolean getMatchSrcStatus() {
+		return matchSrcStatus;
+	}
+
+	/**
+	 * @param matchSrcStatus the matchSrcStatus to set
+	 */
+	public void setMatchSrcStatus(Boolean matchSrcStatus) {
+		this.matchSrcStatus = matchSrcStatus;
 	}
 	
 }

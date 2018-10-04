@@ -64,13 +64,13 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 	public BannerImgImpWzrdController() {
 		initProperties();
 		initView();
-		initBannerDim();
+		//initBannerDim();
 		initStores();
 	}
 
 	public BannerImgImpWzrdController(File psdFile) {
 		initProperties();
-		initBannerDim();
+		//initBannerDim();
 		initView();
 		initStores();
 		this.srcFile = psdFile;
@@ -99,6 +99,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 				templateProps = config.subset(template.toString());
 				bannerTemplates.add(new BannerModel(template.toString(), templateProps));
 			}
+			updateBannerTemplateList();
 			view.listBannerModels.setListData(bannerTemplates);
 		} catch (ConfigurationException e) {
 			e.printStackTrace();
@@ -208,9 +209,9 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 
 						// RESIZE BUFFEREDIMAGE
 						progressLabelUpdate("Resize " + FilenameUtils.getBaseName(srcFile.getName()) + " to "
-								+ dim.getValue().width + " " +  dim.getValue().height + " px");
-						BufferedImage scaledImage = imgHandler.resizeImage(dim.getValue().width,
-								dim.getValue().height, srcImage);
+								+ dim.getValue().width + " " + dim.getValue().height + " px");
+						BufferedImage scaledImage = imgHandler.resizeImage(dim.getValue().width, dim.getValue().height,
+								srcImage);
 
 						// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
 						File directory = new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive")
@@ -223,8 +224,8 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 						ImageIO.write(scaledImage, "jpg", imgFile);
 
 						// UPLOAD TO (REMOTE-)WEBSERVER
-						progressLabelUpdate("Upload " + bannerName + " ("
-								+ banner.getName() + ") to " + store.getStoreName());
+						progressLabelUpdate(
+								"Upload " + bannerName + " (" + banner.getName() + ") to " + store.getStoreName());
 
 						File remoteFile = new File(imgFile.getName());
 
@@ -377,6 +378,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 			initSrcFile(srcFile);
 			view.fileListSourceFiles.setText(srcFile.getAbsolutePath());
 			view.textFieldBannerFileName.setText(FilenameUtils.getBaseName(srcFile.getName()));
+			initBannerDim();
 		} else if (ae.getSource() == view.btnSelectAll) {
 			view.checkBoxListStores.selectAll();
 		} else if (ae.getSource() == view.btnDeselectAll) {
@@ -388,6 +390,9 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 	public void componentShown(ComponentEvent ce) {
 		if (ce.getSource() == view.panelCardSourceFiles) {
 			view.btnCardBack.setVisible(false);
+		} else if (ce.getSource() == view.panelCardImageOptions) {
+//			updateBannerTemplateList();
+//			view.listBannerModels.setListData(bannerTemplates);
 		} else if (ce.getSource() == view.panelCardTargetStores) {
 			initSelectedBannerList();
 			view.checkBoxListStores.setListData(stores);
@@ -409,6 +414,38 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 			};
 			t.start();
 		}
+	}
+
+	private void updateBannerTemplateList() {
+		System.out.println("updateBannerList");
+		for (BannerModel banner : bannerTemplates) {
+			banner.setMatchSrcStatus(null);
+			if (banner.getMatchSrcStatus() == null && banner.getDimensions().get("lg") != null) {
+				System.out.println("updateBannerList");
+				if (banner.getDimensions().get("lg").getWidth() == srcImage.getWidth()
+						&& banner.getDimensions().get("lg").getHeight() == srcImage.getHeight()) {
+					System.out.println("updateBannerList");
+					banner.setMatchSrcStatus(true);
+				} else {
+					banner.setMatchSrcStatus(false);
+				}
+			} else if ((banner.getMatchSrcStatus() == null && banner.getDimensions().get("md") != null)) {
+				if (banner.getDimensions().get("md").getWidth() == srcImage.getWidth()
+						&& banner.getDimensions().get("md").getHeight() == srcImage.getHeight()) {
+					banner.setMatchSrcStatus(true);
+				} else {
+					banner.setMatchSrcStatus(false);
+				}
+			} else if (banner.getMatchSrcStatus() == null && banner.getDimensions().get("sm") != null) {
+				if (banner.getDimensions().get("sm").getWidth() == srcImage.getWidth()
+						&& banner.getDimensions().get("sm").getHeight() == srcImage.getHeight()) {
+					banner.setMatchSrcStatus(true);
+				} else {
+					banner.setMatchSrcStatus(false);
+				}
+			}
+		}
+
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package ui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -93,6 +94,16 @@ public class BannerCheckBoxList extends JList {
 				label.setIcon(checked);
 			} else {
 				label.setIcon(unchecked);
+			}
+			if (banner.getMatchSrcStatus() != null) {
+				if (banner.getMatchSrcStatus()) {
+					label.setEnabled(true);
+					
+				} else {
+					label.setEnabled(false);
+					label.setForeground(Color.DARK_GRAY);
+					label.setBackground(Color.LIGHT_GRAY);
+				}
 			}
 			return label;
 		}

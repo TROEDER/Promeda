@@ -348,9 +348,10 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 				psdFile = new File(psdFilesPath.getAbsolutePath() + File.separatorChar + productID);
 				if (psdFile.isDirectory() && psdFile.exists()) {
 					psdFileList.add(psdFile);
-					for (File psdFileAdditional : getPsdFileAdditionals(productID, psdFilesPath)) {
+					psdFileList.addAll(Arrays.asList(getPsdFileAdditionals(productID, psdFilesPath)));
+					/*for (File psdFileAdditional : getPsdFileAdditionals(productID, psdFilesPath)) {
 						psdFileList.add(psdFileAdditional);
-					}
+					}*/
 				}
 				System.out.println("size:" + psdFileList.size());
 				for (File psdFiles : psdFileList) {

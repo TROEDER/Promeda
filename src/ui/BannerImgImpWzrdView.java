@@ -20,6 +20,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.UIManager;
+import javax.swing.border.MatteBorder;
 
 public class BannerImgImpWzrdView extends JFrame {
 
@@ -58,15 +59,12 @@ public class BannerImgImpWzrdView extends JFrame {
 	 * Create the frame.
 	 */
 	public BannerImgImpWzrdView(BannerImgImpWzrdController controller) {
+		setResizable(false);
 		setTitle("Banner Image Import Wizard");
 
 		this.controller = controller;
-
-		setResizable(false);
-		setSize(new Dimension(436, 567));
-		setPreferredSize(new Dimension(436, 426));
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 436, 426);
+		setBounds(100, 100, 443, 432);
 		contentPane = new JPanel();
 		contentPane.setBorder(null);
 		setContentPane(contentPane);
@@ -96,12 +94,13 @@ public class BannerImgImpWzrdView extends JFrame {
 		btnAddFiles.setBounds(280, 74, 119, 23);
 		panelCardSourceFiles.add(btnAddFiles);
 
-		JLabel lblSelectImages = new JLabel("Select Images");
+		JLabel lblSelectImages = new JLabel("Add Source");
+		lblSelectImages.setBorder(new MatteBorder(0, 0, 2, 0, (Color) UIManager.getColor("Label.disabledForeground")));
 		lblSelectImages.setFont(new Font("Segoe UI", Font.BOLD, 16));
 		lblSelectImages.setBounds(10, 11, 410, 27);
 		panelCardSourceFiles.add(lblSelectImages);
 
-		JLabel lblAddYourSourcefiles = new JLabel("Add your source-files (.psd) to the import-list");
+		JLabel lblAddYourSourcefiles = new JLabel("Select image file (.psd, jpeg) .");
 		lblAddYourSourcefiles.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		lblAddYourSourcefiles.setBounds(10, 40, 410, 23);
 		panelCardSourceFiles.add(lblAddYourSourcefiles);

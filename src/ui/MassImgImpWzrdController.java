@@ -35,6 +35,7 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.sanselan.ImageReadException;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -60,6 +61,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 	private Vector<ImageSize> imageSizeList = new Vector<ImageSize>();
 	private FTPClient ftp = null;
 	private SFTPClientModel sftp = null;
+	private int psdParseError;
 
 	public MassImgImpWzrdController() {
 		initProperties();
@@ -211,12 +213,16 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		return files;
 	}
 
-	public File getLatestPSDFileVersion(File psdFiles) {
+	public File getLatestPSDFileVersion(File psdFiles, String productID) {
 		// GET LATEST PSD VERSION (VIA FILENAME ATTACHMENT '_YYmmdd' (Date))
 		// File[] psdFileVersionSort = sortByNumber(psdFiles.listFiles());
 		File[] psdFileVersionSort = psdFiles.listFiles();
 		Arrays.sort(psdFileVersionSort);
 		if (psdFileVersionSort.length == 0 || psdFileVersionSort == null) {
+			System.out.println(productID + "," + "no file");
+			return null;
+		} else if(psdFileVersionSort[psdFileVersionSort.length - 1].length() == 0) {
+			System.out.println(productID + "," + "empty file");
 			return null;
 		} else {
 			return psdFileVersionSort[psdFileVersionSort.length - 1];
@@ -335,12 +341,12 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 	}
 
 	public void processManuelly() {
+		psdParseError = 0;
 		File psdFile;
 		view.progressBar.setValue(0);
 		view.progressBar.setMaximum(psdStringList.size() * selectedStores.size());
 		view.progressBar.setString(view.progressBar.getValue() + "/" + view.progressBar.getMaximum());
-		
-		System.out.println("size:" + selectedStores.size());
+
 		for (StoreDataModel store : selectedStores) {
 
 			for (String productID : psdStringList) {
@@ -348,22 +354,26 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 				psdFile = new File(psdFilesPath.getAbsolutePath() + File.separatorChar + productID);
 				if (psdFile.isDirectory() && psdFile.exists()) {
 					psdFileList.add(psdFile);
-					//psdFileList.addAll(Arrays.asList(getPsdFileAdditionals(productID, psdFilesPath)));
-					/*for (File psdFileAdditional : getPsdFileAdditionals(productID, psdFilesPath)) {
-						psdFileList.add(psdFileAdditional);
-					}*/
+					// psdFileList.addAll(Arrays.asList(getPsdFileAdditionals(productID,
+					// psdFilesPath)));
+					/*
+					 * for (File psdFileAdditional : getPsdFileAdditionals(productID, psdFilesPath))
+					 * { psdFileList.add(psdFileAdditional); }
+					 */
 					int count = 1;
-					File psdFileAdditional = new File(psdFilesPath.getAbsolutePath() + File.separatorChar + productID + "_" + count);
+					File psdFileAdditional = new File(
+							psdFilesPath.getAbsolutePath() + File.separatorChar + productID + "_" + count);
+					System.out.println(productID + "," + "folder exists");
 					while (psdFileAdditional.exists() && psdFileAdditional.isDirectory()) {
 						psdFileList.add(psdFileAdditional);
 						count++;
-						psdFileAdditional = new File(psdFilesPath.getAbsolutePath() + File.separatorChar + productID + "_" + count);
+						psdFileAdditional = new File(
+								psdFilesPath.getAbsolutePath() + File.separatorChar + productID + "_" + count);
 					}
 				}
-				System.out.println("size:" + psdFileList.size());
 				for (File psdFiles : psdFileList) {
 					// GET LATEST PSD VERSION (VIA FILENAME ATTACHMENT '_YYmmdd' (Date))
-					File psdFileLatestVersion = getLatestPSDFileVersion(psdFiles);
+					File psdFileLatestVersion = getLatestPSDFileVersion(psdFiles, productID);
 					if (psdFileLatestVersion != null) {
 						// START BUILDING IMAGE
 						buildImage(psdFiles.getName(), psdFileLatestVersion, store);
@@ -379,6 +389,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 	}
 
 	public void buildImage(String fileName, File psdFile, StoreDataModel store) {
+		System.out.println(fileName + " --> " + psdFile.getName());
 		ImageHandler imgHandler = new ImageHandler();
 		File imgFile;
 		BufferedImage img;
@@ -386,36 +397,41 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		String currentDate = LocalDate.now().toString(fmt);
 
 		try {
-			img = imgHandler.getImageFromPsd3(psdFile);
+			img = imgHandler.getImageFromPsd2(psdFile);
+			if (img != null) {
 
-			// Show 100x100px thumb of current file in wizard
-			progressThumbUpdate(imgHandler.resizeImage(100, 100, img));
+				// Show 100x100px thumb of current file in wizard
+				progressThumbUpdate(imgHandler.resizeImage(100, 100, img));
 
-			for (ImageSize imgSize : store.getStoreImageSizeListNew()) {
+				for (ImageSize imgSize : store.getStoreImageSizeListNew()) {
 
-				// RESIZE BUFFEREDIMAGE
-				progressLabelUpdate(
-						"Resize " + FilenameUtils.getBaseName(fileName) + " to " + imgSize.getWidth() + "px");
-				BufferedImage scaledImage = imgHandler.resizeImage(imgSize.getWidth(), imgSize.getHeight(), img);
+					// RESIZE BUFFEREDIMAGE
+					progressLabelUpdate(
+							"Resize " + FilenameUtils.getBaseName(fileName) + " to " + imgSize.getWidth() + "px");
+					BufferedImage scaledImage = imgHandler.resizeImage(imgSize.getWidth(), imgSize.getHeight(), img);
 
-				// REMOVE ALPHA CHANNEL FROM BUFFEREDIMAGE ( ARGB -> RGB )
-				progressLabelUpdate("Remove Alpha Channel from " + FilenameUtils.getBaseName(fileName) + " ("
-						+ imgSize.getWidth() + "px)");
-				BufferedImage rgbImage = imgHandler.removeAlphaChannel(scaledImage);
+					// REMOVE ALPHA CHANNEL FROM BUFFEREDIMAGE ( ARGB -> RGB )
+					progressLabelUpdate("Remove Alpha Channel from " + FilenameUtils.getBaseName(fileName) + " ("
+							+ imgSize.getWidth() + "px)");
+					BufferedImage rgbImage = imgHandler.removeAlphaChannel(scaledImage);
 
-				// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
-				File directory = new File(
-						propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive") + imgSize.getName());
-				if (!directory.exists()) {
-					directory.mkdirs();
+					// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
+					File directory = new File(
+							propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive") + imgSize.getName());
+					if (!directory.exists()) {
+						directory.mkdirs();
+					}
+
+					imgFile = new File(directory.getPath() + "/" + fileName + ".jpg");
+					ImageIO.write(rgbImage, "jpg", imgFile);
 				}
-
-				imgFile = new File(directory.getPath() + "/" + fileName + ".jpg");
-				ImageIO.write(rgbImage, "jpg", imgFile);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			psdParseError++;
+			System.out.println(psdParseError);
 			e.printStackTrace();
+		} finally {
+			System.out.println(psdParseError);
 		}
 	}
 

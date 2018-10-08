@@ -386,7 +386,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		String currentDate = LocalDate.now().toString(fmt);
 
 		try {
-			img = imgHandler.getImageFromPsd(psdFile);
+			img = imgHandler.getImageFromPsd2(psdFile);
 
 			// Show 100x100px thumb of current file in wizard
 			progressThumbUpdate(imgHandler.resizeImage(100, 100, img));

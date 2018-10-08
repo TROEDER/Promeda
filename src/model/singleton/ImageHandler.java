@@ -11,6 +11,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.sanselan.ImageReadException;
+import org.apache.sanselan.formats.psd.PsdImageParser;
+import org.apache.sanselan.util.IOUtils;
+
 import com.mortennobel.imagescaling.AdvancedResizeOp;
 import com.mortennobel.imagescaling.ResampleOp;
 
@@ -63,7 +67,18 @@ public class ImageHandler {
 		return img;
 	}
 	
-
+	public BufferedImage getImageFromPsd2(File psdFile) throws IOException {
+		BufferedImage img = null;
+		PsdImageParser psd = new PsdImageParser();
+		try {
+			img = psd.getBufferedImage(IOUtils.getFileBytes(psdFile), null);
+		} catch (ImageReadException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return img;
+	}
 	/**
 	 *
 	 * @param width

@@ -7,10 +7,12 @@ package model.singleton;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.sanselan.ImageParser;
 import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.formats.psd.PsdImageParser;
 import org.apache.sanselan.util.IOUtils;
@@ -79,6 +81,21 @@ public class ImageHandler {
 		
 		return img;
 	}
+	
+	public BufferedImage getImageFromPsd3(File psdFile) throws IOException {
+		PSDParser r = new PSDParser();
+		  r.read(psdFile.getAbsolutePath());
+		  int n = r.getFrameCount();
+		  BufferedImage image = r.getLayer(0);
+		  Graphics2D graphics = image.createGraphics();
+		  for (int i = 1; i < n; i++) {
+		  	BufferedImage layer = r.getLayer(i);
+		  	Point offset = r.getLayerOffset(i);
+		  	graphics.drawImage(layer, 0, 0, null);
+		  }
+		return image;
+	}
+	
 	/**
 	 *
 	 * @param width

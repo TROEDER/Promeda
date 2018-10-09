@@ -221,7 +221,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		if (psdFileVersionSort.length == 0 || psdFileVersionSort == null) {
 			System.out.println(productID + "," + "no file");
 			return null;
-		} else if(psdFileVersionSort[psdFileVersionSort.length - 1].length() == 0) {
+		} else if (psdFileVersionSort[psdFileVersionSort.length - 1].length() == 0) {
 			System.out.println(productID + "," + "empty file");
 			return null;
 		} else {
@@ -340,7 +340,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		view.btnCardNext.setText("Done");
 	}
 
-	public void processManuelly() {
+	public void processPsdFiles() {
 		psdParseError = 0;
 		File psdFile;
 		view.progressBar.setValue(0);
@@ -386,6 +386,53 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		progressLabelUpdate("complete");
 		view.btnCardNext.setEnabled(true);
 		view.btnCardNext.setText("Done");
+	}
+
+	public void processJpegFiles() {
+		File jpegFile;
+		ImageHandler imgHandler = new ImageHandler();
+		view.progressBar.setValue(0);
+		view.progressBar.setMaximum(psdStringList.size() * selectedStores.size());
+		view.progressBar.setString(view.progressBar.getValue() + "/" + view.progressBar.getMaximum());
+
+		for (StoreDataModel store : selectedStores) {
+			for (String productID : psdStringList) {
+
+				jpegFile = new File(psdFilesPath.getAbsolutePath() + File.separatorChar + productID + ".jpg");
+				try {
+					BufferedImage srcImage = ImageIO.read(jpegFile);
+					
+					if (srcImage != null) {
+
+						// Show 100x100px thumb of current file in wizard
+						progressThumbUpdate(imgHandler.resizeImage(100, 100, srcImage));
+
+						for (ImageSize imgSize : store.getStoreImageSizeListNew()) {
+
+							// RESIZE BUFFEREDIMAGE
+							progressLabelUpdate(
+									"Resize " + FilenameUtils.getBaseName(jpegFile.getName()) + " to " + imgSize.getWidth() + "px");
+							BufferedImage scaledImage = imgHandler.resizeImage(imgSize.getWidth(), imgSize.getHeight(), srcImage);
+
+
+							// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
+							File directory = new File(
+									propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive") + imgSize.getName());
+							if (!directory.exists()) {
+								directory.mkdirs();
+							}
+
+							File imgFile = new File(directory.getPath() + "/" + jpegFile.getName() + ".jpg");
+							ImageIO.write(scaledImage, "jpg", imgFile);
+						}
+					}
+					progressBarUpdate(1);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	public void buildImage(String fileName, File psdFile, StoreDataModel store) {
@@ -574,7 +621,6 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		fileChooser.setLocation(100, 100);
 		fileChooser
 				.setCurrentDirectory(new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirOriginals")));
-
 		int returnVal = fileChooser.showOpenDialog(null);
 
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -633,12 +679,6 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 				view.btnCardBack.setVisible(true);
 				view.cardLayoutContentContainer.next(view.panelContentContainer);
 			}
-		} else if (ae.getSource() == view.btnAddFiles) {
-			addFilesPath();
-		} else if (ae.getSource() == view.btnRemoveFiles) {
-			removeFiles();
-		} else if (ae.getSource() == view.btnClearFileList) {
-			clearList();
 		} else if (ae.getSource() == view.btnSelectAll) {
 			view.checkBoxListStores.selectAll();
 		} else if (ae.getSource() == view.btnDeselectAll) {
@@ -658,6 +698,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 			view.btnCardBack.setVisible(false);
 		} else if (ce.getSource() == view.panelCardTargetStores) {
 			view.checkBoxListStores.setListData(stores);
+			System.out.println(view.btnGrpImageFormat.getSelection().getActionCommand());
 		} else if (ce.getSource() == view.panelCardSummary) {
 			view.btnCardNext.setText("Import");
 			initSelectedStoreList();
@@ -668,13 +709,24 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		} else if (ce.getSource() == view.panelCardProcessing) {
 			view.btnCardBack.setVisible(false);
 			view.btnCardNext.setEnabled(false);
-			Thread t = new Thread() {
-				@Override
-				public void run() {
-					processManuelly();
-				}
-			};
-			t.start();
+			if (view.btnGrpImageFormat.getSelection().getActionCommand().equals("PSD") && view.btnGrpImageFormat.getSelection().getActionCommand() != null) {
+				Thread t = new Thread() {
+					@Override
+					public void run() {
+						processPsdFiles();
+					}
+				};
+				t.start();
+				
+			} else if (view.btnGrpImageFormat.getSelection().getActionCommand().equals("JPEG")) {
+				Thread t = new Thread() {
+					@Override
+					public void run() {
+						processJpegFiles();
+					}
+				};
+				t.start();
+			}
 		}
 	}
 

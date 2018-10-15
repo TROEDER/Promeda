@@ -76,32 +76,20 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 		File f = new File(propApp.get("locNetworkRes") + "stores");
 		File[] files = f.listFiles();
 		stores = new Vector<StoreDataModel>();
-		
-		try
-		{
+
+		try {
 			for (File file : files) {
 				if (!file.isDirectory() && FilenameUtils.isExtension(file.getName(), "properties")) {
 					Configuration config = new PropertiesConfiguration(file);
-					String[] imgSizeParams = config.getStringArray("image.size");
-					for(String param : imgSizeParams) {
-						imageSizeList.add(new ImageSize(param.split(",")));
-						System.out.println(new ImageSize(param.split(",")).getName());
-						System.out.println("Groesse: " + imageSizeList.size() + " - " + imageSizeList.lastElement().getWidth());
-					}
-					System.out.println("imageSizeList.size() " + imageSizeList.size() + " - " + imageSizeList.get(0).getName());
-					/*stores.add(new StoreDataModel(config.getString("url"), config.getString("ftp.host"),
-							Integer.parseInt(config.getString("ftp.port")), config.getString("ftp.user"),
-							config.getString("ftp.pswd"), imageSizeList));*/
+					
 					stores.add(new StoreDataModel(config.getString("url"), config.getString("ftp.host"),
-							Integer.parseInt(config.getString("ftp.port")), config.getString("ftp.protocol"), config.getString("ftp.user"),
-							config.getString("ftp.pswd"), config.getList("image.size")));
+							Integer.parseInt(config.getString("ftp.port")), config.getString("ftp.protocol"),
+							config.getString("ftp.user"), config.getString("ftp.pswd"),
+							config.getString("ftp.dir.default"), config.getList("product.image.size")));
 				}
-				imageSizeList.clear();
 			}
-		}
-		catch (ConfigurationException cex)
-		{
-		    // Something went wrong
+		} catch (ConfigurationException cex) {
+			// Something went wrong
 		}
 	}
 	

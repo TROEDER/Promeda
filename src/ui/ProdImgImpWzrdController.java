@@ -157,7 +157,7 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 
 						imgFile = new File(
 								directory.getPath() + "/" + FilenameUtils.getBaseName(psdFile.getName()) + ".jpg");
-						ImageIO.write(rgbImage, "jpg", imgFile);
+						//ImageIO.write(rgbImage, "jpg", imgFile);
 						
 						// COMPRESSION START
 						OutputStream os = new FileOutputStream(imgFile);

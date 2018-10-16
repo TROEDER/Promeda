@@ -10,15 +10,22 @@ import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -221,8 +228,37 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 						}
 
 						imgFile = new File(directory.getPath() + File.separator + bannerName + ".jpg");
-						ImageIO.write(scaledImage, "jpg", imgFile);
+						//ImageIO.write(scaledImage, "jpg", imgFile);
 
+						// COMPRESSION START
+						OutputStream os = new FileOutputStream(imgFile);
+
+						Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
+						ImageWriter writer = (ImageWriter) writers.next();
+
+						ImageOutputStream ios = ImageIO.createImageOutputStream(os);
+						writer.setOutput(ios);
+
+						ImageWriteParam param = writer.getDefaultWriteParam();
+
+						
+						if (param.canWriteProgressive()) {
+							param.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
+						}
+
+						if (param.canWriteCompressed()) {
+							param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+							param.setCompressionQuality(0.7f); // Change the quality value you prefer
+						}
+
+						writer.write(null, new IIOImage(scaledImage, null, null), param);
+
+						os.close();
+						ios.close();
+						writer.dispose();
+						
+						// COMPRESSION END
+						
 						// UPLOAD TO (REMOTE-)WEBSERVER
 						progressLabelUpdate(
 								"Upload " + bannerName + " (" + banner.getName() + ") to " + store.getStoreName());

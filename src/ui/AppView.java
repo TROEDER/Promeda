@@ -66,7 +66,7 @@ public class AppView extends JFrame {
 		btnSearch.addActionListener(controller);
 		panel.add(btnSearch);
 
-		btnProdImgImpWzrd = new JButton("Product Image Import Wizard");
+		btnProdImgImpWzrd = new JButton("Product Image Import");
 		btnProdImgImpWzrd.addActionListener(controller);
 		btnProdImgImpWzrd.setLocation(10, 147);
 		btnProdImgImpWzrd.setSize(new Dimension(225, 40));
@@ -79,7 +79,7 @@ public class AppView extends JFrame {
 		btnSettings.setSize(new Dimension(225, 40));
 		btnSettings.setPreferredSize(new Dimension(300, 23));
 		btnSettings.setAlignmentX(0.5f);
-		btnSettings.setBounds(10, 200, 225, 40);
+		btnSettings.setBounds(10, 300, 225, 40);
 		contentPane.add(btnSettings);
 
 		btnExit = new JButton("");
@@ -105,17 +105,17 @@ public class AppView extends JFrame {
 		label.setBounds(10, 5, 52, 80);
 		contentPane.add(label);
 		
-		btnPageImgImpWzrd = new JButton("Page Image Import Wizard");
+		btnPageImgImpWzrd = new JButton("Banner Import");
 		btnPageImgImpWzrd.addActionListener(controller);
 		btnPageImgImpWzrd.setSize(new Dimension(225, 40));
 		btnPageImgImpWzrd.setPreferredSize(new Dimension(300, 23));
 		btnPageImgImpWzrd.setAlignmentX(0.5f);
-		btnPageImgImpWzrd.setBounds(10, 294, 225, 40);
+		btnPageImgImpWzrd.setBounds(10, 198, 225, 40);
 		contentPane.add(btnPageImgImpWzrd);
 		
-		btnNewButton = new JButton("importer");
+		btnNewButton = new JButton("Mass Restore Import");
 		btnNewButton.addActionListener(controller);
-		btnNewButton.setBounds(10, 256, 98, 26);
+		btnNewButton.setBounds(10, 249, 225, 40);
 		contentPane.add(btnNewButton);
 	}
 }

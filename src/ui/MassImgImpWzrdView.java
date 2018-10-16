@@ -22,6 +22,8 @@ import javax.swing.border.TitledBorder;
 import javax.swing.UIManager;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JRadioButton;
+import javax.swing.ButtonGroup;
 
 public class MassImgImpWzrdView extends JFrame {
 
@@ -43,9 +45,6 @@ public class MassImgImpWzrdView extends JFrame {
 	public JButton btnSelectAll;
 	public JButton btnDeselectAll;
 	public FileList fileListSourceFiles;
-	public JButton btnAddFiles;
-	public JButton btnRemoveFiles;
-	public JButton btnClearFileList;
 	public FileList fileListSourceFilesSummary;
 	public StoreList storeListTargetStoresSummary;
 	public JLabel labelLoadManMoving;
@@ -53,7 +52,13 @@ public class MassImgImpWzrdView extends JFrame {
 	public JTextField textFieldPsdFilesPath;
 	public JButton btnBrowseCsvFile;
 	public JButton btnBrowsePsdFilesPath;
-
+	
+	/**
+	 * @wbp.nonvisual location=12,469
+	 */
+	public ButtonGroup btnGrpImageFormat = new ButtonGroup();
+	public JRadioButton rdbtnJpeg;
+	public JRadioButton rdbtnPsd;
 	/**
 	 * Create the frame.
 	 */
@@ -61,7 +66,7 @@ public class MassImgImpWzrdView extends JFrame {
 		setTitle("Mass Image Import Wizard");
 
 		this.controller = controller;
-
+		
 		setResizable(false);
 		setSize(new Dimension(436, 567));
 		setPreferredSize(new Dimension(436, 426));
@@ -87,7 +92,7 @@ public class MassImgImpWzrdView extends JFrame {
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane.setBounds(10, 74, 260, 91);
+		scrollPane.setBounds(10, 187, 322, 91);
 		panelCardSourceFiles.add(scrollPane);
 
 		fileListSourceFiles = new FileList();
@@ -96,18 +101,6 @@ public class MassImgImpWzrdView extends JFrame {
 		fileListSourceFiles.setFont(new Font("Segoe UI", Font.BOLD, 12));
 		fileListSourceFiles.setBackground(new Color(240, 248, 255));
 		scrollPane.setViewportView(fileListSourceFiles);
-
-		btnAddFiles = new JButton("Add");
-		btnAddFiles.setEnabled(false);
-		btnAddFiles.addActionListener(controller);
-		btnAddFiles.setBounds(280, 74, 119, 23);
-		panelCardSourceFiles.add(btnAddFiles);
-
-		btnRemoveFiles = new JButton("Remove");
-		btnRemoveFiles.setEnabled(false);
-		btnRemoveFiles.addActionListener(controller);
-		btnRemoveFiles.setBounds(280, 108, 119, 23);
-		panelCardSourceFiles.add(btnRemoveFiles);
 
 		JLabel lblSelectImages = new JLabel("Select Images");
 		lblSelectImages.setFont(new Font("Segoe UI", Font.BOLD, 16));
@@ -118,16 +111,10 @@ public class MassImgImpWzrdView extends JFrame {
 		lblAddYourSourcefiles.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		lblAddYourSourcefiles.setBounds(10, 40, 410, 23);
 		panelCardSourceFiles.add(lblAddYourSourcefiles);
-
-		btnClearFileList = new JButton("Clear List");
-		btnClearFileList.setEnabled(false);
-		btnClearFileList.addActionListener(controller);
-		btnClearFileList.setBounds(280, 142, 119, 23);
-		panelCardSourceFiles.add(btnClearFileList);
 		
 		textFieldProductsCsv = new JTextField();
 		textFieldProductsCsv.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Products Import CSV", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		textFieldProductsCsv.setBounds(10, 189, 260, 39);
+		textFieldProductsCsv.setBounds(10, 137, 322, 39);
 		panelCardSourceFiles.add(textFieldProductsCsv);
 		textFieldProductsCsv.setColumns(10);
 		
@@ -144,18 +131,30 @@ public class MassImgImpWzrdView extends JFrame {
 		textFieldPsdFilesPath = new JTextField();
 		textFieldPsdFilesPath.setBorder(new TitledBorder(null, "Banner Foldername", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		textFieldPsdFilesPath.setColumns(10);
-		textFieldPsdFilesPath.setBounds(10, 239, 260, 39);
+		textFieldPsdFilesPath.setBounds(10, 74, 322, 39);
 		panelCardSourceFiles.add(textFieldPsdFilesPath);
 		
 		btnBrowseCsvFile = new JButton("Browse");
 		btnBrowseCsvFile.addActionListener(controller);
-		btnBrowseCsvFile.setBounds(280, 201, 119, 23);
+		btnBrowseCsvFile.setBounds(342, 82, 67, 27);
 		panelCardSourceFiles.add(btnBrowseCsvFile);
 		
 		btnBrowsePsdFilesPath = new JButton("Browse");
 		btnBrowsePsdFilesPath.addActionListener(controller);
-		btnBrowsePsdFilesPath.setBounds(280, 251, 119, 23);
+		btnBrowsePsdFilesPath.setBounds(342, 145, 67, 27);
 		panelCardSourceFiles.add(btnBrowsePsdFilesPath);
+		
+		rdbtnPsd = new JRadioButton("PSD");
+		rdbtnPsd.setActionCommand("PSD");
+		btnGrpImageFormat.add(rdbtnPsd);
+		rdbtnPsd.setBounds(342, 190, 67, 23);
+		panelCardSourceFiles.add(rdbtnPsd);
+		
+		rdbtnJpeg = new JRadioButton("JPEG");
+		rdbtnJpeg.setActionCommand("JPEG");
+		btnGrpImageFormat.add(rdbtnJpeg);
+		rdbtnJpeg.setBounds(342, 216, 67, 23);
+		panelCardSourceFiles.add(rdbtnJpeg);
 
 		panelCardTargetStores = new JPanel();
 		panelCardTargetStores.addComponentListener(controller);
@@ -255,6 +254,8 @@ public class MassImgImpWzrdView extends JFrame {
 		panelCardProcessing.add(labelProgressStep);
 
 		progressBar = new JProgressBar();
+		progressBar.setString("0/100");
+		progressBar.setStringPainted(true);
 		progressBar.setBounds(10, 109, 410, 27);
 		panelCardProcessing.add(progressBar);
 

@@ -32,10 +32,10 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.sanselan.ImageReadException;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -44,7 +44,6 @@ import org.joda.time.format.DateTimeFormatter;
 
 import model.prototype.ImageSize;
 import model.prototype.StoreDataModel;
-import model.singleton.FtpClientModel;
 import model.singleton.ImageHandler;
 import model.singleton.MultipartUtility;
 import model.singleton.PropertiesModel;
@@ -58,10 +57,11 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 	private Vector<StoreDataModel> selectedStores;
 	private File psdFilesPath;
 	private Vector<File> psdFileList = new Vector<File>();
+	private Vector<String> psdStringList = new Vector<String>();
 	private Vector<ImageSize> imageSizeList = new Vector<ImageSize>();
-
 	private FTPClient ftp = null;
 	private SFTPClientModel sftp = null;
+	private int psdParseError;
 
 	public MassImgImpWzrdController() {
 		initProperties();
@@ -86,10 +86,6 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 
 		view = new MassImgImpWzrdView(this);
 		view.setVisible(true);
-	}
-
-	public void initBannerDim() {
-
 	}
 
 	public void initStores() {
@@ -120,28 +116,54 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 							config.getString("ftp.user"), config.getString("ftp.pswd"),
 							config.getString("ftp.dir.default"), config.getList("product.image.size")));
 				}
-				imageSizeList.clear();
 			}
 		} catch (ConfigurationException cex) {
 			// Something went wrong
 		}
 	}
 
-	public void readCsv(File csvFile) {
+	public void readCsvOld(File csvFile) {
 		String productID;
 		Scanner scanner;
 		try {
 			scanner = new Scanner(csvFile);
 			while (scanner.hasNext()) {
+				System.out.println("mark 1");
 				productID = scanner.next();
 				System.out.println(psdFilesPath.getAbsolutePath() + File.separatorChar + productID);
 				File psdFile = new File(psdFilesPath.getAbsolutePath() + File.separatorChar + productID);
+				System.out.println("mark 2");
 				if (psdFile.isDirectory() && psdFile.exists()) {
+					System.out.println("mark 3");
 					psdFileList.add(psdFile);
+					// System.out.println("mark 4");
+					// psdFileList.addAll(Arrays.asList(getPsdFileAdditionals(productID,
+					// psdFilesPath)));
+					System.out.println("mark 4");
 					for (File psdFileAdditional : getPsdFileAdditionals(productID, psdFilesPath)) {
+						System.out.println("mark 5.1");
 						psdFileList.add(psdFileAdditional);
+						System.out.println("mark 5.2");
 					}
 				}
+			}
+			scanner.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void readCsv(File csvFile) {
+		String productID;
+		Scanner scanner;
+		psdStringList.clear();
+
+		try {
+			scanner = new Scanner(csvFile);
+			while (scanner.hasNext()) {
+				productID = scanner.next();
+				psdStringList.add(productID);
+				System.out.println(productID);
 			}
 			scanner.close();
 		} catch (FileNotFoundException e) {
@@ -189,6 +211,22 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 			System.out.println(f.getName());
 		}
 		return files;
+	}
+
+	public File getLatestPSDFileVersion(File psdFiles, String productID) {
+		// GET LATEST PSD VERSION (VIA FILENAME ATTACHMENT '_YYmmdd' (Date))
+		// File[] psdFileVersionSort = sortByNumber(psdFiles.listFiles());
+		File[] psdFileVersionSort = psdFiles.listFiles();
+		Arrays.sort(psdFileVersionSort);
+		if (psdFileVersionSort.length == 0 || psdFileVersionSort == null) {
+			System.out.println(productID + "," + "no file");
+			return null;
+		} else if (psdFileVersionSort[psdFileVersionSort.length - 1].length() == 0) {
+			System.out.println(productID + "," + "empty file");
+			return null;
+		} else {
+			return psdFileVersionSort[psdFileVersionSort.length - 1];
+		}
 	}
 
 	public void process() {
@@ -302,6 +340,148 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		view.btnCardNext.setText("Done");
 	}
 
+	public void processPsdFiles() {
+		psdParseError = 0;
+		File psdFile;
+		view.progressBar.setValue(0);
+		view.progressBar.setMaximum(psdStringList.size() * selectedStores.size());
+		view.progressBar.setString(view.progressBar.getValue() + "/" + view.progressBar.getMaximum());
+
+		for (StoreDataModel store : selectedStores) {
+
+			for (String productID : psdStringList) {
+				psdFileList.clear();
+				psdFile = new File(psdFilesPath.getAbsolutePath() + File.separatorChar + productID);
+				if (psdFile.isDirectory() && psdFile.exists()) {
+					psdFileList.add(psdFile);
+					// psdFileList.addAll(Arrays.asList(getPsdFileAdditionals(productID,
+					// psdFilesPath)));
+					/*
+					 * for (File psdFileAdditional : getPsdFileAdditionals(productID, psdFilesPath))
+					 * { psdFileList.add(psdFileAdditional); }
+					 */
+					int count = 1;
+					File psdFileAdditional = new File(
+							psdFilesPath.getAbsolutePath() + File.separatorChar + productID + "_" + count);
+					System.out.println(productID + "," + "folder exists");
+					while (psdFileAdditional.exists() && psdFileAdditional.isDirectory()) {
+						psdFileList.add(psdFileAdditional);
+						count++;
+						psdFileAdditional = new File(
+								psdFilesPath.getAbsolutePath() + File.separatorChar + productID + "_" + count);
+					}
+				}
+				for (File psdFiles : psdFileList) {
+					// GET LATEST PSD VERSION (VIA FILENAME ATTACHMENT '_YYmmdd' (Date))
+					File psdFileLatestVersion = getLatestPSDFileVersion(psdFiles, productID);
+					if (psdFileLatestVersion != null) {
+						// START BUILDING IMAGE
+						buildImage(psdFiles.getName(), psdFileLatestVersion, store);
+					}
+				}
+				progressBarUpdate(1);
+			}
+		}
+		progressBarUpdate(100);
+		progressLabelUpdate("complete");
+		view.btnCardNext.setEnabled(true);
+		view.btnCardNext.setText("Done");
+	}
+
+	public void processJpegFiles() {
+		File jpegFile;
+		ImageHandler imgHandler = new ImageHandler();
+		view.progressBar.setValue(0);
+		view.progressBar.setMaximum(psdStringList.size() * selectedStores.size());
+		view.progressBar.setString(view.progressBar.getValue() + "/" + view.progressBar.getMaximum());
+
+		for (StoreDataModel store : selectedStores) {
+			for (String productID : psdStringList) {
+
+				jpegFile = new File(psdFilesPath.getAbsolutePath() + File.separatorChar + productID + ".jpg");
+				try {
+					BufferedImage srcImage = ImageIO.read(jpegFile);
+					
+					if (srcImage != null) {
+
+						// Show 100x100px thumb of current file in wizard
+						progressThumbUpdate(imgHandler.resizeImage(100, 100, srcImage));
+
+						for (ImageSize imgSize : store.getStoreImageSizeListNew()) {
+
+							// RESIZE BUFFEREDIMAGE
+							progressLabelUpdate(
+									"Resize " + FilenameUtils.getBaseName(jpegFile.getName()) + " to " + imgSize.getWidth() + "px");
+							BufferedImage scaledImage = imgHandler.resizeImage(imgSize.getWidth(), imgSize.getHeight(), srcImage);
+
+
+							// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
+							File directory = new File(
+									propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive") + imgSize.getName());
+							if (!directory.exists()) {
+								directory.mkdirs();
+							}
+
+							File imgFile = new File(directory.getPath() + "/" + jpegFile.getName() + ".jpg");
+							ImageIO.write(scaledImage, "jpg", imgFile);
+						}
+					}
+					progressBarUpdate(1);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	public void buildImage(String fileName, File psdFile, StoreDataModel store) {
+		System.out.println(fileName + " --> " + psdFile.getName());
+		ImageHandler imgHandler = new ImageHandler();
+		File imgFile;
+		BufferedImage img;
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("_yyyyMMdd");
+		String currentDate = LocalDate.now().toString(fmt);
+
+		try {
+			img = imgHandler.getImageFromPsd2(psdFile);
+			if (img != null) {
+
+				// Show 100x100px thumb of current file in wizard
+				progressThumbUpdate(imgHandler.resizeImage(100, 100, img));
+
+				for (ImageSize imgSize : store.getStoreImageSizeListNew()) {
+
+					// RESIZE BUFFEREDIMAGE
+					progressLabelUpdate(
+							"Resize " + FilenameUtils.getBaseName(fileName) + " to " + imgSize.getWidth() + "px");
+					BufferedImage scaledImage = imgHandler.resizeImage(imgSize.getWidth(), imgSize.getHeight(), img);
+
+					// REMOVE ALPHA CHANNEL FROM BUFFEREDIMAGE ( ARGB -> RGB )
+					progressLabelUpdate("Remove Alpha Channel from " + FilenameUtils.getBaseName(fileName) + " ("
+							+ imgSize.getWidth() + "px)");
+					BufferedImage rgbImage = imgHandler.removeAlphaChannel(scaledImage);
+
+					// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
+					File directory = new File(
+							propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive") + imgSize.getName());
+					if (!directory.exists()) {
+						directory.mkdirs();
+					}
+
+					imgFile = new File(directory.getPath() + "/" + fileName + ".jpg");
+					ImageIO.write(rgbImage, "jpg", imgFile);
+				}
+			}
+		} catch (IOException e) {
+			psdParseError++;
+			System.out.println(psdParseError);
+			e.printStackTrace();
+		} finally {
+			System.out.println(psdParseError);
+		}
+	}
+
 	public void imageOptim(File file) {
 		String charset = "UTF-8";
 		File uploadFile = file;
@@ -393,8 +573,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	public File chooseFile() {
 		File file = null;
 
@@ -442,7 +621,6 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		fileChooser.setLocation(100, 100);
 		fileChooser
 				.setCurrentDirectory(new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirOriginals")));
-
 		int returnVal = fileChooser.showOpenDialog(null);
 
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -476,7 +654,8 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 
 	public void progressBarUpdate(int progressStepSize) {
 		view.progressBar.setValue(view.progressBar.getValue() + progressStepSize);
-		view.labelLoadManMoving.setLocation(view.progressBar.getValue() * 4, 95);
+		view.progressBar.setString(view.progressBar.getValue() + "/" + view.progressBar.getMaximum());
+		view.labelLoadManMoving.setLocation(view.progressBar.getValue(), 95);
 	}
 
 	public void progressLabelUpdate(String LabelText) {
@@ -500,12 +679,6 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 				view.btnCardBack.setVisible(true);
 				view.cardLayoutContentContainer.next(view.panelContentContainer);
 			}
-		} else if (ae.getSource() == view.btnAddFiles) {
-			addFilesPath();
-		} else if (ae.getSource() == view.btnRemoveFiles) {
-			removeFiles();
-		} else if (ae.getSource() == view.btnClearFileList) {
-			clearList();
 		} else if (ae.getSource() == view.btnSelectAll) {
 			view.checkBoxListStores.selectAll();
 		} else if (ae.getSource() == view.btnDeselectAll) {
@@ -525,6 +698,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 			view.btnCardBack.setVisible(false);
 		} else if (ce.getSource() == view.panelCardTargetStores) {
 			view.checkBoxListStores.setListData(stores);
+			System.out.println(view.btnGrpImageFormat.getSelection().getActionCommand());
 		} else if (ce.getSource() == view.panelCardSummary) {
 			view.btnCardNext.setText("Import");
 			initSelectedStoreList();
@@ -535,13 +709,24 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		} else if (ce.getSource() == view.panelCardProcessing) {
 			view.btnCardBack.setVisible(false);
 			view.btnCardNext.setEnabled(false);
-			Thread t = new Thread() {
-				@Override
-				public void run() {
-					process();
-				}
-			};
-			t.start();
+			if (view.btnGrpImageFormat.getSelection().getActionCommand().equals("PSD") && view.btnGrpImageFormat.getSelection().getActionCommand() != null) {
+				Thread t = new Thread() {
+					@Override
+					public void run() {
+						processPsdFiles();
+					}
+				};
+				t.start();
+				
+			} else if (view.btnGrpImageFormat.getSelection().getActionCommand().equals("JPEG")) {
+				Thread t = new Thread() {
+					@Override
+					public void run() {
+						processJpegFiles();
+					}
+				};
+				t.start();
+			}
 		}
 	}
 

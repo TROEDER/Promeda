@@ -28,7 +28,11 @@ hs_err_pid*
 #.project
 .metadata
 
-# exluded folders #
+# folders #
 lib/
 stores/
 imagemin/
+resource/examples/ImageMagick-7.0.8-11/
+
+# files #
+bin/.gitignore

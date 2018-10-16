@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="de">
+<title></title>
+
+<body>
+{WS-Include}
+<div class="col-xs-12 col-lg-8">
+  <div class="page-header">
+    <h1>SEO Content für das Produkt<br>"~PR-Name~"</h1>
+  </div>
+  {!E-PSEO_Connected_Subshop}
+  {E-PSEO_Error}
+  <div id="SeoProductError" class="alert alert-warning" role="alert">
+    <p>Es ist ein Fehler bei Ihren Eingaben aufgetreten !<br>Bitte überprüfen Sie Ihre Eingaben und versuchen Sie es erneut.</p>
+    <p>~E-PSEO_Error~</p>
+  </div>
+  {/E-PSEO_Error}  
+  
+  {E-PSEO_Success}
+  {!E-PSEO_Name_Changed} 
+  <script type="text/javascript">      
+        document.location.href = "~WS-EnsureNextLinkContainsURLParams~~PR-Link~&otp1=EPSEOfieldchanged".replace(/&amp;/g, "&");
+        </script> 
+  {/!E-PSEO_Name_Changed}
+  {E-PSEO_Name_Changed} 
+  <script type="text/javascript">      
+        document.location.href = "~WS-EnsureNextLinkContainsURLParams~~PR-Link~&otp1=EPSEOnamechanged".replace(/&amp;/g, "&");
+        </script> 
+  {/E-PSEO_Name_Changed}
+  {/E-PSEO_Success}
+  <form class="seoform" action="/websale8/" method="post" id="SeoFormEdit">
+    <input type="hidden" name="Ctx" value="~WS-CTX~">
+    <input type="hidden" name="pi" value="~PR-ProdIndex~">
+    <input type="hidden" name="~E-PSEO_Action_Save~" value="true">
+    <div id="SEOFields" class="form-horizontal">
+      <div class="page-header">
+        <h4>SEO URL des Produktes</h4>
+      </div>
+      <div class="alert alert-warning" role="alert">
+        <p>Um die neue URL für dieses Produkt sofort zu aktivieren, muss das manuelle Generieren im WEBSALE Dienst "TopRank-Manager" durchgeführt werden.</p>
+      </div>
+      {WS-OTP1(EPSEOnamechanged)}
+      <div id="SeoProductSuccess" class="alert alert-success" role="alert">
+        <p>Ihre Eingaben wurden erfolgreich gespeichert !</p>
+      </div>
+      {/WS-OTP1(EPSEOnamechanged)}
+      <div class="well">
+        <div class="form-group{E-PSEO_Error_Name} has-error has-feedback{/E-PSEO_Error_Name}">
+          <label for="~E-PSEO_Name_Input~" class="col-sm-3 control-label">URL-Begriffe <span class="glyphicon glyphicon-info-sign" aria-hidden="true" data-toggle="tooltip" title="Begriff in der URL<br><br>Ist kein URL-Begriff hinterlegt, wird in der URL der Produktname verwendet."></span></label>
+          <div class="col-sm-9">
+            <input type="text" name="~E-PSEO_Name_Input~" maxlength="127" value="~E-PSEO_Name~" class="form-control checklength">
+            <p class="text-right"><span data-counter="~E-PSEO_Name_Input~">0</span> / 127</p>
+            {E-PSEO_Error_Name} <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span> <span class="help-block">~E-PSEO_Error_Name~</span> {/E-PSEO_Error_Name} </div>
+        </div>
+      </div>
+      <div class="page-header">
+        <h4>SEO-Felder des Produktes</h4>
+      </div>
+      <p>Die Eingaben in den SEO Feldern und deren Änderung sind unmittelbar nach dem Speichern sichtbar und aktiv.</p>
+      {WS-OTP1(EPSEOfieldchanged)}
+      <div id="SeoProductSuccess" class="alert alert-success" role="alert">
+        <p>Ihre Eingaben wurden erfolgreich gespeichert !</p>
+      </div>
+      {/WS-OTP1(EPSEOfieldchanged)}
+      <div class="well">
+        <div class="form-group{E-PSEO_Error_Field1} has-error has-feedback{/E-PSEO_Error_Field1}">
+          <label for="~E-PSEO_Field1_Input~" class="col-sm-3 control-label">SEO-Feld 1 <span class="glyphicon glyphicon-info-sign" aria-hidden="true" data-toggle="tooltip" title="SEO-Feld1 wird im Meta Title verwendet.<br><br>Lassen Sie das SEO Feld 1 leer, wird der Produktname verwendet."></span></label>
+          <div class="col-sm-9">
+            <textarea name="~E-PSEO_Field1_Input~" maxlength="4000" class="form-control checklength">~E-PSEO_Field1~</textarea>
+            <p class="text-right"><span data-counter="~E-PSEO_Field1_Input~">0</span> / 4000</p>
+            {E-PSEO_Error_Field1} <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span> <span class="help-block">~E-PSEO_Error_Field1~</span> {/E-PSEO_Error_Field1} </div>
+        </div>
+        <div class="form-group{E-PSEO_Error_Field2} has-error has-feedback{/E-PSEO_Error_Field2}">
+          <label for="~E-PSEO_Field2_Input~" class="col-sm-3 control-label">SEO-Feld 2 <span class="glyphicon glyphicon-info-sign" aria-hidden="true" data-toggle="tooltip" title="SEO-Feld2 wird in der Meta Descr verwendet.<br><br>Lassen Sie das SEO Feld 2 leer, wird der Produktname und die Kurz- resp. Langbeschreibung verwendet."></span></label>
+          <div class="col-sm-9">
+            <textarea name="~E-PSEO_Field2_Input~" maxlength="4000" class="form-control checklength">~E-PSEO_Field2~</textarea>
+            <p class="text-right"><span data-counter="~E-PSEO_Field2_Input~">0</span> / 4000</p>
+            {E-PSEO_Error_Field2} <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span> <span class="help-block">~E-PSEO_Error_Field2~</span> {/E-PSEO_Error_Field2} </div>
+        </div>
+        <div class="form-group{E-PSEO_Error_Field3} has-error has-feedback{/E-PSEO_Error_Field3}">
+          <label for="~E-PSEO_Field3_Input~" class="col-sm-3 control-label">SEO-Feld 3 <span class="glyphicon glyphicon-info-sign" aria-hidden="true" data-toggle="tooltip" title="SEO Feld 3 kann noch frei verwendet werden."></span></label>
+          <div class="col-sm-9">
+            <textarea name="~E-PSEO_Field3_Input~" maxlength="4000" class="form-control checklength">~E-PSEO_Field3~</textarea>
+            <p class="text-right"><span data-counter="~E-PSEO_Field3_Input~">0</span> / 4000</p>
+            {E-PSEO_Error_Field3} <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span> <span class="help-block">~E-PSEO_Error_Field3~</span> {/E-PSEO_Error_Field3} </div>
+        </div>
+        <div class="form-group{E-PSEO_Error_Field4} has-error has-feedback{/E-PSEO_Error_Field4}">
+          <label for="~E-PSEO_Field4_Input~" class="col-sm-3 control-label">SEO-Feld 4 <span class="glyphicon glyphicon-info-sign" aria-hidden="true" data-toggle="tooltip" title="SEO Feld 4 kann noch frei verwendet werden."></span></label>
+          <div class="col-sm-9">
+            <textarea name="~E-PSEO_Field4_Input~" maxlength="4000" class="form-control checklength">~E-PSEO_Field4~</textarea>
+            <p class="text-right"><span data-counter="~E-PSEO_Field4_Input~">0</span> / 4000</p>
+            {E-PSEO_Error_Field4} <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span> <span class="help-block">~E-PSEO_Error_Field4~</span> {/E-PSEO_Error_Field4} </div>
+        </div>
+        <div class="form-group{E-PSEO_Error_Field5} has-error has-feedback{/E-PSEO_Error_Field5}">
+          <label for="~E-PSEO_Field5_Input~" class="col-sm-3 control-label">SEO-Feld 5 <span class="glyphicon glyphicon-info-sign" aria-hidden="true" data-toggle="tooltip" title="SEO Feld 5 kann noch frei verwendet werden."></span></label>
+          <div class="col-sm-9">
+            <textarea name="~E-PSEO_Field5_Input~" maxlength="4000" class="form-control checklength">~E-PSEO_Field5~</textarea>
+            <p class="text-right"><span data-counter="~E-PSEO_Field5_Input~">0</span> / 4000</p>
+            {E-PSEO_Error_Field5} <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span> <span class="help-block">~E-PSEO_Error_Field5~</span> {/E-PSEO_Error_Field5} </div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary pull-right">Eingaben speichern</button>
+    </div>
+  </form>
+  <form class="seoform" action="/websale8/" method="post" id="SeoFormReset">
+    <input type="hidden" name="Ctx" value="~WS-CTX~">
+    <input type="hidden" name="~E-PSEO_Action_Reset~" value="true">
+    <input type="hidden" name="pi" value="~PR-ProdIndex~">
+    <button type="submit" name="~E-PSEO_Action_Reset~" class="btn btn-default">Eingaben zurücksetzen</button>
+  </form>
+  <script>
+		$(document).ready(function(){
+			$('.checklength').keyup(function(){
+				$('span[data-counter='+$(this).attr('name')+']').html($(this).val().length);
+			});
+			$('span[data-counter]').each(function(){
+				$(this).html($('.checklength[name='+$(this).attr('data-counter')+']').val().length);
+			});
+		});
+	</script> 
+  {/!E-PSEO_Connected_Subshop}  
+  
+  {E-PSEO_Connected_Subshop}
+  <div class="alert alert-warning" role="alert"> Leider können Sie in diesem Subshop keinen SEO-Content für Produkte bearbeiten.<br>Bitte nehmen Sie Ihre Änderungen im Subshop ~E-PSEO_connected_Subshop~ vor.<br><br>Für dieses Produkt wurde folgender SEO Content im Subshop ~E-PSEO_connected_Subshop~ hinterlegt:
+    <dl class="dl-horizontal">
+      <dt>URL-Begriffe</dt>
+      <dd>{E-PSEO_Name}~E-PSEO_Name~{/E-PSEO_Name}{!E-PSEO_Name}--{/!E-PSEO_Name}</dd>
+      <dt>SEO-Feld 1</dt>
+      <dd>{E-PSEO_Field1}~E-PSEO_Field1~{/E-PSEO_Field1}{!E-PSEO_Field1}--{/!E-PSEO_Field1}</dd>
+      <dt>SEO-Feld 2</dt>
+      <dd>{E-PSEO_Field2}~E-PSEO_Field2~{/E-PSEO_Field2}{!E-PSEO_Field2}--{/!E-PSEO_Field2}</dd>
+      <dt>SEO-Feld 3</dt>
+      <dd>{E-PSEO_Field3}~E-PSEO_Field3~{/E-PSEO_Field3}{!E-PSEO_Field3}--{/!E-PSEO_Field3}</dd>
+      <dt>SEO-Feld 4</dt>
+      <dd>{E-PSEO_Field4}~E-PSEO_Field4~{/E-PSEO_Field4}{!E-PSEO_Field4}--{/!E-PSEO_Field4}</dd>
+      <dt>SEO-Feld 5</dt>
+      <dd>{E-PSEO_Field5}~E-PSEO_Field5~{/E-PSEO_Field5}{!E-PSEO_Field5}--{/!E-PSEO_Field5}</dd>
+    </dl>
+  </div>
+  {/E-PSEO_Connected_Subshop}
+ </div>
+{/WS-Include}
+</body>
+</html>

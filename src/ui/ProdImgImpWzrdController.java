@@ -9,12 +9,19 @@ import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Vector;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 
@@ -76,32 +83,20 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 		File f = new File(propApp.get("locNetworkRes") + "stores");
 		File[] files = f.listFiles();
 		stores = new Vector<StoreDataModel>();
-		
-		try
-		{
+
+		try {
 			for (File file : files) {
 				if (!file.isDirectory() && FilenameUtils.isExtension(file.getName(), "properties")) {
 					Configuration config = new PropertiesConfiguration(file);
-					String[] imgSizeParams = config.getStringArray("image.size");
-					for(String param : imgSizeParams) {
-						imageSizeList.add(new ImageSize(param.split(",")));
-						System.out.println(new ImageSize(param.split(",")).getName());
-						System.out.println("Groesse: " + imageSizeList.size() + " - " + imageSizeList.lastElement().getWidth());
-					}
-					System.out.println("imageSizeList.size() " + imageSizeList.size() + " - " + imageSizeList.get(0).getName());
-					/*stores.add(new StoreDataModel(config.getString("url"), config.getString("ftp.host"),
-							Integer.parseInt(config.getString("ftp.port")), config.getString("ftp.user"),
-							config.getString("ftp.pswd"), imageSizeList));*/
+					
 					stores.add(new StoreDataModel(config.getString("url"), config.getString("ftp.host"),
-							Integer.parseInt(config.getString("ftp.port")), config.getString("ftp.protocol"), config.getString("ftp.user"),
-							config.getString("ftp.pswd"), config.getList("image.size")));
+							Integer.parseInt(config.getString("ftp.port")), config.getString("ftp.protocol"),
+							config.getString("ftp.user"), config.getString("ftp.pswd"),
+							config.getString("ftp.dir.default"), config.getList("product.image.size")));
 				}
-				imageSizeList.clear();
 			}
-		}
-		catch (ConfigurationException cex)
-		{
-		    // Something went wrong
+		} catch (ConfigurationException cex) {
+			// Something went wrong
 		}
 	}
 	
@@ -163,7 +158,36 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 						imgFile = new File(
 								directory.getPath() + "/" + FilenameUtils.getBaseName(psdFile.getName()) + ".jpg");
 						ImageIO.write(rgbImage, "jpg", imgFile);
+						
+						// COMPRESSION START
+						OutputStream os = new FileOutputStream(imgFile);
 
+						Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
+						ImageWriter writer = (ImageWriter) writers.next();
+
+						ImageOutputStream ios = ImageIO.createImageOutputStream(os);
+						writer.setOutput(ios);
+
+						ImageWriteParam param = writer.getDefaultWriteParam();
+
+						
+						if (param.canWriteProgressive()) {
+							param.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
+						}
+
+						if (param.canWriteCompressed()) {
+							param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+							param.setCompressionQuality(0.7f); // Change the quality value you prefer
+						}
+
+						writer.write(null, new IIOImage(rgbImage, null, null), param);
+
+						os.close();
+						ios.close();
+						writer.dispose();
+						
+						// COMPRESSION END
+						
 						// UPLOAD TO WEBSERVER
 						progressLabelUpdate("Upload " + FilenameUtils.getBaseName(psdFile.getName()) + " ("
 								+ imgSize.getName() + ") to " + store.getStoreName());
@@ -201,6 +225,30 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 		view.btnCardNext.setText("Done");
 	}
 
+	public void imageCompression(File input) throws IOException {
+
+	    BufferedImage image = ImageIO.read(input);
+
+	    File compressedImageFile = new File("compressed_image.jpg");
+	    OutputStream os = new FileOutputStream(compressedImageFile);
+
+	    Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
+	    ImageWriter writer = (ImageWriter) writers.next();
+
+	    ImageOutputStream ios = ImageIO.createImageOutputStream(os);
+	    writer.setOutput(ios);
+
+	    ImageWriteParam param = writer.getDefaultWriteParam();
+
+	    param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+	    param.setCompressionQuality(0.05f);  // Change the quality value you prefer
+	    writer.write(null, new IIOImage(image, null, null), param);
+
+	    os.close();
+	    ios.close();
+	    writer.dispose();
+	}
+	
 	public File[] openFiles() {
 		File[] files = null;
 

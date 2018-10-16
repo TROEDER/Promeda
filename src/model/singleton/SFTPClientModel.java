@@ -9,7 +9,6 @@ package model.singleton;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.Vector;
 
 import com.enterprisedt.util.debug.Level;
 import com.enterprisedt.util.debug.Logger;
@@ -36,7 +35,7 @@ public final class SFTPClientModel {
 	 * Logger for Debugging/Output for Log-File set up logger so that we get some
 	 * output
 	 **/
-	private Logger log = Logger.getLogger(SFTPClientModel.class);
+	// private Logger log = Logger.getLogger(SFTPClientModel.class);
 
 	/*******************************************************************************
 	 * Constructor - Creates FTP for given host data
@@ -93,24 +92,40 @@ public final class SFTPClientModel {
 		}
 	}
 
-	public void upload(File localFile, File remoteFile) {
+	public void changeDir(String dir) {
 		try {
-			SftpATTRS attrs;
-			try {
-				attrs = channelSftp.stat(remoteFile.getParentFile().getName());
-			} catch (Exception e) {
-				channelSftp.mkdir(remoteFile.getParentFile().getName());
-			}
-			channelSftp.cd(remoteFile.getParentFile().getName());
-			channelSftp.put(new FileInputStream(localFile), remoteFile.getName());
-			channelSftp.cd("..");
+			channelSftp.cd(dir);
 		} catch (SftpException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+	}
+	
+	public void makeDir(String dir) {
+		SftpATTRS attrs;
+		try {
+			attrs = channelSftp.stat(dir);
+		} catch (Exception e) {
+			try {
+				channelSftp.mkdir(dir);
+			} catch (SftpException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+	}
+	public void upload(File localFile, File remoteFile) {
+		
+			try {
+				channelSftp.put(new FileInputStream(localFile), remoteFile.getPath());
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SftpException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
 	}
 
 	public void disconnect() {

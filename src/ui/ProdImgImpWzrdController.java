@@ -145,7 +145,7 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 						// RESIZE BUFFEREDIMAGE
 						progressLabelUpdate("Resize " + FilenameUtils.getBaseName(psdFile.getName()) + " to "
 								+ imgSize.getWidth() + "px");
-						BufferedImage scaledImage = imgHandler.resizeImage2(imgSize.getWidth(), imgSize.getWidth(), img);
+						BufferedImage scaledImage = imgHandler.resizeImage(imgSize.getWidth(), imgSize.getWidth(), img);
 
 						// REMOVE ALPHA CHANNEL FROM BUFFEREDIMAGE ( ARGB -> RGB )
 						progressLabelUpdate("Remove Alpha Channel from " + FilenameUtils.getBaseName(psdFile.getName())
@@ -154,7 +154,7 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 
 						// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
 						File directory = new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive")
-								+ imgSize.getName() + "/" + FilenameUtils.getBaseName(psdFile.getName()));
+								+ imgSize.getName());
 						if (!directory.exists()) {
 							directory.mkdirs();
 						}
@@ -181,7 +181,7 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 						if (param.canWriteCompressed()) {
 							param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
 							//param.setCompressionType("JPEG-LS");
-							param.setCompressionQuality(0.7f); // Change the quality value you prefer
+							param.setCompressionQuality(0.78f); // Change the quality value you prefer
 						}
 
 						writer.write(null, new IIOImage(rgbImage, null, null), param);

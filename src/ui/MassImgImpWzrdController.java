@@ -306,7 +306,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 
 							File remoteFile = new File(imgSize.getName() + "/" + imgFile.getName());
 
-							// USWING FTP
+							// USING FTP
 							if (store.getStoreFtpProtocol().equals("ftp")) {
 								if (!ftp.isConnected()) {
 									ftp.connect(store.getStoreFtpServer());
@@ -317,7 +317,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 								ftp.storeFile(remoteFile.getName(), input);
 								ftp.changeToParentDirectory();
 
-								// USING SFTP
+							// USING SFTP
 							} else if (store.getStoreFtpProtocol().equals("sftp")) {
 								if (!sftp.session.isConnected()) {
 									sftp.connect();
@@ -438,7 +438,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 	public void buildImage(String fileName, File psdFile, StoreDataModel store) {
 		System.out.println(fileName + " --> " + psdFile.getName());
 		ImageHandler imgHandler = new ImageHandler();
-		File imgFile;
+		File imgFile = null;
 		BufferedImage img;
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("_yyyyMMdd");
 		String currentDate = LocalDate.now().toString(fmt);
@@ -468,8 +468,13 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 					if (!directory.exists()) {
 						directory.mkdirs();
 					}
-
-					imgFile = new File(directory.getPath() + "/" + fileName + ".jpg");
+					
+					if (view.btnGrpImageFormat.getSelection().getActionCommand().equals("PSD") && view.btnGrpImageFormat.getSelection().getActionCommand() != null) {
+						imgFile = new File(directory.getPath() + "/" + fileName + ".jpg");
+					} else if (view.btnGrpImageFormat.getSelection().getActionCommand().equals("JPEG")) {
+						imgFile = new File(directory.getPath() + "/" + fileName);
+					}
+					
 					ImageIO.write(rgbImage, "jpg", imgFile);
 				}
 			}

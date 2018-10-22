@@ -27,6 +27,7 @@ import org.apache.sanselan.util.IOUtils;
 
 import com.mortennobel.imagescaling.AdvancedResizeOp;
 import com.mortennobel.imagescaling.ResampleOp;
+import com.mortennobel.imagescaling.experimental.ImprovedMultistepRescaleOp;
 
 import psd.model.Psd;
 import psd.parser.PsdInputStream;
@@ -131,6 +132,28 @@ public class ImageHandler {
 		return rescaledBImage;
 	}
 
+	/**
+	 *
+	 * @param width
+	 * @param height
+	 * @param bImage
+	 * @return
+	 */
+	public BufferedImage resizeImage2(int width, int height, BufferedImage bImage) {
+		//ResampleOp resampleOp = new ResampleOp(width, height);
+		ImprovedMultistepRescaleOp rescaleOp = new ImprovedMultistepRescaleOp(width, height);
+
+		//resampleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.Soft);
+		//rescaleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.VerySharp);
+		rescaleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.Soft);
+		
+		// BufferedImage rescaledBImage = resampleOp.filter(bImage,
+		//		new BufferedImage(width, height, bImage.getType()));
+		BufferedImage rescaledBImage = rescaleOp.filter(bImage,
+				new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB));
+		return rescaledBImage;
+	}
+	
 	/**
 	 *
 	 * @param imageARGB

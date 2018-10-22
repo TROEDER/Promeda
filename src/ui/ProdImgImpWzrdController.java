@@ -42,11 +42,13 @@ import model.prototype.StoreDataModel;
 import model.singleton.FtpClientModel;
 import model.singleton.ImageHandler;
 import model.singleton.PropertiesModel;
+import model.singleton.SFTPClientModel;
 
 public class ProdImgImpWzrdController implements ActionListener, ComponentListener {
 
 	private ProdImgImpWzrdView view;
-	private FtpClientModel ftp;
+	private FTPClient ftp = null;
+	private SFTPClientModel sftp = null;
 	private PropertiesModel propApp;
 	private Vector<StoreDataModel> stores;
 	private Vector<StoreDataModel> selectedStores;
@@ -88,7 +90,7 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 			for (File file : files) {
 				if (!file.isDirectory() && FilenameUtils.isExtension(file.getName(), "properties")) {
 					Configuration config = new PropertiesConfiguration(file);
-					
+
 					stores.add(new StoreDataModel(config.getString("url"), config.getString("ftp.host"),
 							Integer.parseInt(config.getString("ftp.port")), config.getString("ftp.protocol"),
 							config.getString("ftp.user"), config.getString("ftp.pswd"),
@@ -99,8 +101,6 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 			// Something went wrong
 		}
 	}
-	
-	
 
 	public void process() {
 
@@ -114,21 +114,26 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 		double progressSteps = psdFileList.size() * selectedStores.size();
 		double progressStepSizef = progressBarMax / progressSteps;
 		int progressStepSize = (int) Math.round(progressStepSizef);
-		
-		try {
-			
-			for (StoreDataModel store : selectedStores) {
-				FTPClient f = new FTPClient();
-			    f.connect(store.getStoreFtpServer());
-			    f.login(store.getStoreFtpUser(), store.getStoreFtpPass());
-			    f.setFileType(FTP.BINARY_FILE_TYPE);
-			    
+
+		for (StoreDataModel store : selectedStores) {
+			try {
+				if (store.getStoreFtpProtocol().equals("ftp")) {
+					ftp = new FTPClient();
+					ftp.connect(store.getStoreFtpServer());
+					ftp.login(store.getStoreFtpUser(), store.getStoreFtpPass());
+					ftp.setFileType(FTP.BINARY_FILE_TYPE);
+				} else if (store.getStoreFtpProtocol().equals("sftp")) {
+					sftp = new SFTPClientModel(store.getStoreFtpServer(), store.getStoreFtpPort(),
+							store.getStoreFtpUser(), store.getStoreFtpPass(), store.getDirDefault());
+					sftp.connect();
+				}
+
 				for (File psdFile : psdFileList) {
 
 					// COPY PSD FILE TO ORIGINALS FOLDER
 					copyFile(psdFile,
 							new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirOriginals")
-									+ FilenameUtils.getBaseName(psdFile.getName()) + "/"
+									+ FilenameUtils.getBaseName(psdFile.getName()) + File.separator
 									+ FilenameUtils.getBaseName(psdFile.getName()) + currentDate + "."
 									+ FilenameUtils.getExtension(psdFile.getName())));
 
@@ -140,8 +145,7 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 						// RESIZE BUFFEREDIMAGE
 						progressLabelUpdate("Resize " + FilenameUtils.getBaseName(psdFile.getName()) + " to "
 								+ imgSize.getWidth() + "px");
-						BufferedImage scaledImage = imgHandler.resizeImage(imgSize.getWidth(),
-								imgSize.getWidth(), img);
+						BufferedImage scaledImage = imgHandler.resizeImage2(imgSize.getWidth(), imgSize.getWidth(), img);
 
 						// REMOVE ALPHA CHANNEL FROM BUFFEREDIMAGE ( ARGB -> RGB )
 						progressLabelUpdate("Remove Alpha Channel from " + FilenameUtils.getBaseName(psdFile.getName())
@@ -157,8 +161,8 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 
 						imgFile = new File(
 								directory.getPath() + "/" + FilenameUtils.getBaseName(psdFile.getName()) + ".jpg");
-						//ImageIO.write(rgbImage, "jpg", imgFile);
-						
+						// ImageIO.write(rgbImage, "jpg", imgFile);
+
 						// COMPRESSION START
 						OutputStream os = new FileOutputStream(imgFile);
 
@@ -170,13 +174,13 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 
 						ImageWriteParam param = writer.getDefaultWriteParam();
 
-						
 						if (param.canWriteProgressive()) {
 							param.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
 						}
 
 						if (param.canWriteCompressed()) {
 							param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+							//param.setCompressionType("JPEG-LS");
 							param.setCompressionQuality(0.7f); // Change the quality value you prefer
 						}
 
@@ -185,39 +189,42 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 						os.close();
 						ios.close();
 						writer.dispose();
-						
+
 						// COMPRESSION END
-						
+
 						// UPLOAD TO WEBSERVER
 						progressLabelUpdate("Upload " + FilenameUtils.getBaseName(psdFile.getName()) + " ("
 								+ imgSize.getName() + ") to " + store.getStoreName());
 
-						File remoteFile = new File(imgSize.getName() + "/" + imgFile.getName());
-						// VIA FTP
+						File remoteFile = new File(imgFile.getName());
+
+						// USING FTP
 						if (store.getStoreFtpProtocol().equals("ftp")) {
-							if (!f.isConnected()) {
-								f.connect(store.getStoreFtpServer());
+							if (!ftp.isConnected()) {
+								ftp.connect(store.getStoreFtpServer());
 							}
-							System.out.println("here");
 							InputStream input = new FileInputStream(imgFile);
-							f.mkd(imgSize.getName());
-							f.changeWorkingDirectory(imgSize.getName());
-							f.storeFile(remoteFile.getName(), input);
-							f.changeToParentDirectory();
-							
-							// VIA SFTP
+							ftp.mkd(imgSize.getName());
+							ftp.changeWorkingDirectory(imgSize.getName());
+							ftp.storeFile(remoteFile.getName(), input);
+							ftp.changeToParentDirectory();
+
+						// USING SFTP
 						} else if (store.getStoreFtpProtocol().equals("sftp")) {
-							if (!ftp.session.isConnected()) {
-								ftp.sftpConnect();
+							if (!sftp.session.isConnected()) {
+								sftp.connect();
 							}
-							ftp.sftpUpload(imgFile, remoteFile);
+							sftp.makeDir(imgSize.getName());
+							sftp.changeDir(imgSize.getName());
+							sftp.upload(imgFile, remoteFile);
+							sftp.changeDir("..");
 						}
 					}
 					progressBarUpdate(progressStepSize);
 				}
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		progressBarUpdate(100);
 		progressLabelUpdate("complete");
@@ -227,28 +234,28 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 
 	public void imageCompression(File input) throws IOException {
 
-	    BufferedImage image = ImageIO.read(input);
+		BufferedImage image = ImageIO.read(input);
 
-	    File compressedImageFile = new File("compressed_image.jpg");
-	    OutputStream os = new FileOutputStream(compressedImageFile);
+		File compressedImageFile = new File("compressed_image.jpg");
+		OutputStream os = new FileOutputStream(compressedImageFile);
 
-	    Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
-	    ImageWriter writer = (ImageWriter) writers.next();
+		Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
+		ImageWriter writer = (ImageWriter) writers.next();
 
-	    ImageOutputStream ios = ImageIO.createImageOutputStream(os);
-	    writer.setOutput(ios);
+		ImageOutputStream ios = ImageIO.createImageOutputStream(os);
+		writer.setOutput(ios);
 
-	    ImageWriteParam param = writer.getDefaultWriteParam();
+		ImageWriteParam param = writer.getDefaultWriteParam();
 
-	    param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-	    param.setCompressionQuality(0.05f);  // Change the quality value you prefer
-	    writer.write(null, new IIOImage(image, null, null), param);
+		param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+		param.setCompressionQuality(0.05f); // Change the quality value you prefer
+		writer.write(null, new IIOImage(image, null, null), param);
 
-	    os.close();
-	    ios.close();
-	    writer.dispose();
+		os.close();
+		ios.close();
+		writer.dispose();
 	}
-	
+
 	public File[] openFiles() {
 		File[] files = null;
 
@@ -367,7 +374,7 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 	@Override
 	public void componentMoved(ComponentEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

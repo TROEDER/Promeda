@@ -248,7 +248,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 
 						if (param.canWriteCompressed()) {
 							param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-							param.setCompressionQuality(0.7f); // Change the quality value you prefer
+							param.setCompressionQuality(0.78f); // Change the quality value you prefer
 						}
 
 						writer.write(null, new IIOImage(scaledImage, null, null), param);

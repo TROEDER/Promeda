@@ -33,6 +33,8 @@ public class SettingsView extends JFrame {
 	public StoreList listStoreSettings;
 	public JButton btnSettingsCancel;
 	public JButton btnSettingsSave;
+	public JButton btnBrowseNetworkMedia;
+	public JButton btnBrowseNetworkRes;
 
 	/**
 	 * Create the frame.
@@ -91,6 +93,16 @@ public class SettingsView extends JFrame {
 		textFieldMediaBackupDirLive.setColumns(10);
 		textFieldMediaBackupDirLive.setBounds(186, 91, 221, 20);
 		panelSystemConfig.add(textFieldMediaBackupDirLive);
+		
+		btnBrowseNetworkRes = new JButton("Browse");
+		btnBrowseNetworkRes.addActionListener(controller);
+		btnBrowseNetworkRes.setBounds(417, 7, 89, 23);
+		panelSystemConfig.add(btnBrowseNetworkRes);
+		
+		btnBrowseNetworkMedia = new JButton("Browse");
+		btnBrowseNetworkMedia.addActionListener(controller);
+		btnBrowseNetworkMedia.setBounds(417, 34, 89, 23);
+		panelSystemConfig.add(btnBrowseNetworkMedia);
 		tabbedPane.setEnabledAt(0, true);
 		
 		JPanel panelStoreConfig = new JPanel();

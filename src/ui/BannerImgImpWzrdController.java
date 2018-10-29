@@ -67,6 +67,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 	private BufferedImage srcImage;
 	private FTPClient ftp = null;
 	private SFTPClientModel sftp = null;
+	private ImageHandler imgHandler = new ImageHandler();
 
 	public BannerImgImpWzrdController() {
 		initProperties();
@@ -171,7 +172,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 	public void process() {
 
 		String bannerName = view.textFieldBannerFileName.getText();
-		ImageHandler imgHandler = new ImageHandler();
+		imgHandler = new ImageHandler();
 		File imgFile;
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("_yyyyMMdd");
 		String currentDate = LocalDate.now().toString(fmt);
@@ -203,7 +204,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 				// GET BUFFEREDIMAGE FROM PSD FILE
 				// img = imgHandler.getImageFromPsd(psdFile);
 
-				progressThumbUpdate(imgHandler.resizeImage(100, 100, srcImage));
+				progressThumbUpdate(imgHandler.resizeImage2(100, 100, srcImage));
 				for (BannerModel banner : selectedBannerTemplates) {
 
 					Vector<BufferedImage> scaledImages = new Vector<BufferedImage>();
@@ -217,7 +218,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 						// RESIZE BUFFEREDIMAGE
 						progressLabelUpdate("Resize " + FilenameUtils.getBaseName(srcFile.getName()) + " to "
 								+ dim.getValue().width + " " + dim.getValue().height + " px");
-						BufferedImage scaledImage = imgHandler.resizeImage(dim.getValue().width, dim.getValue().height,
+						BufferedImage scaledImage = imgHandler.resizeImage2(dim.getValue().width, dim.getValue().height,
 								srcImage);
 
 						// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
@@ -366,10 +367,16 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 		String fileExt = FilenameUtils.getExtension(srcFile.getName());
 		System.out.println(fileExt);
 		try {
-			if (fileExt == "psd") {
+			if (fileExt.equalsIgnoreCase("psd") || fileExt.equalsIgnoreCase("psb")) {
 				Psd psd = new Psd(srcFile);
 				srcImage = psd.getImage();
 				view.labelPreviewPsdImage.setIcon(new ImageIcon(srcImage));
+				float factor = (float)300 / (float)srcImage.getHeight();
+				System.out.println(factor);
+				int newWidth = Math.round((float)srcImage.getWidth()*factor);
+				System.out.println(newWidth);
+				ImageIcon iconHelper = new ImageIcon(imgHandler.resizeImage2(newWidth, 300, srcImage));
+				view.labelPreviewPsdImage.setIcon(iconHelper);
 			} else if (fileExt.equalsIgnoreCase("jpg") || fileExt.equalsIgnoreCase("jpeg")) {
 				System.out.println(srcFile.getName());
 				srcImage = ImageIO.read(srcFile);

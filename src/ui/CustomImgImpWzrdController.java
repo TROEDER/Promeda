@@ -53,9 +53,9 @@ import model.singleton.SFTPClientModel;
 import psd.model.Layer;
 import psd.model.Psd;
 
-public class BannerImgImpWzrdController implements ActionListener, ComponentListener {
+public class CustomImgImpWzrdController implements ActionListener, ComponentListener {
 
-	private BannerImgImpWzrdView view;
+	private CustomImgImpWzrdView view;
 	private PropertiesModel propApp;
 	private Vector<StoreDataModel> stores;
 	private Vector<StoreDataModel> selectedStores;
@@ -69,14 +69,14 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 	private SFTPClientModel sftp = null;
 	private ImageHandler imgHandler = new ImageHandler();
 
-	public BannerImgImpWzrdController() {
+	public CustomImgImpWzrdController() {
 		initProperties();
 		initView();
 		//initBannerDim();
 		initStores();
 	}
 
-	public BannerImgImpWzrdController(File psdFile) {
+	public CustomImgImpWzrdController(File psdFile) {
 		initProperties();
 		//initBannerDim();
 		initView();
@@ -92,7 +92,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 
 	private void initView() {
 
-		view = new BannerImgImpWzrdView(this);
+		view = new CustomImgImpWzrdView(this);
 		view.setVisible(true);
 	}
 
@@ -266,7 +266,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 
 						File remoteFile = new File(imgFile.getName());
 
-						// USING FTP
+						// USWING FTP
 						if (store.getStoreFtpProtocol().equals("ftp")) {
 							if (!ftp.isConnected()) {
 								ftp.connect(store.getStoreFtpServer());

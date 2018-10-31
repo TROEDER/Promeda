@@ -248,6 +248,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 					ftp = new FTPClient();
 					ftp.connect(store.getStoreFtpServer());
 					ftp.login(store.getStoreFtpUser(), store.getStoreFtpPass());
+					ftp.cwd(store.getDirDefault());
 					ftp.setFileType(FTP.BINARY_FILE_TYPE);
 				} else if (store.getStoreFtpProtocol().equals("sftp")) {
 					sftp = new SFTPClientModel(store.getStoreFtpServer(), store.getStoreFtpPort(),

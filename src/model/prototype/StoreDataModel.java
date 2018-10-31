@@ -68,6 +68,7 @@ public class StoreDataModel {
 		for (Object imageSizeParams : storeImageSizeList) {
 			storeImageSizeListNew.add(new ImageSize(imageSizeParams.toString().split(",")));
 			System.out.println("xyz" + new ImageSize(imageSizeParams.toString().split(",")).getHeight());
+			
 		}
 		selectStatus = false;
 	}

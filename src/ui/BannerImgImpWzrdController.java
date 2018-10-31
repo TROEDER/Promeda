@@ -190,6 +190,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 					ftp = new FTPClient();
 					ftp.connect(store.getStoreFtpServer());
 					ftp.login(store.getStoreFtpUser(), store.getStoreFtpPass());
+					ftp.cwd(store.getDirDefault());
 					ftp.setFileType(FTP.BINARY_FILE_TYPE);
 				} else if (store.getStoreFtpProtocol().equals("sftp")) {
 					sftp = new SFTPClientModel(store.getStoreFtpServer(), store.getStoreFtpPort(),
@@ -218,7 +219,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 						// RESIZE BUFFEREDIMAGE
 						progressLabelUpdate("Resize " + FilenameUtils.getBaseName(srcFile.getName()) + " to "
 								+ dim.getValue().width + " " + dim.getValue().height + " px");
-						BufferedImage scaledImage = imgHandler.resizeImage2(dim.getValue().width, dim.getValue().height,
+						BufferedImage scaledImage = imgHandler.resizeImage(dim.getValue().width, dim.getValue().height,
 								srcImage);
 
 						// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
@@ -246,7 +247,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 						if (param.canWriteProgressive()) {
 							param.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
 						}
-
+						
 						if (param.canWriteCompressed()) {
 							param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
 							param.setCompressionQuality(0.78f); // Change the quality value you prefer

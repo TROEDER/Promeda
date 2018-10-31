@@ -8,7 +8,9 @@ package model.singleton;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -26,8 +28,9 @@ import org.apache.sanselan.formats.psd.PsdImageParser;
 import org.apache.sanselan.util.IOUtils;
 
 import com.mortennobel.imagescaling.AdvancedResizeOp;
+import com.mortennobel.imagescaling.AdvancedResizeOp.UnsharpenMask;
+import com.mortennobel.imagescaling.MultiStepRescaleOp;
 import com.mortennobel.imagescaling.ResampleOp;
-import com.mortennobel.imagescaling.experimental.ImprovedMultistepRescaleOp;
 
 import psd.model.Psd;
 import psd.parser.PsdInputStream;
@@ -121,7 +124,7 @@ public class ImageHandler {
 		ResampleOp resampleOp = new ResampleOp(width, height);
 		//ImprovedMultistepRescaleOp rescaleOp = new ImprovedMultistepRescaleOp(width, height);
 
-		resampleOp.setUnsharpenMask(ResampleOp.UnsharpenMask.Soft);
+		resampleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.Soft);
 		//rescaleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.VerySharp);
 		//rescaleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.Soft);
 		
@@ -141,16 +144,18 @@ public class ImageHandler {
 	 */
 	public BufferedImage resizeImage2(int width, int height, BufferedImage bImage) {
 		//ResampleOp resampleOp = new ResampleOp(width, height);
-		AdvancedResizeOp rescaleOp = new ImprovedMultistepRescaleOp(width, height);
-		
+		MultiStepRescaleOp rescaleOp = new MultiStepRescaleOp(width, height, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
 		//resampleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.Soft);
 		//rescaleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.VerySharp);
-		rescaleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.Soft);
+		rescaleOp.setUnsharpenMask(UnsharpenMask.Soft);
 		
 		// BufferedImage rescaledBImage = resampleOp.filter(bImage,
 		//		new BufferedImage(width, height, bImage.getType()));
-		BufferedImage rescaledBImage = rescaleOp.filter(bImage,
-				new BufferedImage(width, height, bImage.getType()));
+//		BufferedImage rescaledBImage = rescaleOp.filter(bImage,
+//				new BufferedImage(width, height, bImage.getType()));
+		BufferedImage rescaledBImage = rescaleOp.doFilter(bImage,
+				rescaleOp.createCompatibleDestImage(bImage,
+						bImage.getColorModel()), height, height);
 		return rescaledBImage;
 	}
 	

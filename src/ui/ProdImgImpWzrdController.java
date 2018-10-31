@@ -121,6 +121,7 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 					ftp = new FTPClient();
 					ftp.connect(store.getStoreFtpServer());
 					ftp.login(store.getStoreFtpUser(), store.getStoreFtpPass());
+					ftp.cwd(store.getDirDefault());
 					ftp.setFileType(FTP.BINARY_FILE_TYPE);
 				} else if (store.getStoreFtpProtocol().equals("sftp")) {
 					sftp = new SFTPClientModel(store.getStoreFtpServer(), store.getStoreFtpPort(),
@@ -204,10 +205,10 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 								ftp.connect(store.getStoreFtpServer());
 							}
 							InputStream input = new FileInputStream(imgFile);
-							ftp.mkd(imgSize.getName());
-							ftp.changeWorkingDirectory(imgSize.getName());
+//							ftp.mkd(imgSize.getName());
+//							ftp.cwd(imgSize.getName());
 							ftp.storeFile(remoteFile.getName(), input);
-							ftp.changeToParentDirectory();
+//							ftp.changeToParentDirectory();
 
 						// USING SFTP
 						} else if (store.getStoreFtpProtocol().equals("sftp")) {

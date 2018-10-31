@@ -30,6 +30,7 @@ import org.apache.sanselan.util.IOUtils;
 import com.mortennobel.imagescaling.AdvancedResizeOp;
 import com.mortennobel.imagescaling.AdvancedResizeOp.UnsharpenMask;
 import com.mortennobel.imagescaling.MultiStepRescaleOp;
+import com.mortennobel.imagescaling.ResampleFilters;
 import com.mortennobel.imagescaling.ResampleOp;
 
 import psd.model.Psd;
@@ -123,7 +124,7 @@ public class ImageHandler {
 	public BufferedImage resizeImage(int width, int height, BufferedImage bImage) {
 		ResampleOp resampleOp = new ResampleOp(width, height);
 		//ImprovedMultistepRescaleOp rescaleOp = new ImprovedMultistepRescaleOp(width, height);
-
+		resampleOp.setFilter(new ResampleFilters().getMitchellFilter());
 		resampleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.Soft);
 		//rescaleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.VerySharp);
 		//rescaleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.Soft);

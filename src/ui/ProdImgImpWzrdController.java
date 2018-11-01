@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -43,6 +44,7 @@ import model.singleton.FtpClientModel;
 import model.singleton.ImageHandler;
 import model.singleton.PropertiesModel;
 import model.singleton.SFTPClientModel;
+import psd.model.Psd;
 
 public class ProdImgImpWzrdController implements ActionListener, ComponentListener {
 
@@ -55,6 +57,7 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 	private File[] psdFiles;
 	private Vector<File> psdFileList = new Vector<File>();
 	Vector<ImageSize> imageSizeList = new Vector<ImageSize>();
+	private BufferedImage srcImage;
 
 	public ProdImgImpWzrdController() {
 		initProperties();
@@ -139,7 +142,7 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 									+ FilenameUtils.getExtension(psdFile.getName())));
 
 					// GET BUFFEREDIMAGE FROM PSD FILE
-					img = imgHandler.getImageFromPsd(psdFile);
+					img = initSrcFile(psdFile);
 					progressThumbUpdate(imgHandler.resizeImage(100, 100, img));
 					for (ImageSize imgSize : store.getStoreImageSizeListNew()) {
 
@@ -233,6 +236,25 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 		view.btnCardNext.setText("Done");
 	}
 
+	public BufferedImage initSrcFile(File srcFile) {
+		String fileExt = FilenameUtils.getExtension(srcFile.getName());
+		BufferedImage srcImage = null;
+		try {
+			if (fileExt.equalsIgnoreCase("psd") || fileExt.equalsIgnoreCase("psb")) {
+				// Psd psd = new Psd(srcFile);
+				ImageHandler imgHandler = new ImageHandler();
+				srcImage = imgHandler.getImageFromPsd2(srcFile);
+			} else if (fileExt.equalsIgnoreCase("jpg") || fileExt.equalsIgnoreCase("jpeg")) {
+				srcImage = ImageIO.read(srcFile);
+				
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return srcImage;
+	}
+	
 	public void imageCompression(File input) throws IOException {
 
 		BufferedImage image = ImageIO.read(input);

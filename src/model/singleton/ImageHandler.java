@@ -145,10 +145,10 @@ public class ImageHandler {
 	 */
 	public BufferedImage resizeImage2(int width, int height, BufferedImage bImage) {
 		//ResampleOp resampleOp = new ResampleOp(width, height);
-		MultiStepRescaleOp rescaleOp = new MultiStepRescaleOp(width, height, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+		MultiStepRescaleOp rescaleOp = new MultiStepRescaleOp(width, height, RenderingHints.VALUE_RENDER_QUALITY);
 		//resampleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.Soft);
 		//rescaleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.VerySharp);
-		rescaleOp.setUnsharpenMask(UnsharpenMask.Soft);
+		rescaleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.Soft);
 		
 		// BufferedImage rescaledBImage = resampleOp.filter(bImage,
 		//		new BufferedImage(width, height, bImage.getType()));

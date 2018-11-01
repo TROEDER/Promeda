@@ -37,6 +37,10 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.sanselan.ImageReadException;
+import org.apache.sanselan.ImageWriteException;
+import org.apache.sanselan.Sanselan;
+import org.apache.sanselan.common.RgbBufferedImageFactory;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -212,16 +216,18 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 					scaledImages.clear();
 
 					for (Entry<String, Dimension> dim : banner.getDimensions().entrySet()) {
+						
 						// RESIZE BUFFEREDIMAGE
 						progressLabelUpdate("Resize " + FilenameUtils.getBaseName(srcFile.getName()) + " to "
 								+ dim.getValue().width + " " + dim.getValue().height + " px");
-
-						// RESIZE BUFFEREDIMAGE
-						progressLabelUpdate("Resize " + FilenameUtils.getBaseName(srcFile.getName()) + " to "
-								+ dim.getValue().width + " " + dim.getValue().height + " px");
-						BufferedImage scaledImage = imgHandler.resizeImage(dim.getValue().width, dim.getValue().height,
+						BufferedImage scaledImage = imgHandler.resizeImage2(dim.getValue().width, dim.getValue().height,
 								srcImage);
 
+						// REMOVE ALPHA CHANNEL FROM BUFFEREDIMAGE ( ARGB -> RGB )
+						progressLabelUpdate("Remove Alpha Channel from " + FilenameUtils.getBaseName(srcFile.getName())
+								+ dim.getValue().width + " " + dim.getValue().height + " px");
+						BufferedImage rgbImage = imgHandler.removeAlphaChannel(scaledImage);
+						
 						// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
 						File directory = new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive")
 								+ banner.getDirname() + File.separator + dim.getKey());
@@ -253,8 +259,15 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 							param.setCompressionQuality(0.78f); // Change the quality value you prefer
 						}
 
-						writer.write(null, new IIOImage(scaledImage, null, null), param);
-
+						try {
+							Sanselan.writeImage(rgbImage, imgFile, Sanselan.guessFormat(imgFile), null);
+						} catch (ImageWriteException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (ImageReadException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						os.close();
 						ios.close();
 						writer.dispose();

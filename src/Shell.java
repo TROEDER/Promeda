@@ -9,6 +9,10 @@ public class Shell {
 
 	public static void main(String[] args) throws IOException {
 
+
+	}
+	
+	public void imageCompression() throws IOException {
 		File files = null;
 
 		JFileChooser fileChooser = new JFileChooser();

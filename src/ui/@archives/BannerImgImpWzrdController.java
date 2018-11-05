@@ -217,7 +217,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 				// GET BUFFEREDIMAGE FROM PSD FILE
 				// img = imgHandler.getImageFromPsd(psdFile);
 
-				progressThumbUpdate(imgHandler.resizeImage(100, 100, srcImage));
+				progressThumbUpdate(imgHandler.resizeImage2(100, 100, srcImage));
 				for (BannerModel banner : selectedBannerTemplates) {
 
 					Vector<BufferedImage> scaledImages = new Vector<BufferedImage>();
@@ -228,7 +228,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 						// RESIZE BUFFEREDIMAGE
 						progressLabelUpdate("Resize " + FilenameUtils.getBaseName(srcFile.getName()) + " to "
 								+ dim.getValue().width + " " + dim.getValue().height + " px");
-						BufferedImage scaledImage = imgHandler.resizeImage(dim.getValue().width, dim.getValue().height,
+						BufferedImage scaledImage = imgHandler.resizeImage2(dim.getValue().width, dim.getValue().height,
 								srcImage);
 
 						// REMOVE ALPHA CHANNEL FROM BUFFEREDIMAGE ( ARGB -> RGB )
@@ -245,7 +245,14 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 
 						imgFile = new File(directory.getPath() + File.separator + bannerName + ".jpg");
 						//ImageIO.write(scaledImage, "jpg", imgFile);
-				    
+				        
+						FileImageInputStream in = new FileImageInputStream(srcFile);
+				        Iterator<ImageReader> iterator = ImageIO.getImageReaders(in);
+				        ImageReader reader = iterator.next();
+				        reader.setInput(in);
+							
+				        IIOMetadata data = reader.getImageMetadata(0);
+				        
 						// COMPRESSION START
 						OutputStream os = new FileOutputStream(imgFile);
 						Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
@@ -266,7 +273,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 							param.setCompressionQuality(0.85f); // Change the quality value you prefer
 						}
 
-						writer.write(writer.getDefaultStreamMetadata(param), new IIOImage(rgbImage, null, null), param);
+						writer.write(data, new IIOImage(rgbImage, null, null), param);
 
 						os.close();
 						ios.close();

@@ -8,13 +8,16 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -244,34 +247,37 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 						}
 
 						imgFile = new File(directory.getPath() + File.separator + bannerName + ".jpg");
-						//ImageIO.write(scaledImage, "jpg", imgFile);
-				    
+						ImageIO.write(rgbImage, "jpeg", imgFile);
+						try {
+							exec();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						// COMPRESSION START
-						OutputStream os = new FileOutputStream(imgFile);
-						Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
-						ImageWriter writer = (ImageWriter) writers.next();
-
-						ImageOutputStream ios = ImageIO.createImageOutputStream(os);
-						writer.setOutput(ios);
-
-						ImageWriteParam param = writer.getDefaultWriteParam();
-
-						if (param.canWriteProgressive()) {
-							param.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
-						}
-
-						if (param.canWriteCompressed()) {
-							param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-							//param.setCompressionType("JPEG-LS");
-							param.setCompressionQuality(0.85f); // Change the quality value you prefer
-						}
-
-						writer.write(writer.getDefaultStreamMetadata(param), new IIOImage(rgbImage, null, null), param);
-
-						os.close();
-						ios.close();
-						writer.dispose();
-
+//						OutputStream os = new FileOutputStream(imgFile);
+//						Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
+//						ImageWriter writer = (ImageWriter) writers.next();
+//
+//						ImageOutputStream ios = ImageIO.createImageOutputStream(os);
+//						writer.setOutput(ios);
+//
+//						ImageWriteParam param = writer.getDefaultWriteParam();
+//
+//						if (param.canWriteProgressive()) {
+//							param.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
+//						}
+//
+//						if (param.canWriteCompressed()) {
+//							param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+//							param.setCompressionQuality(0.85f);
+//						}
+//
+//						writer.write(writer.getDefaultStreamMetadata(param), new IIOImage(rgbImage, null, null), param);
+//
+//						os.close();
+//						ios.close();
+//						writer.dispose();
 						// COMPRESSION END
 						
 						// UPLOAD TO (REMOTE-)WEBSERVER
@@ -324,6 +330,54 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 		view.btnCardNext.setText("Done");
 	}
 
+	public void exec() throws IOException, InterruptedException {
+		String destFolder="\\\\SVR-APP-11\\Promeda-bin";
+		//String destFolder = "C:\\Web\\htdocs\\Promeda-bin";
+		/*
+		 * Location where the Nodejs Project is Present
+		 */
+		System.out.println(destFolder);
+
+		String cmdPrompt = "cmd";
+		String path = "/c";
+		String npm = isWindows() ? "npm.cmd" : "npm";
+		String npmUpdate = npm + " run newer-mozjpeg";
+
+		File jsFile = new File(destFolder);
+		List<String> updateCommand = new ArrayList<String>();
+		updateCommand.add(cmdPrompt);
+		updateCommand.add(path);
+		// updateCommand.add("gulp");
+		updateCommand.add(npmUpdate);
+		// updateCommand.add("jpegtran");
+		runExecution(updateCommand, jsFile);
+	}
+
+	public static void runExecution(List<String> command, File navigatePath) throws IOException, InterruptedException {
+
+		System.out.println(command);
+
+		ProcessBuilder executeProcess = new ProcessBuilder(command);
+		executeProcess.directory(navigatePath);
+		Process resultExecution = executeProcess.start();
+		int result = resultExecution.waitFor();
+		BufferedReader br = new BufferedReader(new InputStreamReader(resultExecution.getInputStream()));
+		StringBuffer sb = new StringBuffer();
+
+		String line;
+		while ((line = br.readLine()) != null) {
+			sb.append(line + System.getProperty("line.separator"));
+			System.out.println(sb.toString());
+		}
+		br.close();
+		int resultStatust = resultExecution.waitFor();
+		System.out.println("Result of Execution" + (resultStatust == 0 ? "\tSuccess" : "\tFailure"));
+	}
+
+	static boolean isWindows() {
+		return System.getProperty("os.name").toLowerCase().contains("win");
+	}
+	
 	public File openFile() {
 		File file = null;
 

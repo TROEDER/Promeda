@@ -29,7 +29,10 @@ public class BannerModel {
 		
 		this.name = name;
 		this.dirname = props.getString("dirname");
-		
+		Iterator<String> keyIter = props.getKeys();
+		while(keyIter.hasNext()) {
+			
+		}
 		if(props.containsKey("sm.width") && props.containsKey("sm.height")) {
 			dimSM = new Dimension(props.getInt("sm.width"), props.getInt("sm.height"));
 			dimensions.put("sm", dimSM);

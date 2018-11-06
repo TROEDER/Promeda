@@ -52,5 +52,10 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/Promeda/lib/sanselan-0.97-incubator-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/ij.jar" sourcepath="lib/ij152h-src">
+		<attributes>
+			<attribute name="javadoc_location" value="https://javadoc.scijava.org/ImageJ/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

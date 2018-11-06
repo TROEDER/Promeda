@@ -88,9 +88,10 @@ public class ImageHandler {
 		ImageFormat imageFormat;
 		try {
 			imageFormat = Sanselan.guessFormat(psdFile);
-			if (imageFormat.equals(ImageFormat.IMAGE_FORMAT_PSD))
+			if (imageFormat.equals(ImageFormat.IMAGE_FORMAT_PSD) || imageFormat.equals(ImageFormat.IMAGE_FORMAT_JPEG))
 		    {
 		    	img = Sanselan.getBufferedImage(psdFile);
+		    	System.out.println(Sanselan.dumpImageFile(psdFile));
 		    }		
 		} catch (ImageReadException e) {
 			e.printStackTrace();

@@ -56,8 +56,8 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 	private Vector<StoreDataModel> stores;
 	private Vector<StoreDataModel> selectedStores;
 	private File psdFilesPath;
-	private Vector<File> psdFileList = new Vector<File>();
-	private Vector<String> psdStringList = new Vector<String>();
+	private Vector<File> srcFileList = new Vector<File>();
+	private Vector<String> srcFileNameList = new Vector<String>();
 	private Vector<ImageSize> imageSizeList = new Vector<ImageSize>();
 	private FTPClient ftp = null;
 	private SFTPClientModel sftp = null;
@@ -73,7 +73,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		initProperties();
 		initView();
 		initStores();
-		this.psdFileList = psdFileList;
+		this.srcFileList = psdFileList;
 		view.fileListSourceFiles.setListData(psdFileList);
 	}
 
@@ -135,14 +135,14 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 				System.out.println("mark 2");
 				if (psdFile.isDirectory() && psdFile.exists()) {
 					System.out.println("mark 3");
-					psdFileList.add(psdFile);
+					srcFileList.add(psdFile);
 					// System.out.println("mark 4");
 					// psdFileList.addAll(Arrays.asList(getPsdFileAdditionals(productID,
 					// psdFilesPath)));
 					System.out.println("mark 4");
 					for (File psdFileAdditional : getPsdFileAdditionals(productID, psdFilesPath)) {
 						System.out.println("mark 5.1");
-						psdFileList.add(psdFileAdditional);
+						srcFileList.add(psdFileAdditional);
 						System.out.println("mark 5.2");
 					}
 				}
@@ -156,13 +156,13 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 	public void readCsv(File csvFile) {
 		String productID;
 		Scanner scanner;
-		psdStringList.clear();
+		srcFileNameList.clear();
 
 		try {
 			scanner = new Scanner(csvFile);
 			while (scanner.hasNext()) {
 				productID = scanner.next();
-				psdStringList.add(productID);
+				srcFileNameList.add(productID);
 				System.out.println(productID);
 			}
 			scanner.close();
@@ -238,7 +238,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		String currentDate = LocalDate.now().toString(fmt);
 
 		double progressBarMax = 100;
-		double progressSteps = psdFileList.size() * selectedStores.size();
+		double progressSteps = srcFileList.size() * selectedStores.size();
 		double progressStepSizef = progressBarMax / progressSteps;
 		int progressStepSize = (int) Math.round(progressStepSizef);
 
@@ -256,7 +256,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 					sftp.connect();
 				}
 
-				for (File psdFiles : psdFileList) {
+				for (File psdFiles : srcFileList) {
 					try {
 						// GET LATEST PSD VERSION (VIA FILENAME ATTACHMENT '_YYmmdd' (Date))
 						File[] psdFileVersionSort = sortByNumber(psdFiles.listFiles());
@@ -345,16 +345,16 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		psdParseError = 0;
 		File psdFile;
 		view.progressBar.setValue(0);
-		view.progressBar.setMaximum(psdStringList.size() * selectedStores.size());
+		view.progressBar.setMaximum(srcFileNameList.size() * selectedStores.size());
 		view.progressBar.setString(view.progressBar.getValue() + "/" + view.progressBar.getMaximum());
 
 		for (StoreDataModel store : selectedStores) {
 
-			for (String productID : psdStringList) {
-				psdFileList.clear();
+			for (String productID : srcFileNameList) {
+				srcFileList.clear();
 				psdFile = new File(psdFilesPath.getAbsolutePath() + File.separatorChar + productID);
 				if (psdFile.isDirectory() && psdFile.exists()) {
-					psdFileList.add(psdFile);
+					srcFileList.add(psdFile);
 					// psdFileList.addAll(Arrays.asList(getPsdFileAdditionals(productID,
 					// psdFilesPath)));
 					/*
@@ -366,13 +366,13 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 							psdFilesPath.getAbsolutePath() + File.separatorChar + productID + "_" + count);
 					System.out.println(productID + "," + "folder exists");
 					while (psdFileAdditional.exists() && psdFileAdditional.isDirectory()) {
-						psdFileList.add(psdFileAdditional);
+						srcFileList.add(psdFileAdditional);
 						count++;
 						psdFileAdditional = new File(
 								psdFilesPath.getAbsolutePath() + File.separatorChar + productID + "_" + count);
 					}
 				}
-				for (File psdFiles : psdFileList) {
+				for (File psdFiles : srcFileList) {
 					// GET LATEST PSD VERSION (VIA FILENAME ATTACHMENT '_YYmmdd' (Date))
 					File psdFileLatestVersion = getLatestPSDFileVersion(psdFiles, productID);
 					if (psdFileLatestVersion != null) {
@@ -393,11 +393,11 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		File jpegFile;
 		ImageHandler imgHandler = new ImageHandler();
 		view.progressBar.setValue(0);
-		view.progressBar.setMaximum(psdStringList.size() * selectedStores.size());
+		view.progressBar.setMaximum(srcFileNameList.size() * selectedStores.size());
 		view.progressBar.setString(view.progressBar.getValue() + "/" + view.progressBar.getMaximum());
 
 		for (StoreDataModel store : selectedStores) {
-			for (String productID : psdStringList) {
+			for (String productID : srcFileNameList) {
 
 				jpegFile = new File(psdFilesPath.getAbsolutePath() + File.separatorChar + productID + ".jpg");
 				try {
@@ -641,13 +641,13 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 	}
 
 	public void removeFiles() {
-		psdFileList.remove(view.fileListSourceFiles.getSelectedIndex());
-		view.fileListSourceFiles.setListData(psdFileList);
+		srcFileList.remove(view.fileListSourceFiles.getSelectedIndex());
+		view.fileListSourceFiles.setListData(srcFileList);
 	}
 
 	public void clearList() {
-		psdFileList.clear();
-		view.fileListSourceFiles.setListData(psdFileList);
+		srcFileList.clear();
+		view.fileListSourceFiles.setListData(srcFileList);
 	}
 
 	public void initSelectedStoreList() {
@@ -708,7 +708,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		} else if (ce.getSource() == view.panelCardSummary) {
 			view.btnCardNext.setText("Import");
 			initSelectedStoreList();
-			view.fileListSourceFilesSummary.setListData(psdFileList);
+			view.fileListSourceFilesSummary.setListData(srcFileList);
 			view.fileListSourceFilesSummary.setEnabled(false);
 			view.storeListTargetStoresSummary.setListData(selectedStores);
 			view.storeListTargetStoresSummary.setEnabled(false);

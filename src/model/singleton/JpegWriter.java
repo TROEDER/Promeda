@@ -1,9 +1,12 @@
-package ij.plugin;
+package model.singleton;
+
 import ij.*;
 import ij.process.*;
 import ij.gui.*;
 import ij.io.*;
 import ij.measure.Calibration;
+import ij.plugin.PlugIn;
+
 import java.util.Locale;	
 import java.awt.image.*;
 import java.awt.*;

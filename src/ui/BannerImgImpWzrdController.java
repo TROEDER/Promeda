@@ -112,7 +112,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 	}
 
 	public void initBannerDim() {
-		System.out.println("asdasd" + propApp.get("locNetworkRes"));
+		
 		File filePropBanner = new File(propApp.get("locNetworkRes") + "banner" + File.separator + "banner.properties");
 		try {
 			Configuration config = new PropertiesConfiguration(filePropBanner);

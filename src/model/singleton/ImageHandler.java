@@ -10,7 +10,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.color.ColorSpace;
+import java.awt.color.ICC_Profile;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorConvertOp;
 import java.awt.image.ColorModel;
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,6 +38,8 @@ import org.apache.sanselan.ImageParser;
 import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.Sanselan;
 import org.apache.sanselan.formats.psd.PsdImageParser;
+import org.apache.sanselan.formats.psd.dataparsers.DataParser;
+import org.apache.sanselan.formats.psd.dataparsers.DataParserCMYK;
 import org.apache.sanselan.util.IOUtils;
 import org.w3c.dom.Element;
 
@@ -148,7 +153,12 @@ public class ImageHandler {
             //image = ImageIO.read(new File(fileName));
         	image = jpegReader.readImage(file);
         } else {
-            image = Sanselan.getBufferedImage(file);
+        	image = Sanselan.getBufferedImage(file);
+        	ColorSpace colorSpace = image.getColorModel().getColorSpace();
+        	if (!colorSpace.isCS_sRGB()) {
+        		ColorConvertOp op = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_sRGB), null );
+        		image = op.filter(image, null);
+        	}        	
         }
         return image;
     }

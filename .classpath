@@ -62,5 +62,8 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/Promeda/lib/jcodec-javase-0.2.3-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/jmagick-6.6.9.jar"/>
+	<classpathentry kind="lib" path="lib/bioformats_package.jar"/>
+	<classpathentry kind="lib" path="lib/commons-imaging-1.0a1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

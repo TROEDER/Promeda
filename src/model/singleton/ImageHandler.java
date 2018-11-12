@@ -6,6 +6,7 @@
 package model.singleton;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
@@ -13,10 +14,19 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.BreakIterator;
+import java.util.Iterator;
+import java.util.Locale;
 
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 
 import org.apache.sanselan.ImageFormat;
@@ -26,13 +36,20 @@ import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.Sanselan;
 import org.apache.sanselan.formats.psd.PsdImageParser;
 import org.apache.sanselan.util.IOUtils;
+import org.w3c.dom.Element;
 
 import com.mortennobel.imagescaling.AdvancedResizeOp;
 import com.mortennobel.imagescaling.AdvancedResizeOp.UnsharpenMask;
+
+import ij.IJ;
+import ij.ImagePlus;
+import ij.measure.Calibration;
+
 import com.mortennobel.imagescaling.MultiStepRescaleOp;
 import com.mortennobel.imagescaling.ResampleFilters;
 import com.mortennobel.imagescaling.ResampleOp;
 
+import model.prototype.JpegReader;
 import psd.model.Psd;
 import psd.parser.PsdInputStream;
 
@@ -42,11 +59,13 @@ import psd.parser.PsdInputStream;
  */
 public class ImageHandler {
 
-	PropertiesModel prop;
-
+	private PropertiesModel prop;
+	private JpegReader jpegReader;
+	
 	public ImageHandler() {
 		this.prop = new PropertiesModel();
 		prop.loadAppProperties();
+		jpegReader = new JpegReader();
 	}
 
 	/**
@@ -115,6 +134,25 @@ public class ImageHandler {
 		return image;
 	}
 	
+	 /**
+     * Load image from image file
+     * @param fileName Image file name
+     * @return Image
+     * @throws java.io.IOException
+     * @throws org.apache.sanselan.ImageReadException
+     */
+    public BufferedImage imageLoad(File file) throws IOException, ImageReadException{
+        ImageFormat info = Sanselan.guessFormat(file);
+        BufferedImage image = null;
+        if (info == ImageFormat.IMAGE_FORMAT_JPEG){
+            //image = ImageIO.read(new File(fileName));
+        	image = jpegReader.readImage(file);
+        } else {
+            image = Sanselan.getBufferedImage(file);
+        }
+        return image;
+    }
+    
 	/**
 	 *
 	 * @param width
@@ -181,6 +219,52 @@ public class ImageHandler {
 		g2d.dispose();
 		return imageRGB;
 	}
-
+	
+	 public void saveAsJpeg(BufferedImage bi, String path, int quality) {
+	        //IJ.log("saveAsJpeg: "+path);
+		 	System.out.println(bi.getWidth());
+	     	bi = resizeImage(278, 278, bi);
+	     	System.out.println(bi.getWidth());
+	        try {
+	                   
+				Iterator iter = ImageIO.getImageWritersByFormatName("jpeg");
+				try {
+					
+					ImageWriter writer = (ImageWriter)iter.next();
+					writer.setOutput(ImageIO.createImageOutputStream(new File(path)));
+					ImageWriteParam param = writer.getDefaultWriteParam();
+					param.setCompressionMode(param.MODE_EXPLICIT);
+					param.setCompressionQuality(quality / 100f);
+					if (quality == 100)
+						param.setSourceSubsampling(1, 1, 0, 0);
+					IIOMetadata metaData = writer.getDefaultImageMetadata(new ImageTypeSpecifier(bi), param);
+					
+					for(String format: metaData.getMetadataFormatNames()) {
+					System.out.println(format);
+					}
+//					Calibration cal = imp.getCalibration();
+//					String unit = cal.getUnit().toLowerCase(Locale.US);
+					//if (cal.getUnit().equals("inch")||cal.getUnit().equals("in")) {
+						Element tree = (Element)metaData.getAsTree("javax_imageio_jpeg_image_1.0");
+						Element jfif = (Element)tree.getElementsByTagName("app0JFIF").item(0);
+//						jfif.setAttribute("Xdensity", "" + (int)Math.round(1.0/cal.pixelWidth));
+//						jfif.setAttribute("Ydensity", "" + (int)Math.round(1.0/cal.pixelHeight));
+						jfif.setAttribute("Xdensity", "72");
+						jfif.setAttribute("Ydensity", "72");
+						jfif.setAttribute("resUnits", "1"); // density is dots per inch*/
+						//metaData.setFromTree("javax_imageio_jpeg_image_1.0",tree);
+					//}
+					IIOImage iioImage = new IIOImage(bi, null, null);
+					writer.write(null, iioImage, param);
+				} catch (Exception e) {
+					e.printStackTrace();
+					System.err.println("falling back to plain jpeg writing because of " + e);
+					ImageIO.write(bi, "jpeg", new FileOutputStream(path));
+				}
+	        }
+	        catch (Exception e) {
+	           IJ.error("Jpeg Writer", ""+e);
+	        }
+	    }
 
 }

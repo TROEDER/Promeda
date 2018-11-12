@@ -14,13 +14,16 @@ import java.io.*;
 
 import java.util.Iterator;
 import javax.imageio.stream.FileImageOutputStream;
+
+import org.w3c.dom.Element;
+
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriter;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.metadata.IIOMetadata;
-import org.w3c.dom.Element;
+
 
 /** The File->Save As->Jpeg command (FileSaver.saveAsJpeg()) uses
       this plugin to save images in JPEG format. The path where 

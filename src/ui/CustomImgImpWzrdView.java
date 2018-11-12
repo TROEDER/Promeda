@@ -54,12 +54,14 @@ public class CustomImgImpWzrdView extends JFrame {
 	public JPanel panel_1;
 	public JLabel labelPreviewPsdImage;
 	public BannerCheckBoxList listBannerModels;
-	private JScrollPane scrollPane;
-	private JPanel panelCardRemoteDir;
-	private JLabel label;
-	private JLabel label_1;
-	private JTextField textField;
-	private JPanel panel_3;
+	public JScrollPane scrollPane;
+	public JPanel panelCardRemoteDir;
+	public JLabel label;
+	public JLabel label_1;
+	public JTextField textField;
+	public JPanel panel_3;
+	public JTextField metadata1;
+	public JTextField metadata2;
 
 	/**
 	 * Create the frame.
@@ -70,14 +72,14 @@ public class CustomImgImpWzrdView extends JFrame {
 
 		this.controller = controller;
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 443, 432);
+		setBounds(100, 100, 443, 533);
 		contentPane = new JPanel();
 		contentPane.setBorder(null);
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
 		panelContentContainer = new JPanel();
-		panelContentContainer.setBounds(0, 0, 430, 330);
+		panelContentContainer.setBounds(0, 0, 430, 439);
 		contentPane.add(panelContentContainer);
 		cardLayoutContentContainer = new CardLayout();
 		panelContentContainer.setLayout(cardLayoutContentContainer);
@@ -120,6 +122,20 @@ public class CustomImgImpWzrdView extends JFrame {
 		labelPreviewPsdImage = new JLabel("");
 		labelPreviewPsdImage.setBounds(6, 16, 373, 182);
 		panel_2.add(labelPreviewPsdImage);
+		
+		JLabel lblNewLabel = new JLabel("New label");
+		lblNewLabel.setBounds(10, 330, 76, 25);
+		panelCardSourceFiles.add(lblNewLabel);
+		
+		metadata1 = new JTextField();
+		metadata1.setBounds(96, 330, 303, 25);
+		panelCardSourceFiles.add(metadata1);
+		metadata1.setColumns(10);
+		
+		metadata2 = new JTextField();
+		metadata2.setColumns(10);
+		metadata2.setBounds(96, 366, 303, 25);
+		panelCardSourceFiles.add(metadata2);
 
 		panelCardImageOptions = new JPanel();
 		panelCardImageOptions.addComponentListener(controller);
@@ -305,7 +321,7 @@ public class CustomImgImpWzrdView extends JFrame {
 		panelCardProcessing.add(labelProgressThumb);
 
 		JPanel panelButtonBar = new JPanel();
-		panelButtonBar.setBounds(0, 331, 430, 66);
+		panelButtonBar.setBounds(0, 438, 430, 66);
 		contentPane.add(panelButtonBar);
 		panelButtonBar.setLayout(null);
 

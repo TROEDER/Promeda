@@ -248,36 +248,37 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 
 						imgFile = new File(directory.getPath() + File.separator + bannerName + ".jpg");
 						ImageIO.write(rgbImage, "jpeg", imgFile);
-						try {
-							exec();
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						// COMPRESSION START
-//						OutputStream os = new FileOutputStream(imgFile);
-//						Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
-//						ImageWriter writer = (ImageWriter) writers.next();
-//
-//						ImageOutputStream ios = ImageIO.createImageOutputStream(os);
-//						writer.setOutput(ios);
-//
-//						ImageWriteParam param = writer.getDefaultWriteParam();
-//
-//						if (param.canWriteProgressive()) {
-//							param.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
+//						try {
+//							exec();
+//						} catch (InterruptedException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
 //						}
-//
+						
+						// COMPRESSION START
+						OutputStream os = new FileOutputStream(imgFile);
+						Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
+						ImageWriter writer = (ImageWriter) writers.next();
+
+						ImageOutputStream ios = ImageIO.createImageOutputStream(os);
+						writer.setOutput(ios);
+
+						ImageWriteParam param = writer.getDefaultWriteParam();
+
+						if (param.canWriteProgressive()) {
+							param.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
+						}
+
 //						if (param.canWriteCompressed()) {
 //							param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
 //							param.setCompressionQuality(0.85f);
 //						}
-//
-//						writer.write(writer.getDefaultStreamMetadata(param), new IIOImage(rgbImage, null, null), param);
-//
-//						os.close();
-//						ios.close();
-//						writer.dispose();
+
+						writer.write(writer.getDefaultStreamMetadata(param), new IIOImage(rgbImage, null, null), param);
+
+						os.close();
+						ios.close();
+						writer.dispose();
 						// COMPRESSION END
 						
 						// UPLOAD TO (REMOTE-)WEBSERVER

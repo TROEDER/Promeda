@@ -1,8 +1,10 @@
 package model.prototype;
 
+import java.awt.Dimension;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
+import java.awt.color.ICC_ProfileRGB;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.awt.image.Raster;
@@ -16,13 +18,21 @@ import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
+
+import org.apache.sanselan.ColorTools;
+import org.apache.sanselan.ImageFormat;
+import org.apache.sanselan.ImageInfo;
 import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.Sanselan;
+import org.apache.sanselan.color.ColorConversions;
+import org.apache.sanselan.common.IImageMetadata;
 import org.apache.sanselan.common.byteSources.ByteSource;
 import org.apache.sanselan.common.byteSources.ByteSourceArray;
 import org.apache.sanselan.common.byteSources.ByteSourceFile;
 import org.apache.sanselan.formats.jpeg.JpegImageParser;
 import org.apache.sanselan.formats.jpeg.segments.UnknownSegment;
+
+import com.mysql.jdbc.log.Log;
 
 /**
  * All thanks go to Codo @ Stack Overflow for this gem
@@ -37,7 +47,8 @@ public class JpegReader {
 
     private int colorType = COLOR_TYPE_RGB;
     private boolean hasAdobeMarker = false;
-
+    private ColorTools colorTools = new ColorTools();
+    
     public BufferedImage readImage(byte[] bytes) throws IOException, ImageReadException {
         colorType = COLOR_TYPE_RGB;
         hasAdobeMarker = false;
@@ -72,35 +83,55 @@ public class JpegReader {
     public BufferedImage readImage(File file) throws IOException, ImageReadException {
         colorType = COLOR_TYPE_RGB;
         hasAdobeMarker = false;
-        ImageInputStream stream = ImageIO.createImageInputStream(file);
-        Iterator<ImageReader> iter = ImageIO.getImageReaders(stream);
-        while (iter.hasNext()) {
-            ImageReader reader = iter.next();
-            reader.setInput(stream);
-
-            BufferedImage image;
-            ICC_Profile profile = null;
-            try {
-                image = reader.read(0);
-            } catch (IIOException e) {
-                colorType = COLOR_TYPE_CMYK;
-                checkAdobeMarker(file);
-                profile = Sanselan.getICCProfile(file);
-                WritableRaster raster = (WritableRaster) reader.readRaster(0, null);
-                if (colorType == COLOR_TYPE_YCCK)
-                    convertYcckToCmyk(raster);
-                if (hasAdobeMarker)
-                    convertInvertedColors(raster);
-                image = convertCmykToRgb(raster, profile);
+        BufferedImage image;
+        ICC_Profile profile = Sanselan.getICCProfile(file);
+        ImageInfo info = Sanselan.getImageInfo(file);
+        ImageFormat format = (Sanselan.guessFormat(file) != ImageFormat.IMAGE_FORMAT_UNKNOWN) ? Sanselan.guessFormat(file) : null;
+        IImageMetadata metadata = Sanselan.getMetadata(file);
+        String xmpXml = Sanselan.getXmpXml(file);
+        Dimension imageSize = Sanselan.getImageSize(file);
+        
+        if(format == ImageFormat.IMAGE_FORMAT_JPEG) {
+	        ImageInputStream stream = ImageIO.createImageInputStream(file);
+	        Iterator<ImageReader> iter = ImageIO.getImageReaders(stream);
+	        while (iter.hasNext()) {
+	            ImageReader reader = iter.next();
+	            reader.setInput(stream);
+	            try {
+	                image = reader.read(0);
+	            } catch (IIOException e) {
+	                colorType = COLOR_TYPE_CMYK;
+	                checkAdobeMarker(file);
+	                WritableRaster raster = (WritableRaster) reader.readRaster(0, null);
+	                if (colorType == COLOR_TYPE_YCCK)
+	                    convertYcckToCmyk(raster);
+	                if (hasAdobeMarker)
+	                    convertInvertedColors(raster);
+	                image = convertCmykToRgb(raster, profile);
+	            
+	            return image;
+	            }
+	        }
+        } else {
+        	try {
+                image = Sanselan.getBufferedImage(file);
+                colorTools.convertBetweenICCProfiles(image, profile, ICC_Profile.getInstance(ICC_Profile.icSigRgbData));
+                return image;
+        	} catch (ImageReadException e) {
+                e.printStackTrace();
+            
             }
-
-            return image;
         }
-
         return null;
+        
     }
     
-    /**
+    private ImageFormat getImageFormatFromExtension() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
      * Check Adobe markers in File
      * @param file
      * @throws IOException

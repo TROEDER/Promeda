@@ -14,18 +14,28 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.stream.FileImageInputStream;
+import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.ListModel;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -34,12 +44,15 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.sanselan.ImageReadException;
+import org.apache.sanselan.ImageWriteException;
+import org.apache.sanselan.Sanselan;
+import org.apache.sanselan.common.BinaryFileFunctions;
+import org.apache.sanselan.common.RgbBufferedImageFactory;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.w3c.dom.Element;
 
-import ij.IJ;
-import ij.ImagePlus;
 import model.prototype.BannerModel;
 
 // import com.enterprisedt.net.ftp.FTPException;
@@ -52,9 +65,9 @@ import model.singleton.SFTPClientModel;
 import psd.model.Layer;
 import psd.model.Psd;
 
-public class CustomImgImpWzrdController implements ActionListener, ComponentListener {
+public class BannerImgImpWzrdController implements ActionListener, ComponentListener {
 
-	private CustomImgImpWzrdView view;
+	private BannerImgImpWzrdView view;
 	private PropertiesModel propApp;
 	private Vector<StoreDataModel> stores;
 	private Vector<StoreDataModel> selectedStores;
@@ -68,14 +81,14 @@ public class CustomImgImpWzrdController implements ActionListener, ComponentList
 	private SFTPClientModel sftp = null;
 	private ImageHandler imgHandler = new ImageHandler();
 
-	public CustomImgImpWzrdController() {
+	public BannerImgImpWzrdController() {
 		initProperties();
 		initView();
 		//initBannerDim();
 		initStores();
 	}
 
-	public CustomImgImpWzrdController(File psdFile) {
+	public BannerImgImpWzrdController(File psdFile) {
 		initProperties();
 		//initBannerDim();
 		initView();
@@ -91,7 +104,7 @@ public class CustomImgImpWzrdController implements ActionListener, ComponentList
 
 	private void initView() {
 
-		view = new CustomImgImpWzrdView(this);
+		view = new BannerImgImpWzrdView(this);
 		view.setVisible(true);
 	}
 
@@ -104,7 +117,7 @@ public class CustomImgImpWzrdController implements ActionListener, ComponentList
 			Configuration templateProps;
 			for (Object template : templates) {
 				templateProps = config.subset(template.toString());
-				bannerTemplates.add(new BannerModel(template.toString(), new Dimension(srcImage.getWidth(),srcImage.getHeight()), templateProps));
+				bannerTemplates.add(new BannerModel(template.toString(), templateProps));
 			}
 			updateBannerTemplateList();
 			view.listBannerModels.setListData(bannerTemplates);
@@ -182,75 +195,129 @@ public class CustomImgImpWzrdController implements ActionListener, ComponentList
 		int progressStepSize = (int) Math.round(progressStepSizef);
 
 		try {
+
+			for (StoreDataModel store : selectedStores) {
+
+				if (store.getStoreFtpProtocol().equals("ftp")) {
+					ftp = new FTPClient();
+					ftp.connect(store.getStoreFtpServer());
+					ftp.login(store.getStoreFtpUser(), store.getStoreFtpPass());
+					ftp.cwd(store.getDirDefault());
+					ftp.setFileType(FTP.BINARY_FILE_TYPE);
+				} else if (store.getStoreFtpProtocol().equals("sftp")) {
+					sftp = new SFTPClientModel(store.getStoreFtpServer(), store.getStoreFtpPort(),
+							store.getStoreFtpUser(), store.getStoreFtpPass(), store.getDirDefault());
+					sftp.connect();
+				}
+
+				// COPY PSD FILE TO ORIGINALS FOLDER
+				copyFile(srcFile, new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirOriginals")
+						+ bannerName + currentDate + "." + FilenameUtils.getExtension(srcFile.getName())));
+
+				// GET BUFFEREDIMAGE FROM PSD FILE
+				// img = imgHandler.getImageFromPsd(psdFile);
+
 				progressThumbUpdate(imgHandler.resizeImage2(100, 100, srcImage));
-				
+				for (BannerModel banner : selectedBannerTemplates) {
+
 					Vector<BufferedImage> scaledImages = new Vector<BufferedImage>();
 					scaledImages.clear();
-	
+
+					for (Entry<String, Dimension> dim : banner.getDimensions().entrySet()) {
+						
+						// RESIZE BUFFEREDIMAGE
+						progressLabelUpdate("Resize " + FilenameUtils.getBaseName(srcFile.getName()) + " to "
+								+ dim.getValue().width + " " + dim.getValue().height + " px");
+						BufferedImage scaledImage = imgHandler.resizeImage2(dim.getValue().width, dim.getValue().height,
+								srcImage);
+
 						// REMOVE ALPHA CHANNEL FROM BUFFEREDIMAGE ( ARGB -> RGB )
-						progressLabelUpdate("Remove Alpha Channel from " + FilenameUtils.getBaseName(srcFile.getName()));
-						BufferedImage rgbImage = imgHandler.removeAlphaChannel(srcImage);
+						progressLabelUpdate("Remove Alpha Channel from " + FilenameUtils.getBaseName(srcFile.getName())
+								+ dim.getValue().width + " " + dim.getValue().height + " px");
+						BufferedImage rgbImage = imgHandler.removeAlphaChannel(scaledImage);
 						
 						// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
-						File directory = new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive"));
+						File directory = new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive")
+								+ banner.getDirname() + File.separator + dim.getKey());
 						if (!directory.exists()) {
 							directory.mkdirs();
 						}
 
 						imgFile = new File(directory.getPath() + File.separator + bannerName + ".jpg");
 						//ImageIO.write(scaledImage, "jpg", imgFile);
-						
+				        
+						FileImageInputStream in = new FileImageInputStream(srcFile);
+				        Iterator<ImageReader> iterator = ImageIO.getImageReaders(in);
+				        ImageReader reader = iterator.next();
+				        reader.setInput(in);
+							
+				        IIOMetadata data = reader.getImageMetadata(0);
+				        
 						// COMPRESSION START
-//						WritableRaster raster = rgbImage.getRaster();
-//						DataBufferByte data   = (DataBufferByte) raster.getDataBuffer();
-//
-//						LosslessJPEGCodec codec = new LosslessJPEGCodec();
-//					
-//							// convert byte array back to BufferedImage
-//							InputStream in = null;
-//							try {
-//								in = new ByteArrayInputStream(codec.compress(data.getData(), CodecOptions.getDefaultOptions()));
-//							} catch (FormatException e) {
-//								// TODO Auto-generated catch block
-//								e.printStackTrace();
-//							}
-//							BufferedImage comprImage = ImageIO.read(in);
-						
 						OutputStream os = new FileOutputStream(imgFile);
-
-						Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpeg");
+						Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
 						ImageWriter writer = (ImageWriter) writers.next();
 
 						ImageOutputStream ios = ImageIO.createImageOutputStream(os);
 						writer.setOutput(ios);
 
 						ImageWriteParam param = writer.getDefaultWriteParam();
-						
-//						ImagePlus imgPlus = IJ.openImage(srcFile.getAbsolutePath());
-//						System.out.println(imgPlus.getHeight() +"  " + imgPlus.getCalibration());
-						//imgHandler.saveAsJpeg(rgbImage, imgFile.getAbsolutePath(), 85);
+
 						if (param.canWriteProgressive()) {
 							param.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
 						}
-						
+
 						if (param.canWriteCompressed()) {
-							int quality = 85;
 							param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-							param.setCompressionQuality(quality / 100f);
-							if (quality == 100)
-								param.setSourceSubsampling(1, 1, 0, 0);
+							//param.setCompressionType("JPEG-LS");
+							param.setCompressionQuality(0.85f); // Change the quality value you prefer
 						}
-						writer.write(null, new IIOImage(rgbImage, null, null), param);
+
+						writer.write(data, new IIOImage(rgbImage, null, null), param);
 
 						os.close();
 						ios.close();
 						writer.dispose();
-						
+
 						// COMPRESSION END
 						
-					
+						// UPLOAD TO (REMOTE-)WEBSERVER
+						progressLabelUpdate(
+								"Upload " + bannerName + " (" + banner.getName() + ") to " + store.getStoreName());
+
+						File remoteFile = new File(imgFile.getName());
+
+						// USING FTP
+						if (store.getStoreFtpProtocol().equals("ftp")) {
+							if (!ftp.isConnected()) {
+								ftp.connect(store.getStoreFtpServer());
+							}
+							InputStream input = new FileInputStream(imgFile);
+							ftp.mkd(banner.getDirname());
+							ftp.changeWorkingDirectory(banner.getDirname());
+							ftp.mkd(dim.getKey());
+							ftp.changeWorkingDirectory(dim.getKey());
+							ftp.storeFile(remoteFile.getName(), input);
+							ftp.changeToParentDirectory();
+							ftp.changeToParentDirectory();
+
+							// USING SFTP
+						} else if (store.getStoreFtpProtocol().equals("sftp")) {
+							if (!sftp.session.isConnected()) {
+								sftp.connect();
+							}
+							sftp.makeDir(banner.getDirname());
+							sftp.changeDir(banner.getDirname());
+							sftp.makeDir(dim.getKey());
+							sftp.changeDir(dim.getKey());
+							sftp.upload(imgFile, remoteFile);
+							sftp.changeDir("..");
+							sftp.changeDir("..");
+						}
+					}
+				}
 				progressBarUpdate(progressStepSize);
-			
+			}
 
 		} catch (
 
@@ -316,22 +383,24 @@ public class CustomImgImpWzrdController implements ActionListener, ComponentList
 		}
 	}
 
-	public void initSrcFile() {
+	public void initSrcFile(File srcFile) {
+		String fileExt = FilenameUtils.getExtension(srcFile.getName());
 		try {
-			srcImage = imgHandler.readImage(srcFile);
-		} catch (ImageReadException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if (fileExt.equalsIgnoreCase("psd") || fileExt.equalsIgnoreCase("psb")) {
+				Psd psd = new Psd(srcFile);
+				srcImage = psd.getImage();
+				float factor = (float)300 / (float)srcImage.getHeight();
+				int newWidth = Math.round((float)srcImage.getWidth()*factor);
+				ImageIcon iconHelper = new ImageIcon(imgHandler.resizeImage2(newWidth, 300, srcImage));
+				view.labelPreviewPsdImage.setIcon(iconHelper);
+			} else if (fileExt.equalsIgnoreCase("jpg") || fileExt.equalsIgnoreCase("jpeg")) {
+				srcImage = ImageIO.read(srcFile);
+				view.labelPreviewPsdImage.setIcon(new ImageIcon(srcImage));
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		float factor = (float)view.labelPreviewPsdImage.getHeight() / (float)srcImage.getHeight();
-		int newWidth = Math.round((float)srcImage.getWidth()*factor);
-		ImageIcon iconHelper = new ImageIcon(imgHandler.resizeImage2(newWidth, view.labelPreviewPsdImage.getHeight(), srcImage));
-		view.labelPreviewPsdImage.setIcon(iconHelper);
-	
-		
 	}
 
 	public void progressBarUpdate(int progressStepSize) {
@@ -364,7 +433,7 @@ public class CustomImgImpWzrdController implements ActionListener, ComponentList
 			srcFile = openFile();
 			srcFileList.add(srcFile);
 			// srcFileList = new Vector<File>(Arrays.asList(openFiles()));
-			initSrcFile();
+			initSrcFile(srcFile);
 			view.fileListSourceFiles.setText(srcFile.getAbsolutePath());
 			view.textFieldBannerFileName.setText(FilenameUtils.getBaseName(srcFile.getName()));
 			initBannerDim();

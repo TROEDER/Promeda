@@ -1,13 +1,18 @@
 package model.prototype;
 
 import java.awt.Dimension;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import javax.swing.ImageIcon;
 
 import org.apache.commons.configuration.Configuration;
 
 public class BannerModel {
-
+	
 	private String name;
 	private String dirname;
 	private Dimension dimSM;
@@ -16,64 +21,63 @@ public class BannerModel {
 	HashMap<String, Dimension> dimensions;
 	private Boolean selectStatus;
 	private Boolean matchSrcStatus;
-
+	
 	public BannerModel() {
 
 	}
 
 	public BannerModel(String name, Dimension srcImageSize, Configuration props) {
 		dimensions = new HashMap<String, Dimension>();
-
+		
 		this.name = name;
 		this.dirname = props.getString("dirname");
 		Iterator<String> keyIter = props.getKeys();
-		while (keyIter.hasNext()) {
-
-			if (props.containsKey("sm.width") && props.containsKey("sm.height")) {
-				if (props.getProperty("sm.height") == "auto") {
-					float factor = (float) props.getInt("sm.width") / (float) srcImageSize.width;
-					int newHeight = Math.round((float) srcImageSize.height * factor);
-					dimSM = new Dimension(props.getInt("sm.width"), newHeight);
-				} else {
-					dimSM = new Dimension(props.getInt("sm.width"), props.getInt("sm.height"));
-				}
-				dimensions.put("sm", dimSM);
-			}
-			if (props.containsKey("md.width") && props.containsKey("md.height")) {
-				if (props.getProperty("md.height") == "auto") {
-					float factor = (float) props.getInt("md.width") / (float) srcImageSize.width;
-					int newHeight = Math.round((float) srcImageSize.height * factor);
-					dimMD = new Dimension(props.getInt("md.width"), newHeight);
-				} else {
-					dimMD = new Dimension(props.getInt("md.width"), props.getInt("md.height"));
-				}
-				dimensions.put("md", dimMD);
-			}
-			if (props.containsKey("lg.width") && props.containsKey("lg.height")) {
-				if (props.getProperty("lg.height") == "auto") {
-					float factor = (float) props.getInt("lg.width") / (float) srcImageSize.width;
-					int newHeight = Math.round((float) srcImageSize.height * factor);
-					dimLG = new Dimension(props.getInt("lg.width"), newHeight);
-				} else {
-					dimLG = new Dimension(props.getInt("lg.width"), props.getInt("lg.height"));
-				}
-				dimensions.put("lg", dimLG);
-
-			}
+		while(keyIter.hasNext()) {
+			
 		}
+		if(props.containsKey("sm.width") && props.containsKey("sm.height")) {
+			if(props.getProperty("sm.height").equals("auto")) {
+				float factor = (float)props.getInt("sm.width") / (float)srcImageSize.width;
+				int newHeight = Math.round((float)srcImageSize.height*factor);
+				dimSM = new Dimension(props.getInt("sm.width"), newHeight);
+			} else {
+				dimSM = new Dimension(props.getInt("sm.width"), props.getInt("sm.height"));
+			}
+			dimensions.put("sm", dimSM);
+		}
+		if(props.containsKey("md.width") && props.containsKey("md.height")) {
+			if(props.getProperty("md.height").equals("auto")) {
+				float factor = (float)props.getInt("md.width") / (float)srcImageSize.width;
+				int newHeight = Math.round((float)srcImageSize.height*factor);
+				dimSM = new Dimension(props.getInt("md.width"), newHeight);
+			} else {
+			dimMD = new Dimension(props.getInt("md.width"), props.getInt("md.height"));
+			}
+			dimensions.put("md", dimMD);
+		}
+		if(props.containsKey("lg.width") && props.containsKey("lg.height")) {
+			if(props.getProperty("lg.height").equals("auto")) {
+				float factor = (float)props.getInt("lg.width") / (float)srcImageSize.width;
+				int newHeight = Math.round((float)srcImageSize.height*factor);
+				dimSM = new Dimension(props.getInt("lg.width"), newHeight);
+			} else {
+			dimLG = new Dimension(props.getInt("lg.width"), props.getInt("lg.height"));
+			}
+			dimensions.put("lg", dimLG);
+			
+		}		
 		setSelectStatus(false);
 		setMatchSrcStatus(true);
 	}
 
 	public String GetDimensionsKeys() {
 		String keys = "output: " + dirname + "/[";
-		for (String key : dimensions.keySet()) {
-			keys += " " + key + " ";
+		for ( String key : dimensions.keySet() ) {
+		 keys += " " + key + " ";  
 		}
 		keys += "]";
 		return keys;
 	}
-
 	/**
 	 * @return the dimSM
 	 */
@@ -185,5 +189,5 @@ public class BannerModel {
 	public void setMatchSrcStatus(Boolean matchSrcStatus) {
 		this.matchSrcStatus = matchSrcStatus;
 	}
-
+	
 }

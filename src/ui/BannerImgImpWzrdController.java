@@ -16,29 +16,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.Vector;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.stream.FileImageInputStream;
-import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
-import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
-import javax.swing.ListModel;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -47,14 +37,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.sanselan.ImageReadException;
-import org.apache.sanselan.ImageWriteException;
-import org.apache.sanselan.Sanselan;
-import org.apache.sanselan.common.BinaryFileFunctions;
-import org.apache.sanselan.common.RgbBufferedImageFactory;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.w3c.dom.Element;
 
 import model.prototype.BannerModel;
 
@@ -63,6 +48,7 @@ import model.prototype.BannerModel;
 import model.prototype.ImageSize;
 import model.prototype.StoreDataModel;
 import model.singleton.ImageHandler;
+import model.singleton.ImageUtil;
 import model.singleton.PropertiesModel;
 import model.singleton.SFTPClientModel;
 import psd.model.Layer;
@@ -83,6 +69,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 	private FTPClient ftp = null;
 	private SFTPClientModel sftp = null;
 	private ImageHandler imgHandler = new ImageHandler();
+	private ImageUtil imgUtil = new ImageUtil();
 
 	public BannerImgImpWzrdController() {
 		initProperties();
@@ -120,7 +107,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 			Configuration templateProps;
 			for (Object template : templates) {
 				templateProps = config.subset(template.toString());
-				bannerTemplates.add(new BannerModel(template.toString(), templateProps));
+				bannerTemplates.add(new BannerModel(template.toString(), new Dimension(srcImage.getWidth(), srcImage.getHeight()),templateProps));
 			}
 			updateBannerTemplateList();
 			view.listBannerModels.setListData(bannerTemplates);
@@ -138,20 +125,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 			for (File file : files) {
 				if (!file.isDirectory() && FilenameUtils.isExtension(file.getName(), "properties")) {
 					Configuration config = new PropertiesConfiguration(file);
-					/*
-					 * String[] imgSizeParams = config.getStringArray("banner.image.size"); for
-					 * (String param : imgSizeParams) { imageSizeList.add(new
-					 * ImageSize(param.split(","))); System.out.println(new
-					 * ImageSize(param.split(",")).getName()); System.out.println( "Groesse: " +
-					 * imageSizeList.size() + " - " + imageSizeList.lastElement().getWidth()); }
-					 */
-					// System.out.println("imageSizeList.size() " + imageSizeList.size() + " - " +
-					// imageSizeList.get(0).getName());
-					/*
-					 * stores.add(new StoreDataModel(config.getString("url"),
-					 * config.getString("ftp.host"), Integer.parseInt(config.getString("ftp.port")),
-					 * config.getString("ftp.user"), config.getString("ftp.pswd"), imageSizeList));
-					 */
+
 					stores.add(new StoreDataModel(config.getString("url"), config.getString("ftp.host"),
 							Integer.parseInt(config.getString("ftp.port")), config.getString("ftp.protocol"),
 							config.getString("ftp.user"), config.getString("ftp.pswd"),
@@ -431,24 +405,9 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 		}
 	}
 
-	public void initSrcFile(File srcFile) {
-		String fileExt = FilenameUtils.getExtension(srcFile.getName());
-		try {
-			if (fileExt.equalsIgnoreCase("psd") || fileExt.equalsIgnoreCase("psb")) {
-				Psd psd = new Psd(srcFile);
-				srcImage = psd.getImage();
-				float factor = (float)300 / (float)srcImage.getHeight();
-				int newWidth = Math.round((float)srcImage.getWidth()*factor);
-				ImageIcon iconHelper = new ImageIcon(imgHandler.resizeImage2(newWidth, 300, srcImage));
-				view.labelPreviewPsdImage.setIcon(iconHelper);
-			} else if (fileExt.equalsIgnoreCase("jpg") || fileExt.equalsIgnoreCase("jpeg")) {
-				srcImage = ImageIO.read(srcFile);
-				view.labelPreviewPsdImage.setIcon(new ImageIcon(srcImage));
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public BufferedImage initSrcFile(File srcFile) {
+		
+			return imgHandler.readImage(srcFile);
 	}
 
 	public void progressBarUpdate(int progressStepSize) {
@@ -479,11 +438,13 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 			}
 		} else if (ae.getSource() == view.btnAddFiles) {
 			srcFile = openFile();
-			srcFileList.add(srcFile);
-			// srcFileList = new Vector<File>(Arrays.asList(openFiles()));
-			initSrcFile(srcFile);
+			srcImage = imgHandler.readImage(srcFile);
 			view.fileListSourceFiles.setText(srcFile.getAbsolutePath());
 			view.textFieldBannerFileName.setText(FilenameUtils.getBaseName(srcFile.getName()));
+			float factor = (float)view.labelPreviewPsdImage.getHeight() / (float)srcImage.getHeight();
+			int newWidth = Math.round((float)srcImage.getWidth()*factor);
+			ImageIcon iconHelper = new ImageIcon(imgHandler.resizeImage(newWidth, view.labelPreviewPsdImage.getHeight(), srcImage));
+			view.labelPreviewPsdImage.setIcon(iconHelper);
 			initBannerDim();
 		} else if (ae.getSource() == view.btnSelectAll) {
 			view.checkBoxListStores.selectAll();
@@ -530,7 +491,6 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 				System.out.println("updateBannerList");
 				if (banner.getDimensions().get("lg").getWidth() == srcImage.getWidth()
 						&& banner.getDimensions().get("lg").getHeight() == srcImage.getHeight()) {
-					System.out.println("updateBannerList");
 					banner.setMatchSrcStatus(true);
 				} else {
 					banner.setMatchSrcStatus(false);

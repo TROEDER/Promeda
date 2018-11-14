@@ -35,6 +35,7 @@ import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.sanselan.ColorTools;
 import org.apache.sanselan.ImageFormat;
 import org.apache.sanselan.ImageInfo;
@@ -47,16 +48,11 @@ import org.w3c.dom.Element;
 import com.mortennobel.imagescaling.AdvancedResizeOp;
 import com.mortennobel.imagescaling.AdvancedResizeOp.UnsharpenMask;
 
-import ij.IJ;
-import ij.ImagePlus;
-import ij.measure.Calibration;
-
 import com.mortennobel.imagescaling.MultiStepRescaleOp;
 import com.mortennobel.imagescaling.ResampleFilters;
 import com.mortennobel.imagescaling.ResampleOp;
-import com.twelvemonkeys.imageio.plugins.psd.PSDImageReader;
-import com.twelvemonkeys.imageio.plugins.psd.PSDImageReaderSpi;
 
+import ij.IJ;
 import model.prototype.JpegReader;
 import psd.model.Psd;
 
@@ -117,7 +113,6 @@ public class ImageHandler {
 			}
 		} catch (ImageReadException e) {
 			e.printStackTrace();
-			return null;
 		}
 		return img;
 	}
@@ -145,25 +140,29 @@ public class ImageHandler {
 	 * @throws java.io.IOException
 	 * @throws org.apache.sanselan.ImageReadException
 	 */
-	public BufferedImage imageLoad(File file) throws IOException, ImageReadException {
-		ImageFormat info = Sanselan.guessFormat(file);
-		ICC_Profile profile = Sanselan.getICCProfile(file);
-		BufferedImage image = null;
-		if (info == ImageFormat.IMAGE_FORMAT_JPEG) {
-			// image = ImageIO.read(new File(fileName));
-			image = jpegReader.readImage(file);
-			return image;
-		} else {
-			ImageInputStream stream = ImageIO.createImageInputStream(file);
-	        Iterator<ImageReader> iter = ImageIO.getImageReaders(stream);
-	        while (iter.hasNext()) {
-	            ImageReader reader = iter.next();
-	            reader.setInput(stream);
-			image = Sanselan.getBufferedImage(file);
-			return image;
-	        }
+	public BufferedImage readImage(File file) {
+		ImageFormat info;
+		try {
+			info = Sanselan.guessFormat(file);
+			ICC_Profile profile = Sanselan.getICCProfile(file);
+			BufferedImage image = null;
+			if (info == ImageFormat.IMAGE_FORMAT_JPEG || FilenameUtils.isExtension(file.getName(), new String[]{"jpg","jpeg","jpe"})) {
+				// image = ImageIO.read(new File(fileName));
+				image = jpegReader.readImage(file);
+				return image;
+			} else {
+				image = getImageFromPsd2(file);
+				return image;
+		        }
+		} catch (ImageReadException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return image;
+		return null;
+	
 	}
 
 	/**

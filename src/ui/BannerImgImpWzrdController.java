@@ -74,13 +74,13 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 	public BannerImgImpWzrdController() {
 		initProperties();
 		initView();
-		//initBannerDim();
+		// initBannerDim();
 		initStores();
 	}
 
 	public BannerImgImpWzrdController(File psdFile) {
 		initProperties();
-		//initBannerDim();
+		// initBannerDim();
 		initView();
 		initStores();
 		this.srcFile = psdFile;
@@ -99,8 +99,8 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 	}
 
 	public void initBannerDim() {
-		
-		File filePropBanner = new File(propApp.get("locNetworkRes") + "banner" + File.separator + "banner.properties");
+
+		File filePropBanner = new File(propApp.get("locNetworkRes") + "banner" + "/" + "banner.properties");
 		try {
 			Configuration config = new PropertiesConfiguration(filePropBanner);
 			List<Object> templates = config.getList("template");
@@ -201,7 +201,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 					scaledImages.clear();
 
 					for (Entry<String, Dimension> dim : banner.getDimensions().entrySet()) {
-						
+
 						// RESIZE BUFFEREDIMAGE
 						progressLabelUpdate("Resize " + FilenameUtils.getBaseName(srcFile.getName()) + " to "
 								+ dim.getValue().width + " " + dim.getValue().height + " px");
@@ -212,7 +212,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 						progressLabelUpdate("Remove Alpha Channel from " + FilenameUtils.getBaseName(srcFile.getName())
 								+ dim.getValue().width + " " + dim.getValue().height + " px");
 						BufferedImage rgbImage = imgHandler.removeAlphaChannel(scaledImage);
-						
+
 						// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
 						File directory = new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive")
 								+ banner.getDirname() + File.separator + dim.getKey());
@@ -228,7 +228,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 //							// TODO Auto-generated catch block
 //							e.printStackTrace();
 //						}
-						
+
 						// COMPRESSION START
 						OutputStream os = new FileOutputStream(imgFile);
 						Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
@@ -254,7 +254,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 						ios.close();
 						writer.dispose();
 						// COMPRESSION END
-						
+
 						// UPLOAD TO (REMOTE-)WEBSERVER
 						progressLabelUpdate(
 								"Upload " + bannerName + " (" + banner.getName() + ") to " + store.getStoreName());
@@ -306,8 +306,8 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 	}
 
 	public void exec() throws IOException, InterruptedException {
-		String destFolder="\\\\SVR-APP-11\\Promeda-bin";
-		//String destFolder = "C:\\Web\\htdocs\\Promeda-bin";
+		String destFolder = "\\\\SVR-APP-11\\Promeda-bin";
+		// String destFolder = "C:\\Web\\htdocs\\Promeda-bin";
 		/*
 		 * Location where the Nodejs Project is Present
 		 */
@@ -352,7 +352,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 	static boolean isWindows() {
 		return System.getProperty("os.name").toLowerCase().contains("win");
 	}
-	
+
 	public File openFile() {
 		File file = null;
 
@@ -406,16 +406,16 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 	}
 
 	public BufferedImage initSrcFile(File srcFile) {
-			srcImage =  imgHandler.readImage(srcFile);
+		srcImage = imgHandler.readImage(srcFile);
 //			view.fileListSourceFiles.setText(srcFile.getAbsolutePath());
 //			view.textFieldBannerFileName.setText(FilenameUtils.getBaseName(srcFile.getName()));
 //			float factor = (float)view.labelPreviewPsdImage.getHeight() / (float)srcImage.getHeight();
 //			int newWidth = Math.round((float)srcImage.getWidth()*factor);
 //			ImageIcon iconHelper = new ImageIcon(imgHandler.resizeImage(newWidth, view.labelPreviewPsdImage.getHeight(), srcImage));
 //			view.labelPreviewPsdImage.setIcon(iconHelper);
-			view.labelPreviewPsdImage.setIcon(new ImageIcon(srcImage));
-			
-			return srcImage;
+		view.labelPreviewPsdImage.setIcon(new ImageIcon(srcImage));
+
+		return srcImage;
 	}
 
 	public void progressBarUpdate(int progressStepSize) {
@@ -447,7 +447,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 		} else if (ae.getSource() == view.btnAddFiles) {
 			srcFile = openFile();
 			srcImage = initSrcFile(srcFile);
-			
+
 			initBannerDim();
 		} else if (ae.getSource() == view.btnSelectAll) {
 			view.checkBoxListStores.selectAll();

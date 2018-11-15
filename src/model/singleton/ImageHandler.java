@@ -6,25 +6,15 @@
 package model.singleton;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.color.ColorSpace;
-import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorConvertOp;
-import java.awt.image.ColorModel;
-import java.awt.image.SampleModel;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.BreakIterator;
 import java.util.Iterator;
-import java.util.Locale;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -37,26 +27,16 @@ import javax.imageio.stream.ImageInputStream;
 
 import org.apache.sanselan.ColorTools;
 import org.apache.sanselan.ImageFormat;
-import org.apache.sanselan.ImageInfo;
-import org.apache.sanselan.ImageParser;
 import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.Sanselan;
-
 import org.w3c.dom.Element;
 
 import com.mortennobel.imagescaling.AdvancedResizeOp;
-import com.mortennobel.imagescaling.AdvancedResizeOp.UnsharpenMask;
-
-import ij.IJ;
-import ij.ImagePlus;
-import ij.measure.Calibration;
-
 import com.mortennobel.imagescaling.MultiStepRescaleOp;
 import com.mortennobel.imagescaling.ResampleFilters;
 import com.mortennobel.imagescaling.ResampleOp;
-import com.twelvemonkeys.imageio.plugins.psd.PSDImageReader;
-import com.twelvemonkeys.imageio.plugins.psd.PSDImageReaderSpi;
 
+import ij.IJ;
 import model.prototype.JpegReader;
 import psd.model.Psd;
 

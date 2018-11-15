@@ -316,22 +316,15 @@ public class CustomImgImpWzrdController implements ActionListener, ComponentList
 		}
 	}
 
-	public void initSrcFile() {
-		try {
-			srcImage = imgHandler.readImage(srcFile);
-		} catch (ImageReadException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public BufferedImage initSrcFile() {
+		srcImage =  imgHandler.readImage(srcFile);
+		view.fileListSourceFiles.setText(srcFile.getAbsolutePath());
+		view.textFieldBannerFileName.setText(FilenameUtils.getBaseName(srcFile.getName()));
 		float factor = (float)view.labelPreviewPsdImage.getHeight() / (float)srcImage.getHeight();
 		int newWidth = Math.round((float)srcImage.getWidth()*factor);
-		ImageIcon iconHelper = new ImageIcon(imgHandler.resizeImage2(newWidth, view.labelPreviewPsdImage.getHeight(), srcImage));
+		ImageIcon iconHelper = new ImageIcon(imgHandler.resizeImage(newWidth, view.labelPreviewPsdImage.getHeight(), srcImage));
 		view.labelPreviewPsdImage.setIcon(iconHelper);
-	
-		
+		return srcImage;
 	}
 
 	public void progressBarUpdate(int progressStepSize) {

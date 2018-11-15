@@ -17,10 +17,31 @@ public class BannerModel {
 	private Boolean selectStatus;
 	private Boolean matchSrcStatus;
 
-	public BannerModel() {
-
+	public BannerModel(String name, Configuration props) {
+		dimensions = new HashMap<String, Dimension>();
+		
+		this.name = name;
+		this.dirname = props.getString("dirname");
+		Iterator<String> keyIter = props.getKeys();
+		while(keyIter.hasNext()) {
+			
+		}
+		if(props.containsKey("sm.width") && props.containsKey("sm.height")) {
+			dimSM = new Dimension(props.getInt("sm.width"), props.getInt("sm.height"));
+			dimensions.put("sm", dimSM);
+		}
+		if(props.containsKey("md.width") && props.containsKey("md.height")) {
+			dimMD = new Dimension(props.getInt("md.width"), props.getInt("md.height"));
+			dimensions.put("md", dimMD);
+		}
+		if(props.containsKey("lg.width") && props.containsKey("lg.height")) {
+			dimLG = new Dimension(props.getInt("lg.width"), props.getInt("lg.height"));
+			dimensions.put("lg", dimLG);
+		}		
+		setSelectStatus(false);
+		setMatchSrcStatus(true);
 	}
-
+	
 	public BannerModel(String name, Dimension srcImageSize, Configuration props) {
 		dimensions = new HashMap<String, Dimension>();
 

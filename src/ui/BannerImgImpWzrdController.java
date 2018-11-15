@@ -107,7 +107,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 			Configuration templateProps;
 			for (Object template : templates) {
 				templateProps = config.subset(template.toString());
-				bannerTemplates.add(new BannerModel(template.toString(), new Dimension(srcImage.getWidth(), srcImage.getHeight()),templateProps));
+				bannerTemplates.add(new BannerModel(template.toString(), templateProps));
 			}
 			updateBannerTemplateList();
 			view.listBannerModels.setListData(bannerTemplates);
@@ -406,8 +406,16 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 	}
 
 	public BufferedImage initSrcFile(File srcFile) {
-		
-			return imgHandler.readImage(srcFile);
+			srcImage =  imgHandler.readImage(srcFile);
+//			view.fileListSourceFiles.setText(srcFile.getAbsolutePath());
+//			view.textFieldBannerFileName.setText(FilenameUtils.getBaseName(srcFile.getName()));
+//			float factor = (float)view.labelPreviewPsdImage.getHeight() / (float)srcImage.getHeight();
+//			int newWidth = Math.round((float)srcImage.getWidth()*factor);
+//			ImageIcon iconHelper = new ImageIcon(imgHandler.resizeImage(newWidth, view.labelPreviewPsdImage.getHeight(), srcImage));
+//			view.labelPreviewPsdImage.setIcon(iconHelper);
+			view.labelPreviewPsdImage.setIcon(new ImageIcon(srcImage));
+			
+			return srcImage;
 	}
 
 	public void progressBarUpdate(int progressStepSize) {
@@ -438,13 +446,8 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 			}
 		} else if (ae.getSource() == view.btnAddFiles) {
 			srcFile = openFile();
-			srcImage = imgHandler.readImage(srcFile);
-			view.fileListSourceFiles.setText(srcFile.getAbsolutePath());
-			view.textFieldBannerFileName.setText(FilenameUtils.getBaseName(srcFile.getName()));
-			float factor = (float)view.labelPreviewPsdImage.getHeight() / (float)srcImage.getHeight();
-			int newWidth = Math.round((float)srcImage.getWidth()*factor);
-			ImageIcon iconHelper = new ImageIcon(imgHandler.resizeImage(newWidth, view.labelPreviewPsdImage.getHeight(), srcImage));
-			view.labelPreviewPsdImage.setIcon(iconHelper);
+			srcImage = initSrcFile(srcFile);
+			
 			initBannerDim();
 		} else if (ae.getSource() == view.btnSelectAll) {
 			view.checkBoxListStores.selectAll();

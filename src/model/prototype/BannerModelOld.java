@@ -7,8 +7,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.ImageIcon;
-
 import org.apache.commons.configuration.Configuration;
 
 public class BannerModel {
@@ -26,7 +24,7 @@ public class BannerModel {
 
 	}
 
-	public BannerModel(String name, Dimension srcImageSize, Configuration props) {
+	public BannerModel(String name, Configuration props) {
 		dimensions = new HashMap<String, Dimension>();
 		
 		this.name = name;
@@ -36,35 +34,16 @@ public class BannerModel {
 			
 		}
 		if(props.containsKey("sm.width") && props.containsKey("sm.height")) {
-			if(props.getProperty("sm.height").equals("auto")) {
-				float factor = (float)props.getInt("sm.width") / (float)srcImageSize.width;
-				int newHeight = Math.round((float)srcImageSize.height*factor);
-				dimSM = new Dimension(props.getInt("sm.width"), newHeight);
-			} else {
-				dimSM = new Dimension(props.getInt("sm.width"), props.getInt("sm.height"));
-			}
+			dimSM = new Dimension(props.getInt("sm.width"), props.getInt("sm.height"));
 			dimensions.put("sm", dimSM);
 		}
 		if(props.containsKey("md.width") && props.containsKey("md.height")) {
-			if(props.getProperty("md.height").equals("auto")) {
-				float factor = (float)props.getInt("md.width") / (float)srcImageSize.width;
-				int newHeight = Math.round((float)srcImageSize.height*factor);
-				dimSM = new Dimension(props.getInt("md.width"), newHeight);
-			} else {
 			dimMD = new Dimension(props.getInt("md.width"), props.getInt("md.height"));
-			}
 			dimensions.put("md", dimMD);
 		}
 		if(props.containsKey("lg.width") && props.containsKey("lg.height")) {
-			if(props.getProperty("lg.height").equals("auto")) {
-				float factor = (float)props.getInt("lg.width") / (float)srcImageSize.width;
-				int newHeight = Math.round((float)srcImageSize.height*factor);
-				dimSM = new Dimension(props.getInt("lg.width"), newHeight);
-			} else {
 			dimLG = new Dimension(props.getInt("lg.width"), props.getInt("lg.height"));
-			}
 			dimensions.put("lg", dimLG);
-			
 		}		
 		setSelectStatus(false);
 		setMatchSrcStatus(true);

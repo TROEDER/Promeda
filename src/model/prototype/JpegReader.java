@@ -39,7 +39,9 @@ public class JpegReader {
     private boolean hasAdobeMarker = false;
 
     public BufferedImage readImage(byte[] bytes) throws IOException, ImageReadException {
-        colorType = COLOR_TYPE_RGB;
+        System.out.println(ImageIO.getReaderFormatNames());
+        System.out.println(ImageIO.getWriterFormatNames());
+    	colorType = COLOR_TYPE_RGB;
         hasAdobeMarker = false;
         ImageInputStream stream = ImageIO.createImageInputStream(new ByteArrayInputStream(bytes));
         Iterator<ImageReader> iter = ImageIO.getImageReaders(stream);

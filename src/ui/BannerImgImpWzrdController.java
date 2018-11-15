@@ -120,7 +120,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 			Configuration templateProps;
 			for (Object template : templates) {
 				templateProps = config.subset(template.toString());
-				bannerTemplates.add(new BannerModel(template.toString(), templateProps));
+				bannerTemplates.add(new BannerModel(template.toString(), new Dimension(srcImage.getWidth(),srcImage.getHeight()), templateProps));
 			}
 			updateBannerTemplateList();
 			view.listBannerModels.setListData(bannerTemplates);

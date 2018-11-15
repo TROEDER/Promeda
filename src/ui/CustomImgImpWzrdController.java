@@ -47,6 +47,7 @@ import model.prototype.BannerModel;
 import model.prototype.ImageSize;
 import model.prototype.StoreDataModel;
 import model.singleton.ImageHandler;
+import model.singleton.ImageUtil;
 import model.singleton.PropertiesModel;
 import model.singleton.SFTPClientModel;
 import psd.model.Layer;
@@ -67,6 +68,7 @@ public class CustomImgImpWzrdController implements ActionListener, ComponentList
 	private FTPClient ftp = null;
 	private SFTPClientModel sftp = null;
 	private ImageHandler imgHandler = new ImageHandler();
+	private ImageUtil imgUtil = new ImageUtil();
 
 	public CustomImgImpWzrdController() {
 		initProperties();
@@ -104,7 +106,7 @@ public class CustomImgImpWzrdController implements ActionListener, ComponentList
 			Configuration templateProps;
 			for (Object template : templates) {
 				templateProps = config.subset(template.toString());
-				bannerTemplates.add(new BannerModel(template.toString(), templateProps));
+				bannerTemplates.add(new BannerModel(template.toString(), new Dimension(srcImage.getWidth(),srcImage.getHeight()), templateProps));
 			}
 			updateBannerTemplateList();
 			view.listBannerModels.setListData(bannerTemplates);
@@ -318,7 +320,8 @@ public class CustomImgImpWzrdController implements ActionListener, ComponentList
 
 	public void initSrcFile() {
 		try {
-			srcImage = imgHandler.imageLoad(srcFile);
+			//srcImage = imgHandler.imageLoad(srcFile);
+			srcImage = imgUtil.imageLoad(srcFile);
 		} catch (ImageReadException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

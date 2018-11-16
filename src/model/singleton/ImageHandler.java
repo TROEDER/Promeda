@@ -133,17 +133,11 @@ public class ImageHandler {
 			// image = ImageIO.read(new File(fileName));
 			image = jpegReader.readImage(file);
 			return image;
-		} else {
-			ImageInputStream stream = ImageIO.createImageInputStream(file);
-	        Iterator<ImageReader> iter = ImageIO.getImageReaders(stream);
-	        while (iter.hasNext()) {
-	            ImageReader reader = iter.next();
-	            reader.setInput(stream);
+		} else if(info == ImageFormat.IMAGE_FORMAT_PSD || info == ImageFormat.IMAGE_FORMAT_PNG){
 			image = Sanselan.getBufferedImage(file);
 			return image;
 	        }
-		}
-		return image;
+		return null;
 	}
 
 	/**

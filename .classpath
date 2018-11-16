@@ -2,6 +2,8 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0_45"/>
 	<classpathentry excluding="*.gitignore|ui/@archives/*" kind="src" path="src"/>
+	<classpathentry kind="src" path="stores"/>
+	<classpathentry kind="src" path="banner"/>
 	<classpathentry excluding="examples/" kind="src" path="resource"/>
 	<classpathentry exported="true" kind="lib" path="lib/edtftpj.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/java-image-scaling-0.8.6.jar"/>
@@ -55,5 +57,6 @@
 			<attribute name="javadoc_location" value="https://javadoc.scijava.org/ImageJ/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/Filters.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -416,16 +416,22 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 	}
 
 	public void initSrcFile(File srcFile) {
+		System.out.println(srcFile.getName());
 		String fileExt = FilenameUtils.getExtension(srcFile.getName());
+		System.out.println(fileExt);
 		try {
 			if (fileExt.equalsIgnoreCase("psd") || fileExt.equalsIgnoreCase("psb")) {
 				Psd psd = new Psd(srcFile);
 				srcImage = psd.getImage();
+				view.labelPreviewPsdImage.setIcon(new ImageIcon(srcImage));
 				float factor = (float)300 / (float)srcImage.getHeight();
+				System.out.println(factor);
 				int newWidth = Math.round((float)srcImage.getWidth()*factor);
+				System.out.println(newWidth);
 				ImageIcon iconHelper = new ImageIcon(imgHandler.resizeImage2(newWidth, 300, srcImage));
 				view.labelPreviewPsdImage.setIcon(iconHelper);
 			} else if (fileExt.equalsIgnoreCase("jpg") || fileExt.equalsIgnoreCase("jpeg")) {
+				System.out.println(srcFile.getName());
 				srcImage = ImageIO.read(srcFile);
 				view.labelPreviewPsdImage.setIcon(new ImageIcon(srcImage));
 			}
@@ -434,6 +440,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 			e.printStackTrace();
 		}
 	}
+
 
 	public void progressBarUpdate(int progressStepSize) {
 		view.progressBar.setValue(view.progressBar.getValue() + progressStepSize);

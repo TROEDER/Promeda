@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
-import java.awt.color.ICC_ProfileRGB;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.awt.image.Raster;
@@ -14,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -24,15 +24,12 @@ import org.apache.sanselan.ImageFormat;
 import org.apache.sanselan.ImageInfo;
 import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.Sanselan;
-import org.apache.sanselan.color.ColorConversions;
 import org.apache.sanselan.common.IImageMetadata;
 import org.apache.sanselan.common.byteSources.ByteSource;
 import org.apache.sanselan.common.byteSources.ByteSourceArray;
 import org.apache.sanselan.common.byteSources.ByteSourceFile;
 import org.apache.sanselan.formats.jpeg.JpegImageParser;
 import org.apache.sanselan.formats.jpeg.segments.UnknownSegment;
-
-import com.mysql.jdbc.log.Log;
 
 /**
  * All thanks go to Codo @ Stack Overflow for this gem

@@ -109,6 +109,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 	}
 
 	public void initBannerDim() {
+		Dimension srcImageSize = new Dimension(srcImage.getWidth(), srcImage.getHeight());
 		System.out.println("asdasd" + propApp.get("locNetworkRes"));
 		File filePropBanner = new File(propApp.get("locNetworkRes") + "banner" + File.separator + "banner.properties");
 		try {
@@ -117,7 +118,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 			Configuration templateProps;
 			for (Object template : templates) {
 				templateProps = config.subset(template.toString());
-				bannerTemplates.add(new BannerModel(template.toString(), templateProps));
+				bannerTemplates.add(new BannerModel(template.toString(), srcImageSize, templateProps));
 			}
 			updateBannerTemplateList();
 			view.listBannerModels.setListData(bannerTemplates);
@@ -384,7 +385,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 				srcImage = psd.getImage();
 				float factor = (float)300 / (float)srcImage.getHeight();
 				int newWidth = Math.round((float)srcImage.getWidth()*factor);
-				ImageIcon iconHelper = new ImageIcon(imgHandler.resizeImage2(newWidth, 300, srcImage));
+				ImageIcon iconHelper = new ImageIcon(imgHandler.resizeImage(newWidth, 300, srcImage));
 				view.labelPreviewPsdImage.setIcon(iconHelper);
 			} else if (fileExt.equalsIgnoreCase("jpg") || fileExt.equalsIgnoreCase("jpeg")) {
 				srcImage = ImageIO.read(srcFile);

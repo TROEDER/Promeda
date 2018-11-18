@@ -53,7 +53,7 @@ public class BannerModel {
 		this.dirname = props.getString("dirname");
 		
 		if(props.containsKey("sm.width") && props.containsKey("sm.height")) {
-			if(props.getProperty("sm.height").equals("auto")) {
+			if(props.getProperty("sm.height").toString().equals(new String("auto")) || props.getProperty("sm.height").toString() == "auto") {
 				float factor = (float)props.getInt("sm.width") / (float)srcImageSize.width;
 				int newHeight = Math.round((float)srcImageSize.height*factor);
 				dimSM = new Dimension(props.getInt("sm.width"), newHeight);
@@ -63,17 +63,18 @@ public class BannerModel {
 			dimensions.put("sm", dimSM);
 		}
 		if(props.containsKey("md.width") && props.containsKey("md.height")) {
-			if(props.getProperty("md.height").equals("auto")) {
+			if(props.getProperty("md.height").toString().equalsIgnoreCase("auto") || props.getProperty("md.height").toString().equals(new String("auto")) || props.getProperty("md.height").toString() == "auto") {
 				float factor = (float)props.getInt("md.width") / (float)srcImageSize.width;
 				int newHeight = Math.round((float)srcImageSize.height*factor);
 				dimMD = new Dimension(props.getInt("md.width"), newHeight);
 			} else {
+				System.out.println(props.getProperty("md.height").toString());
 			dimMD = new Dimension(props.getInt("md.width"), props.getInt("md.height"));
 			}
 			dimensions.put("md", dimMD);
 		}
 		if(props.containsKey("lg.width") && props.containsKey("lg.height")) {
-			if(props.getProperty("lg.height").equals("auto")) {
+			if(props.getProperty("lg.height").toString().equals(new String("auto")) || props.getProperty("lg.height").toString() == "auto") {
 				float factor = (float)props.getInt("lg.width") / (float)srcImageSize.width;
 				int newHeight = Math.round((float)srcImageSize.height*factor);
 				dimLG = new Dimension(props.getInt("lg.width"), newHeight);

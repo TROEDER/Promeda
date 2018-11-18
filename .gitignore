@@ -33,6 +33,8 @@ lib/
 stores/
 imagemin/
 resource/examples/ImageMagick-7.0.8-11/
+dist/
+docs/
 
 # files #
 bin/.gitignore

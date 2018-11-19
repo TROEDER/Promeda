@@ -35,7 +35,6 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.sanselan.ImageReadException;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -318,7 +317,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 								ftp.storeFile(remoteFile.getName(), input);
 								ftp.changeToParentDirectory();
 
-							// USING SFTP
+								// USING SFTP
 							} else if (store.getStoreFtpProtocol().equals("sftp")) {
 								if (!sftp.session.isConnected()) {
 									sftp.connect();
@@ -402,7 +401,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 				jpegFile = new File(psdFilesPath.getAbsolutePath() + File.separatorChar + productID + ".jpg");
 				try {
 					BufferedImage srcImage = ImageIO.read(jpegFile);
-					
+
 					if (srcImage != null) {
 
 						// Show 100x100px thumb of current file in wizard
@@ -411,14 +410,14 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 						for (ImageSize imgSize : store.getStoreImageSizeListNew()) {
 
 							// RESIZE BUFFEREDIMAGE
-							progressLabelUpdate(
-									"Resize " + FilenameUtils.getBaseName(jpegFile.getName()) + " to " + imgSize.getWidth() + "px");
-							BufferedImage scaledImage = imgHandler.resizeImage(imgSize.getWidth(), imgSize.getHeight(), srcImage);
-
+							progressLabelUpdate("Resize " + FilenameUtils.getBaseName(jpegFile.getName()) + " to "
+									+ imgSize.getWidth() + "px");
+							BufferedImage scaledImage = imgHandler.resizeImage(imgSize.getWidth(), imgSize.getHeight(),
+									srcImage);
 
 							// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
-							File directory = new File(
-									propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive") + imgSize.getName());
+							File directory = new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive")
+									+ imgSize.getName());
 							if (!directory.exists()) {
 								directory.mkdirs();
 							}
@@ -469,13 +468,14 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 					if (!directory.exists()) {
 						directory.mkdirs();
 					}
-					
-					if (view.btnGrpImageFormat.getSelection().getActionCommand().equals("PSD") && view.btnGrpImageFormat.getSelection().getActionCommand() != null) {
+
+					if (view.btnGrpImageFormat.getSelection().getActionCommand().equals("PSD")
+							&& view.btnGrpImageFormat.getSelection().getActionCommand() != null) {
 						imgFile = new File(directory.getPath() + "/" + fileName + ".jpg");
 					} else if (view.btnGrpImageFormat.getSelection().getActionCommand().equals("JPEG")) {
 						imgFile = new File(directory.getPath() + "/" + fileName);
 					}
-					
+
 					ImageIO.write(rgbImage, "jpg", imgFile);
 				}
 			}
@@ -715,7 +715,8 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 		} else if (ce.getSource() == view.panelCardProcessing) {
 			view.btnCardBack.setVisible(false);
 			view.btnCardNext.setEnabled(false);
-			if (view.btnGrpImageFormat.getSelection().getActionCommand().equals("PSD") && view.btnGrpImageFormat.getSelection().getActionCommand() != null) {
+			if (view.btnGrpImageFormat.getSelection().getActionCommand().equals("PSD")
+					&& view.btnGrpImageFormat.getSelection().getActionCommand() != null) {
 				Thread t = new Thread() {
 					@Override
 					public void run() {
@@ -723,7 +724,7 @@ public class MassImgImpWzrdController implements ActionListener, ComponentListen
 					}
 				};
 				t.start();
-				
+
 			} else if (view.btnGrpImageFormat.getSelection().getActionCommand().equals("JPEG")) {
 				Thread t = new Thread() {
 					@Override

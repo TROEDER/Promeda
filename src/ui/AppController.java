@@ -32,7 +32,7 @@ public class AppController implements ActionListener {
 		} else if (ae.getSource() == view.btnNewButton) {
 			new MassImgImpWzrdController();
 		} else if (ae.getSource() == view.btnSettings) {
-			new SettingsController(); 
+			new SettingsController();
 		} else if (ae.getSource() == view.btnSearch || ae.getSource() == view.textFieldProdNr) {
 			new ArticleController(view.textFieldProdNr.getText());
 		}

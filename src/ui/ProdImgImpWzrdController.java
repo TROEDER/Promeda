@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -15,7 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
-import java.util.ListIterator;
 import java.util.Vector;
 
 import javax.imageio.IIOImage;
@@ -40,11 +38,9 @@ import org.joda.time.format.DateTimeFormatter;
 
 import model.prototype.ImageSize;
 import model.prototype.StoreDataModel;
-import model.singleton.FtpClientModel;
 import model.singleton.ImageHandler;
 import model.singleton.PropertiesModel;
 import model.singleton.SFTPClientModel;
-import psd.model.Psd;
 
 public class ProdImgImpWzrdController implements ActionListener, ComponentListener {
 
@@ -157,8 +153,8 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 						BufferedImage rgbImage = imgHandler.removeAlphaChannel(scaledImage);
 
 						// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
-						File directory = new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive")
-								+ imgSize.getName());
+						File directory = new File(
+								propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive") + imgSize.getName());
 						if (!directory.exists()) {
 							directory.mkdirs();
 						}
@@ -184,7 +180,7 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 
 						if (param.canWriteCompressed()) {
 							param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-							//param.setCompressionType("JPEG-LS");
+							// param.setCompressionType("JPEG-LS");
 							param.setCompressionQuality(0.78f); // Change the quality value you prefer
 						}
 
@@ -213,7 +209,7 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 							ftp.storeFile(remoteFile.getName(), input);
 //							ftp.changeToParentDirectory();
 
-						// USING SFTP
+							// USING SFTP
 						} else if (store.getStoreFtpProtocol().equals("sftp")) {
 							if (!sftp.session.isConnected()) {
 								sftp.connect();
@@ -246,7 +242,7 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 				srcImage = imgHandler.getImageFromPsd2(srcFile);
 			} else if (fileExt.equalsIgnoreCase("jpg") || fileExt.equalsIgnoreCase("jpeg")) {
 				srcImage = ImageIO.read(srcFile);
-				
+
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -254,7 +250,7 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 		}
 		return srcImage;
 	}
-	
+
 	public void imageCompression(File input) throws IOException {
 
 		BufferedImage image = ImageIO.read(input);

@@ -100,7 +100,7 @@ public final class SFTPClientModel {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void makeDir(String dir) {
 		SftpATTRS attrs;
 		try {
@@ -114,18 +114,19 @@ public final class SFTPClientModel {
 			}
 		}
 	}
+
 	public void upload(File localFile, File remoteFile) {
-		
-			try {
-				channelSftp.put(new FileInputStream(localFile), remoteFile.getPath());
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SftpException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		
+
+		try {
+			channelSftp.put(new FileInputStream(localFile), remoteFile.getPath());
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SftpException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	public void disconnect() {

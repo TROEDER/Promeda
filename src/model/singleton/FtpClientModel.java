@@ -25,13 +25,12 @@ public final class FtpClientModel {
 	private int port;
 	private String user;
 	private String password;
-	
+
 	public FileTransferClient ftp;
-	
+
 	public Session session = null;
 	private Channel channel = null;
 	private ChannelSftp channelSftp = null;
-
 
 	/**
 	 * Logger for Debugging/Output for Log-File set up logger so that we get some
@@ -173,33 +172,33 @@ public final class FtpClientModel {
 
 	public void sftpConnect() {
 
-        try {
-            JSch jsch = new JSch();
-            session = jsch.getSession(user, host, port);
-            session.setPassword(password);
-            java.util.Properties config = new java.util.Properties();
-            config.put("StrictHostKeyChecking", "no");
-            session.setConfig(config);
-            session.connect();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+		try {
+			JSch jsch = new JSch();
+			session = jsch.getSession(user, host, port);
+			session.setPassword(password);
+			java.util.Properties config = new java.util.Properties();
+			config.put("StrictHostKeyChecking", "no");
+			session.setConfig(config);
+			session.connect();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	public void sftpUpload(File localFile, File remoteFile) {
 		try {
-            channel = session.openChannel("sftp");
-            channel.connect();
-            channelSftp = (ChannelSftp) channel;
+			channel = session.openChannel("sftp");
+			channel.connect();
+			channelSftp = (ChannelSftp) channel;
 //            if(!remoteFile.getParentFile().exists()) channelSftp.mkdir(remoteFile.getParentFile().getName());
-            channelSftp.cd(remoteFile.getParentFile().getName());
-            System.out.println(remoteFile.getParentFile().getName());
-            channelSftp.put(new FileInputStream(localFile), remoteFile.getName());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+			channelSftp.cd(remoteFile.getParentFile().getName());
+			System.out.println(remoteFile.getParentFile().getName());
+			channelSftp.put(new FileInputStream(localFile), remoteFile.getName());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
-	
+
 	public void sftpDisconnect() {
 		channelSftp.disconnect();
 		channel.disconnect();

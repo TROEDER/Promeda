@@ -43,7 +43,7 @@ public class PropertiesModel {
 
 	public Configuration loadAppProperties2() {
 		try {
-			File file = new File("props"+File.separator + "config"+File.separator + "app.properties");
+			File file = new File("props" + File.separator + "config" + File.separator + "app.properties");
 			config = new PropertiesConfiguration(file);
 		} catch (ConfigurationException e) {
 			// TODO Auto-generated catch block

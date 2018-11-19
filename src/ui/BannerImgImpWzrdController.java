@@ -14,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -255,33 +256,8 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 						imgFile = new File(directory.getPath() + File.separator + bannerName + ".jpg");
 						// ImageIO.write(scaledImage, "jpg", imgFile);
 
-						// COMPRESSION START
-						OutputStream os = new FileOutputStream(imgFile);
-						Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
-						ImageWriter writer = (ImageWriter) writers.next();
-
-						ImageOutputStream ios = ImageIO.createImageOutputStream(os);
-						writer.setOutput(ios);
-
-						ImageWriteParam param = writer.getDefaultWriteParam();
-
-						if (param.canWriteProgressive()) {
-							param.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
-						}
-
-						if (param.canWriteCompressed()) {
-							param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-							// param.setCompressionType("JPEG-LS");
-							param.setCompressionQuality(0.85f); // Change the quality value you prefer
-						}
-
-						writer.write(writer.getDefaultStreamMetadata(param), new IIOImage(rgbImage, null, null), param);
-
-						os.close();
-						ios.close();
-						writer.dispose();
-
-						// COMPRESSION END
+						// COMPRESS and WRITE JPEG FILE
+						compress(rgbImage, imgFile);
 
 						// UPLOAD TO (REMOTE-)WEBSERVER
 						progressLabelUpdate(
@@ -333,6 +309,36 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 		view.btnCardNext.setText("Done");
 	}
 
+	public void compress(BufferedImage srcImage, File destFile) throws IOException {
+		OutputStream os = new FileOutputStream(destFile);
+		Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpeg");
+		ImageWriter writer = (ImageWriter) writers.next();
+
+		ImageOutputStream ios = ImageIO.createImageOutputStream(os);
+		writer.setOutput(ios);
+
+		ImageWriteParam param = writer.getDefaultWriteParam();
+
+		if (param.canWriteProgressive()) {
+			param.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
+		}
+
+		if (param.canWriteCompressed()) {
+			param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+			// param.setCompressionType("JPEG-LS");
+			param.setCompressionQuality(0.85f); // Change the quality value you prefer
+		}
+
+		writer.write(writer.getDefaultStreamMetadata(param), new IIOImage(srcImage, null, null), param);
+
+		os.close();
+		ios.close();
+		writer.dispose();
+	}
+	
+	public void libJpegTurboCompress() {
+		
+	}
 	public File openFile() {
 		File file = null;
 

@@ -51,5 +51,6 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/Promeda/lib/sanselan-0.97-incubator-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/turbojpeg.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

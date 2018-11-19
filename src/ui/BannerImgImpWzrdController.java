@@ -18,8 +18,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -118,6 +120,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 	}
 
 	public void initBannerDim() {
+
 		Dimension srcImageSize = new Dimension(srcImage.getWidth(), srcImage.getHeight());
 		System.out.println("asdasd" + propApp.get("locNetworkRes"));
 		File filePropBanner = new File(propApp.get("locNetworkRes") + "banner" + File.separator + "banner.properties");
@@ -127,7 +130,9 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 			Configuration templateProps;
 			for (Object template : templates) {
 				templateProps = config.subset(template.toString());
+
 				bannerTemplates.add(new BannerModel(template.toString(), srcImageSize, templateProps));
+
 			}
 			updateBannerTemplateList();
 			view.listBannerModels.setListData(bannerTemplates);
@@ -254,7 +259,9 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 						}
 
 						imgFile = new File(directory.getPath() + File.separator + bannerName + ".jpg");
+
 						// ImageIO.write(scaledImage, "jpg", imgFile);
+
 
 						// COMPRESS and WRITE JPEG FILE
 						compress(rgbImage, imgFile);
@@ -339,6 +346,54 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 	public void libJpegTurboCompress() {
 		
 	}
+	public void exec() throws IOException, InterruptedException {
+		String destFolder="\\\\SVR-APP-11\\Promeda-bin";
+		//String destFolder = "C:\\Web\\htdocs\\Promeda-bin";
+		/*
+		 * Location where the Nodejs Project is Present
+		 */
+		System.out.println(destFolder);
+
+		String cmdPrompt = "cmd";
+		String path = "/c";
+		String npm = isWindows() ? "npm.cmd" : "npm";
+		String npmUpdate = npm + " run newer-mozjpeg";
+
+		File jsFile = new File(destFolder);
+		List<String> updateCommand = new ArrayList<String>();
+		updateCommand.add(cmdPrompt);
+		updateCommand.add(path);
+		// updateCommand.add("gulp");
+		updateCommand.add(npmUpdate);
+		// updateCommand.add("jpegtran");
+		runExecution(updateCommand, jsFile);
+	}
+
+	public static void runExecution(List<String> command, File navigatePath) throws IOException, InterruptedException {
+
+		System.out.println(command);
+
+		ProcessBuilder executeProcess = new ProcessBuilder(command);
+		executeProcess.directory(navigatePath);
+		Process resultExecution = executeProcess.start();
+		int result = resultExecution.waitFor();
+		BufferedReader br = new BufferedReader(new InputStreamReader(resultExecution.getInputStream()));
+		StringBuffer sb = new StringBuffer();
+
+		String line;
+		while ((line = br.readLine()) != null) {
+			sb.append(line + System.getProperty("line.separator"));
+			System.out.println(sb.toString());
+		}
+		br.close();
+		int resultStatust = resultExecution.waitFor();
+		System.out.println("Result of Execution" + (resultStatust == 0 ? "\tSuccess" : "\tFailure"));
+	}
+
+	static boolean isWindows() {
+		return System.getProperty("os.name").toLowerCase().contains("win");
+	}
+	
 	public File openFile() {
 		File file = null;
 

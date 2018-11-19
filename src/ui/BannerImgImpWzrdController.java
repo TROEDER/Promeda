@@ -3,11 +3,15 @@ package ui;
 import static org.apache.commons.io.FileUtils.copyFile;
 
 import java.awt.Dimension;
+import java.awt.PageAttributes.ColorType;
+import java.awt.color.ColorSpace;
+import java.awt.color.ICC_Profile;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -43,9 +47,12 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.sanselan.ColorTools;
 import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.ImageWriteException;
 import org.apache.sanselan.Sanselan;
+import org.apache.sanselan.color.ColorCMYK;
+import org.apache.sanselan.color.ColorConversions;
 import org.apache.sanselan.common.BinaryFileFunctions;
 import org.apache.sanselan.common.RgbBufferedImageFactory;
 import org.joda.time.LocalDate;
@@ -60,6 +67,7 @@ import model.prototype.BannerModel;
 import model.prototype.ImageSize;
 import model.prototype.StoreDataModel;
 import model.singleton.ImageHandler;
+import model.singleton.JpegReader;
 import model.singleton.PropertiesModel;
 import model.singleton.SFTPClientModel;
 import psd.model.Layer;
@@ -84,13 +92,13 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 	public BannerImgImpWzrdController() {
 		initProperties();
 		initView();
-		//initBannerDim();
+		// initBannerDim();
 		initStores();
 	}
 
 	public BannerImgImpWzrdController(File psdFile) {
 		initProperties();
-		//initBannerDim();
+		// initBannerDim();
 		initView();
 		initStores();
 		this.srcFile = psdFile;
@@ -225,7 +233,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 					scaledImages.clear();
 
 					for (Entry<String, Dimension> dim : banner.getDimensions().entrySet()) {
-						
+
 						// RESIZE BUFFEREDIMAGE
 						progressLabelUpdate("Resize " + FilenameUtils.getBaseName(srcFile.getName()) + " to "
 								+ dim.getValue().width + " " + dim.getValue().height + " px");
@@ -236,7 +244,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 						progressLabelUpdate("Remove Alpha Channel from " + FilenameUtils.getBaseName(srcFile.getName())
 								+ dim.getValue().width + " " + dim.getValue().height + " px");
 						BufferedImage rgbImage = imgHandler.removeAlphaChannel(scaledImage);
-						
+
 						// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
 						File directory = new File(propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive")
 								+ banner.getDirname() + File.separator + dim.getKey());
@@ -245,8 +253,8 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 						}
 
 						imgFile = new File(directory.getPath() + File.separator + bannerName + ".jpg");
-						//ImageIO.write(scaledImage, "jpg", imgFile);
-				    
+						// ImageIO.write(scaledImage, "jpg", imgFile);
+
 						// COMPRESSION START
 						OutputStream os = new FileOutputStream(imgFile);
 						Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
@@ -263,7 +271,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 
 						if (param.canWriteCompressed()) {
 							param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-							//param.setCompressionType("JPEG-LS");
+							// param.setCompressionType("JPEG-LS");
 							param.setCompressionQuality(0.85f); // Change the quality value you prefer
 						}
 
@@ -274,7 +282,7 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 						writer.dispose();
 
 						// COMPRESSION END
-						
+
 						// UPLOAD TO (REMOTE-)WEBSERVER
 						progressLabelUpdate(
 								"Upload " + bannerName + " (" + banner.getName() + ") to " + store.getStoreName());
@@ -383,13 +391,12 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 			if (fileExt.equalsIgnoreCase("psd") || fileExt.equalsIgnoreCase("psb")) {
 				Psd psd = new Psd(srcFile);
 				srcImage = psd.getImage();
-				float factor = (float)300 / (float)srcImage.getHeight();
-				int newWidth = Math.round((float)srcImage.getWidth()*factor);
+				float factor = (float) 300 / (float) srcImage.getHeight();
+				int newWidth = Math.round((float) srcImage.getWidth() * factor);
 				ImageIcon iconHelper = new ImageIcon(imgHandler.resizeImage(newWidth, 300, srcImage));
 				view.labelPreviewPsdImage.setIcon(iconHelper);
 			} else if (fileExt.equalsIgnoreCase("jpg") || fileExt.equalsIgnoreCase("jpeg")) {
 				srcImage = ImageIO.read(srcFile);
-				view.labelPreviewPsdImage.setIcon(new ImageIcon(srcImage));
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

@@ -1,5 +1,5 @@
 
-package com.koadweb.javafpdf;
+package model.singleton;
 
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;

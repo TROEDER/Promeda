@@ -175,11 +175,9 @@ public class ImageHandler {
 	 */
 	public BufferedImage resizeImage(int width, int height, BufferedImage bImage) {
 		ResampleOp resampleOp = new ResampleOp(width, height);
-		new ResampleFilters();
-		// ImprovedMultistepRescaleOp rescaleOp = new ImprovedMultistepRescaleOp(width,
-		// height);
+		//ImprovedMultistepRescaleOp rescaleOp = new ImprovedMultistepRescaleOp(width, height);
 		System.out.println(resampleOp.getFilter().getName());
-		resampleOp.setFilter(ResampleFilters.getBiCubicFilter());
+		resampleOp.setFilter(ResampleFilters.getLanczos3Filter());
 		System.out.println(resampleOp.getFilter().getName());
 		resampleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.Soft);
 		System.out.println(resampleOp.getUnsharpenMask().name());

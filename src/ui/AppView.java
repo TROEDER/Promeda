@@ -12,8 +12,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class AppView extends JFrame {
 
@@ -26,6 +28,11 @@ public class AppView extends JFrame {
 	public JTextField textFieldProdNr;
 	public JButton btnPageImgImpWzrd;
 	public JButton btnNewButton;
+	public JPopupMenu popupMenuImageImport;
+	public JMenuItem mntmProduct;
+	public JMenuItem mntmBanner;
+	public JMenuItem mntmThemenwelt;
+	public JButton btnMenuImageImport;
 
 	/**
 	 * Create the frame.
@@ -36,7 +43,7 @@ public class AppView extends JFrame {
 
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 251, 473);
+		setBounds(100, 100, 251, 580);
 		contentPane = new JPanelWithBackgroundImage(getClass().getResource("/img/promeda-app-bg3.jpg"));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -90,7 +97,7 @@ public class AppView extends JFrame {
 		btnExit.setSize(new Dimension(225, 40));
 		btnExit.setPreferredSize(new Dimension(300, 23));
 		btnExit.setAlignmentX(0.5f);
-		btnExit.setBounds(94, 367, 64, 64);
+		btnExit.setBounds(93, 474, 64, 64);
 		contentPane.add(btnExit);
 		
 		JLabel lblNewLabel_1 = new JLabel("Promondo Media Administration");
@@ -117,5 +124,42 @@ public class AppView extends JFrame {
 		btnNewButton.addActionListener(controller);
 		btnNewButton.setBounds(10, 249, 225, 40);
 		contentPane.add(btnNewButton);
+		
+		btnMenuImageImport = new JButton("Image Imports");
+		btnMenuImageImport.addActionListener(controller);
+		btnMenuImageImport.setSize(new Dimension(225, 40));
+		btnMenuImageImport.setPreferredSize(new Dimension(300, 23));
+		btnMenuImageImport.setAlignmentX(0.5f);
+		btnMenuImageImport.setBounds(10, 351, 225, 40);
+		contentPane.add(btnMenuImageImport);
+		
+		popupMenuImageImport = new JPopupMenu();
+		addPopup(btnMenuImageImport, popupMenuImageImport);
+		
+		mntmProduct = new JMenuItem("Product");
+		popupMenuImageImport.add(mntmProduct);
+		
+		mntmBanner = new JMenuItem("Banner");
+		popupMenuImageImport.add(mntmBanner);
+		
+		mntmThemenwelt = new JMenuItem("Themenwelt");
+		popupMenuImageImport.add(mntmThemenwelt);
+	}
+	private static void addPopup(Component component, final JPopupMenu popup) {
+		component.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+			public void mouseReleased(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+			private void showMenu(MouseEvent e) {
+				popup.show(e.getComponent(), e.getX(), e.getY());
+			}
+		});
 	}
 }

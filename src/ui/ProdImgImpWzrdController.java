@@ -41,6 +41,7 @@ import model.prototype.StoreDataModel;
 import model.singleton.ImageHandler;
 import model.singleton.PropertiesModel;
 import model.singleton.SFTPClientModel;
+import psd.model.Psd;
 
 public class ProdImgImpWzrdController implements ActionListener, ComponentListener {
 
@@ -151,8 +152,8 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 						progressLabelUpdate("Remove Alpha Channel from " + FilenameUtils.getBaseName(psdFile.getName())
 								+ " (" + imgSize.getWidth() + "px)");
 						BufferedImage rgbImage = imgHandler.removeAlphaChannel(scaledImage);
-
-						// WRITE IMAGE FILE TO MEDIA/LIVE FOLDER
+						
+						// COMPRESS and WRITE JPEG FILE TO MEDIA/LIVE FOLDER
 						File directory = new File(
 								propApp.get("locMediaBackup") + propApp.get("mediaBackupDirLive") + imgSize.getName());
 						if (!directory.exists()) {
@@ -163,34 +164,7 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 								directory.getPath() + "/" + FilenameUtils.getBaseName(psdFile.getName()) + ".jpg");
 						// ImageIO.write(rgbImage, "jpg", imgFile);
 
-						// COMPRESSION START
-						OutputStream os = new FileOutputStream(imgFile);
-
-						Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
-						ImageWriter writer = (ImageWriter) writers.next();
-
-						ImageOutputStream ios = ImageIO.createImageOutputStream(os);
-						writer.setOutput(ios);
-
-						ImageWriteParam param = writer.getDefaultWriteParam();
-
-						if (param.canWriteProgressive()) {
-							param.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
-						}
-
-						if (param.canWriteCompressed()) {
-							param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-							// param.setCompressionType("JPEG-LS");
-							param.setCompressionQuality(0.78f); // Change the quality value you prefer
-						}
-
-						writer.write(null, new IIOImage(rgbImage, null, null), param);
-
-						os.close();
-						ios.close();
-						writer.dispose();
-
-						// COMPRESSION END
+						compress(rgbImage, imgFile);
 
 						// UPLOAD TO WEBSERVER
 						progressLabelUpdate("Upload " + FilenameUtils.getBaseName(psdFile.getName()) + " ("
@@ -209,7 +183,7 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 							ftp.storeFile(remoteFile.getName(), input);
 //							ftp.changeToParentDirectory();
 
-							// USING SFTP
+						// USING SFTP
 						} else if (store.getStoreFtpProtocol().equals("sftp")) {
 							if (!sftp.session.isConnected()) {
 								sftp.connect();
@@ -237,9 +211,8 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 		BufferedImage srcImage = null;
 		try {
 			if (fileExt.equalsIgnoreCase("psd") || fileExt.equalsIgnoreCase("psb")) {
-				// Psd psd = new Psd(srcFile);
-				ImageHandler imgHandler = new ImageHandler();
-				srcImage = imgHandler.getImageFromPsd2(srcFile);
+				Psd psd = new Psd(srcFile);
+				srcImage = psd.getImage();
 			} else if (fileExt.equalsIgnoreCase("jpg") || fileExt.equalsIgnoreCase("jpeg")) {
 				srcImage = ImageIO.read(srcFile);
 
@@ -251,6 +224,34 @@ public class ProdImgImpWzrdController implements ActionListener, ComponentListen
 		return srcImage;
 	}
 
+	public void compress(BufferedImage srcImage, File destFile) throws IOException {
+		OutputStream os = new FileOutputStream(destFile);
+		Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpeg");
+		ImageWriter writer = (ImageWriter) writers.next();
+
+		ImageOutputStream ios = ImageIO.createImageOutputStream(os);
+		writer.setOutput(ios);
+
+		ImageWriteParam param = writer.getDefaultWriteParam();
+
+		if (param.canWriteProgressive()) {
+			param.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
+		}
+
+		if (param.canWriteCompressed()) {
+			param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+			// param.setCompressionType("JPEG-LS");
+			param.setCompressionQuality(0.85f); // Change the quality value you prefer
+		}
+
+		writer.write(writer.getDefaultStreamMetadata(param), new IIOImage(srcImage, null, null), param);
+
+		os.close();
+		ios.close();
+		writer.dispose();
+	}
+
+	
 	public void imageCompression(File input) throws IOException {
 
 		BufferedImage image = ImageIO.read(input);

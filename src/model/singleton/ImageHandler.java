@@ -54,8 +54,6 @@ import ij.measure.Calibration;
 import com.mortennobel.imagescaling.MultiStepRescaleOp;
 import com.mortennobel.imagescaling.ResampleFilters;
 import com.mortennobel.imagescaling.ResampleOp;
-import com.twelvemonkeys.imageio.plugins.psd.PSDImageReader;
-import com.twelvemonkeys.imageio.plugins.psd.PSDImageReaderSpi;
 
 import model.prototype.JpegReader;
 import psd.model.Psd;

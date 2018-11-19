@@ -38,8 +38,6 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import ij.IJ;
-import ij.ImagePlus;
 import model.prototype.BannerModel;
 
 // import com.enterprisedt.net.ftp.FTPException;

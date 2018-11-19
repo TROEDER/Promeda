@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/121/trunk/psd-library/src/psd/parser/layer/additional
+END
+LayerIdParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/layer/additional/LayerIdParser.java
+END
+LayerSectionDividerHandler.java
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/layer/additional/LayerSectionDividerHandler.java
+END
+LayerIdHandler.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/layer/additional/LayerIdHandler.java
+END
+LayerTypeToolParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/layer/additional/LayerTypeToolParser.java
+END
+LayerMetaDataParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/layer/additional/LayerMetaDataParser.java
+END
+LayerTypeToolHandler.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/layer/additional/LayerTypeToolHandler.java
+END
+LayerMetaDataHandler.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/layer/additional/LayerMetaDataHandler.java
+END
+LayerUnicodeNameParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/layer/additional/LayerUnicodeNameParser.java
+END
+LayerUnicodeNameHandler.java
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/layer/additional/LayerUnicodeNameHandler.java
+END
+Matrix.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/121/trunk/psd-library/src/psd/parser/layer/additional/Matrix.java
+END
+LayerSectionDividerParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/layer/additional/LayerSectionDividerParser.java
+END

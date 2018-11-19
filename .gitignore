@@ -11,10 +11,10 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
+#*.jar
 *.war
 *.ear
-*.zip
+#*.zip
 *.tar.gz
 *.rar
 
@@ -29,7 +29,7 @@ hs_err_pid*
 .metadata
 
 # folders #
-lib/
+
 stores/
 imagemin/
 resource/examples/ImageMagick-7.0.8-11/

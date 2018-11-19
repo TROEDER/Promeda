@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/header
+END
+Header.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/header/Header.java
+END
+HeaderSectionParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/header/HeaderSectionParser.java
+END
+HeaderSectionHandler.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/header/HeaderSectionHandler.java
+END

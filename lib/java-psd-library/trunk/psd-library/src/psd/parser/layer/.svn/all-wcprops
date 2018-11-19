@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/121/trunk/psd-library/src/psd/parser/layer
+END
+Channel.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/layer/Channel.java
+END
+LayerAdditionalInformationParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/layer/LayerAdditionalInformationParser.java
+END
+LayerParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/layer/LayerParser.java
+END
+LayerHandler.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/layer/LayerHandler.java
+END
+Mask.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/layer/Mask.java
+END
+LayerType.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/layer/LayerType.java
+END
+LayersSectionParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/layer/LayersSectionParser.java
+END
+BlendingRanges.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/layer/BlendingRanges.java
+END
+LayersSectionHandler.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/layer/LayersSectionHandler.java
+END

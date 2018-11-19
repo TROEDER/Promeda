@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/112/branches/v1/psdlibrary/doc/psd/rawObjects
+END
+package-frame.html
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/112/branches/v1/psdlibrary/doc/psd/rawObjects/package-frame.html
+END
+PsdDescriptor.html
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/112/branches/v1/psdlibrary/doc/psd/rawObjects/PsdDescriptor.html
+END
+package-use.html
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/112/branches/v1/psdlibrary/doc/psd/rawObjects/package-use.html
+END
+PsdTextData.html
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/112/branches/v1/psdlibrary/doc/psd/rawObjects/PsdTextData.html
+END
+PsdLong.html
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/112/branches/v1/psdlibrary/doc/psd/rawObjects/PsdLong.html
+END
+PsdBoolean.html
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/112/branches/v1/psdlibrary/doc/psd/rawObjects/PsdBoolean.html
+END
+package-summary.html
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/112/branches/v1/psdlibrary/doc/psd/rawObjects/package-summary.html
+END
+package-tree.html
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/!svn/ver/112/branches/v1/psdlibrary/doc/psd/rawObjects/package-tree.html
+END
+PsdEnum.html
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/112/branches/v1/psdlibrary/doc/psd/rawObjects/PsdEnum.html
+END
+PsdText.html
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/112/branches/v1/psdlibrary/doc/psd/rawObjects/PsdText.html
+END
+PsdUnitFloat.html
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/!svn/ver/112/branches/v1/psdlibrary/doc/psd/rawObjects/PsdUnitFloat.html
+END
+PsdDouble.html
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/112/branches/v1/psdlibrary/doc/psd/rawObjects/PsdDouble.html
+END
+PsdList.html
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/112/branches/v1/psdlibrary/doc/psd/rawObjects/PsdList.html
+END

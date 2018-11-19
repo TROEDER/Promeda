@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/112/branches/v1/psdlibrary/src/psd/rawObjects
+END
+PsdText.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/112/branches/v1/psdlibrary/src/psd/rawObjects/PsdText.java
+END
+PsdEnum.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/112/branches/v1/psdlibrary/src/psd/rawObjects/PsdEnum.java
+END
+PsdUnitFloat.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/!svn/ver/112/branches/v1/psdlibrary/src/psd/rawObjects/PsdUnitFloat.java
+END
+PsdDouble.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/112/branches/v1/psdlibrary/src/psd/rawObjects/PsdDouble.java
+END
+PsdList.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/112/branches/v1/psdlibrary/src/psd/rawObjects/PsdList.java
+END
+PsdDescriptor.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/112/branches/v1/psdlibrary/src/psd/rawObjects/PsdDescriptor.java
+END
+PsdTextData.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/112/branches/v1/psdlibrary/src/psd/rawObjects/PsdTextData.java
+END
+PsdBoolean.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/112/branches/v1/psdlibrary/src/psd/rawObjects/PsdBoolean.java
+END
+PsdLong.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/112/branches/v1/psdlibrary/src/psd/rawObjects/PsdLong.java
+END

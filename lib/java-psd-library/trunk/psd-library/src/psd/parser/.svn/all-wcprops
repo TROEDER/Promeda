@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/121/trunk/psd-library/src/psd/parser
+END
+PsdInputStream.java
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/PsdInputStream.java
+END
+ColorMode.java
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/ColorMode.java
+END
+PsdFileParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/PsdFileParser.java
+END
+ColorModeSectionParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/ColorModeSectionParser.java
+END
+BlendMode.java
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/118/trunk/psd-library/src/psd/parser/BlendMode.java
+END

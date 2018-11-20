@@ -33,9 +33,6 @@ public class AppController implements ActionListener {
 			new MassImgImpWzrdController();
 		} else if (ae.getSource() == view.btnMenuImageImport) {
 			view.popupMenuImageImport.show(view.getContentPane(), view.btnMenuImageImport.getX(), view.btnMenuImageImport.getY() + view.btnMenuImageImport.getHeight());
-			//view.popupMenuImageImport.setLocation(view.btnMenuImageImport.getX(), view.btnMenuImageImport.getY() + view.btnMenuImageImport.getHeight());
-			view.popupMenuImageImport.setVisible(!view.popupMenuImageImport.isVisible());
-			
 		} else if (ae.getSource() == view.btnSettings) {
 			new SettingsController();
 		} else if (ae.getSource() == view.btnSearch || ae.getSource() == view.textFieldProdNr) {

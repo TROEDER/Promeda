@@ -13,6 +13,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+
+import org.apache.commons.io.FilenameUtils;
 import org.apache.sanselan.ImageFormat;
 import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.Sanselan;
@@ -162,4 +166,23 @@ public class ImageHandler {
 		return imageRGB;
 	}
 
+	public BufferedImage readBufferedImage(File srcFile) {
+		String fileExt = FilenameUtils.getExtension(srcFile.getName());
+		try {
+			BufferedImage srcImage;
+			if (fileExt.equalsIgnoreCase("psd") || fileExt.equalsIgnoreCase("psb")) {
+				Psd psd = new Psd(srcFile);
+				srcImage = psd.getImage();
+				return srcImage;
+			} else if (fileExt.equalsIgnoreCase("jpg") || fileExt.equalsIgnoreCase("jpeg")) {
+				srcImage = ImageIO.read(srcFile);
+				return srcImage;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 }

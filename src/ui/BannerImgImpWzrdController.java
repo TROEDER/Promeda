@@ -49,7 +49,7 @@ import model.singleton.SFTPClientModel;
 import psd.model.Layer;
 import psd.model.Psd;
 
-public class BannerImgImpWzrdController implements ActionListener, ComponentListener {
+public class BannerImgImpWzrdController extends ImportController implements ActionListener, ComponentListener  {
 
 	private BannerImgImpWzrdView view;
 	private PropertiesModel propApp;
@@ -379,6 +379,10 @@ public class BannerImgImpWzrdController implements ActionListener, ComponentList
 				view.labelPreviewPsdImage.setIcon(iconHelper);
 			} else if (fileExt.equalsIgnoreCase("jpg") || fileExt.equalsIgnoreCase("jpeg")) {
 				srcImage = ImageIO.read(srcFile);
+				float factor = (float) 300 / (float) srcImage.getHeight();
+				int newWidth = Math.round((float) srcImage.getWidth() * factor);
+				ImageIcon iconHelper = new ImageIcon(imgHandler.resizeImage(newWidth, 300, srcImage));
+				view.labelPreviewPsdImage.setIcon(iconHelper);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
